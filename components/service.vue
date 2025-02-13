@@ -1,7 +1,6 @@
 <template>
     <article>
         <subComponentsServiceViewer/>
-        <div>
         <template v-for="(service, index) in services" :key="index">
             <subComponentsServiceItem  v-bind="service" />
         </template>
