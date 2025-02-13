@@ -58,7 +58,6 @@ article {
     background-position: center;
     display: grid;
     grid-template-rows: 2fr 124px;
-    background-color: red;
 
     .graphics {
         padding: 124px 56px;

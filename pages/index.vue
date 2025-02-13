@@ -4,7 +4,8 @@ const route = useRoute()
 
 <template>
   <AppHeader />
-  <hero></hero>
+  <hero />
+  <service/>
 </template>
 
 <style lang="scss"></style>
