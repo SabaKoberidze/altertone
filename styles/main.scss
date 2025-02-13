@@ -1,0 +1,12 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Neue', sans-serif;
+}
+body{ 
+    background-color: black;
+    width: 100vw;
+    height: 100dvh;
+}
+@import './_fonts.scss';
