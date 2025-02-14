@@ -1,10 +1,5 @@
 <template>
-    <header>
-
-
-
-
-
+    <header :class="{ scroll: isScrolled }">
         <div id="headerLogo">
             <img alt='logo' src="/images/logo.svg" />
             <p>Altertone</p>
@@ -15,9 +10,25 @@
         </div>
     </header>
 </template>
-<script setup lang="ts">
 
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const isScrolled = ref(false);
+
+const handleScroll = () => {
+    isScrolled.value = window.scrollY > 0;
+};
+
+onMounted(() => {
+    window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+});
 </script>
+
 <style lang="scss" scoped>
 header {
     display: flex;
@@ -30,6 +41,23 @@ header {
     position: fixed;
     z-index: 5;
     top: 0;
+    &::before{
+        content: '';
+        position: absolute;
+        top: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: 400ms;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);     
+        z-index: -1;   
+    }
+    &.scroll {
+        &::before{
+            top:0%;
+        }
+
+    }
 
     @include respond-to('tablet') {
         padding: 40px 20px;

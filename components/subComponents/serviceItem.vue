@@ -1,5 +1,5 @@
 <template>
-    <div class="serviceItem">
+    <div class="serviceItem" >
         <img :src="bgImage" class="serviceBg" />
         <div class="serviceContent">
             <img :src="icon" class="serviceIcon" />
@@ -37,7 +37,7 @@ defineProps({
     border-radius: 28px;
     overflow: hidden;
     color: white;
-    padding: 30px;
+    padding: 30px;   
 
     .serviceBg {
         width: 100%;
@@ -78,6 +78,9 @@ defineProps({
         .serviceTitle {
             font-size: 24px;
             font-feature-settings: "case";
+            h3{
+                font-family: 'SF Georgian';
+            }
         }
 
         .serviceInfo {
@@ -95,8 +98,8 @@ defineProps({
                 font-weight: 400;
                 line-height: 150%;
                 letter-spacing: 0.28px;
-
                 p {
+                    font-family: 'SF Georgian';
                     color: rgba(255, 255, 255, 0.56);
                 }
             }
@@ -111,6 +114,9 @@ defineProps({
                 align-items: center;
                 gap: 17px;
                 cursor: pointer;
+                p{
+                    font-family: 'SF Georgian';
+                }
             }
         }
     }
