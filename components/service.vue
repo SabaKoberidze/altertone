@@ -1,47 +1,57 @@
 <template>
     <article>
-        <subComponentsServiceViewer/>
-        <template v-for="(service, index) in services" :key="index">
-            <subComponentsServiceItem  v-bind="service" />
-        </template>
+        <subComponentsServiceViewer />
+        <div class="serviceContainer">
+            <template v-for="(service, index) in services" :key="index">
+                <subComponentsServiceItem v-bind="service" />
+            </template>
+        </div>
     </article>
 </template>
 <style lang="scss" scoped>
-    article{
-        padding: 0 56px;
-        width: 100%;
-        background: #0D0E0F;
+article {
+    padding: 0 56px;
+    width: 100%;
+    background: #0D0E0F;
+    display: flex;
+
+    .serviceContainer {
+        padding: 220px 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
     }
+}
 </style>
 <script setup lang="ts">
 let services = [
     {
-        title: 'მუსიკალური ინსტრუმენტები',
+        title: 'სარეპეტიციო სივრცე',
         icon: '/images/icons/room.svg',
         bgImage: '/images/hero.png',
-        price: 100,
-        duration: 5
+        price: 30,
+        duration: 2
     },
     {
-        title: 'აუდიო აღჭურვილობა',
+        title: 'ჩაწერა',
         icon: '/images/icons/mic.svg',
         bgImage: '/images/hero.png',
-        price: 150,
-        duration: 3
+        price: 100,
+        duration: 1
     },
     {
-        title: 'ლაიტინგი',
+        title: 'ვიდეო გადაღება',
         icon: '/images/icons/vid.svg',
         bgImage: '/images/hero.png',
-        price: 200,
-        duration: 7
+        price: 400,
+        duration: 0
     },
     {
-        title: 'ლაიტინგი',
+        title: 'ხმის გამოხმოვანება კონცერტებზე',
         icon: '/images/icons/sound.svg',
         bgImage: '/images/hero.png',
-        price: 200,
-        duration: 7
+        price: 0,
+        duration: 0
     }
 ]
 </script>

@@ -128,6 +128,7 @@ article {
             font-weight: 700;
             letter-spacing: -1.92px;
             text-transform: uppercase;
+            font-feature-settings: 'case';
 
         }
 
