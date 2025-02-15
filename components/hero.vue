@@ -15,7 +15,7 @@
             <p>პროფესიონალური აპარატურა, მოქნილი ცხრილი და საუკეთესო პირობები მუსიკოსებისთვის.</p>
         </div>
         <div class="nextPage">
-            <div>
+            <div @click="$emit('scrollToServices')">
                 <button type="button" class="nextPageButton"></button>
                 <p>სერვისები</p>
             </div>
@@ -159,6 +159,18 @@ article {
             display: flex;
             align-items: center;
             gap: 17px;
+            height: 44px;
+            // padding: 0 15px;
+            // border-radius: 8px;
+            // transition: 200ms;
+
+            &:hover {
+                //background-color: rgba(255, 255, 255, 0.15);
+
+                p {
+                    color: #FFF;
+                }
+            }
 
             .nextPageButton {
                 cursor: pointer;
@@ -177,7 +189,9 @@ article {
                 color: rgba(255, 255, 255, 0.56);
                 font-weight: 500;
                 font-family: "SF Georgian";
+                transition: 200ms;
             }
+
         }
     }
 }

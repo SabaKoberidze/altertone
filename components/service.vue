@@ -1,9 +1,12 @@
 <template>
     <article>
-        <subComponentsServiceViewer :services="services" :visibleIndex="highestVisibleIndex" />
+        <subComponentsServiceViewer :services="services" :visibleIndex="highestVisibleIndex"
+            @contentClicked='scrollToContent' />
         <div class="serviceContainer">
             <template v-for="(service, index) in services" :key="index">
-                <subComponentsServiceItem v-bind="service" :ref="el => setServiceRef(el, index)" />
+                <div ref="serviceScrollPoint" class="serviceScrollPoint">
+                    <subComponentsServiceItem v-bind="service" :ref="el => setServiceRef(el, index)" />
+                </div>
             </template>
         </div>
     </article>
@@ -14,20 +17,52 @@ import { ref, onMounted, watch } from 'vue';
 import { useElementVisibility } from '@vueuse/core';
 
 let services = [
-    { title: 'სარეპეტიციო სივრცე', icon: '/images/icons/room.svg', bgImage: '/images/hero.png', price: 30, duration: 2 },
-    { title: 'ჩაწერა', icon: '/images/icons/mic.svg', bgImage: '/images/hero.png', price: 100, duration: 1 },
-    { title: 'ვიდეო გადაღება', icon: '/images/icons/vid.svg', bgImage: '/images/hero.png', price: 400, duration: 0 },
-    { title: 'ხმის გამოხმოვანება კონცერტებზე', icon: '/images/icons/sound.svg', bgImage: '/images/hero.png', price: 0, duration: 0 }
+    {
+        title: 'სარეპეტიციო სივრცე', icon: '/images/icons/room.svg', bgImage: '/images/hero.png', price: 30, duration: 2, details: {
+            includedServices: ['დარბაზი', 'აპარატურა'],
+            addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
+            deals: ['4 საათზე 12.5 ფასდაკლება']
+        }
+    },
+    {
+        title: 'ჩაწერა', icon: '/images/icons/mic.svg', bgImage: '/images/hero.png', price: 100, duration: 1, details: {
+            includedServices: ['დარბაზი', 'აპარატურა'],
+            addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
+            deals: ['4 საათზე 12.5 ფასდაკლება']
+        }
+    },
+    {
+        title: 'ვიდეო გადაღება', icon: '/images/icons/vid.svg', bgImage: '/images/hero.png', price: 400, duration: 0, details: {
+            includedServices: ['დარბაზი', 'აპარატურა'],
+            addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
+            deals: ['4 საათზე 12.5 ფასდაკლება']
+        }
+    },
+    {
+        title: 'ხმის გამოხმოვანება კონცერტებზე', icon: '/images/icons/sound.svg', bgImage: '/images/hero.png', price: 0, duration: 0, details: {
+            includedServices: ['დარბაზი', 'აპარატურა'],
+            addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
+            deals: ['4 საათზე 12.5 ფასდაკლება']
+        }
+    }
 ];
 
 const serviceSection = ref<HTMLElement[]>([]);
 const visibleBlocks = ref<boolean[]>([]);
 const highestVisibleIndex = ref(-1);
-
+const serviceScrollPoint = ref<HTMLElement[]>([]);
 const setServiceRef = (el: any, index: number) => {
     if (el) serviceSection.value[index] = el;
 };
-
+const scrollToContent = (index: number) => {
+    console.log(index)
+    console.log(serviceScrollPoint.value)
+    serviceScrollPoint.value[index].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+    });
+};
 onMounted(() => {
     serviceSection.value.forEach((el, index) => {
         const isVisible = useElementVisibility(ref(el), { rootMargin: `0px 0px ${-window.innerHeight / 2}px 0px` });
@@ -40,7 +75,6 @@ onMounted(() => {
                 .filter(i => i !== -1);
 
             highestVisibleIndex.value = visibleIndices.length ? Math.max(...visibleIndices) : -1;
-            console.log(`Current Highest Visible Index: ${highestVisibleIndex.value}`);
         });
     });
 });
