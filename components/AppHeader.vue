@@ -1,7 +1,7 @@
 <template>
     <header :class="{ scroll: isScrolled }">
         <div id="headerLogo">
-            <img alt='logo' src="/images/logo.svg" />
+            <img alt='logo' src="/images/Logo.svg" />
             <p>Altertone</p>
         </div>
         <div id="headerButtons">
@@ -41,7 +41,8 @@ header {
     position: fixed;
     z-index: 5;
     top: 0;
-    &::before{
+
+    &::before {
         content: '';
         position: absolute;
         top: -100%;
@@ -49,12 +50,13 @@ header {
         width: 100%;
         height: 100%;
         transition: 400ms;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);     
-        z-index: -1;   
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
+        z-index: -1;
     }
+
     &.scroll {
-        &::before{
-            top:0%;
+        &::before {
+            top: 0%;
         }
 
     }
