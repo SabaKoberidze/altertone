@@ -4,17 +4,17 @@
 
         <div class="serviceMap">
             <div class="servicePoints">
-                <template v-for="(service, index, key) in services">
+                <template v-for="(service, index, key) in services" :key="key">
                     <div :class="{ active: visibleIndex === Number(index) }" class="servicePoint">
                         <div class="point"></div>
-                        <div ref="lines" v-if="Number(index) < ((services?.length ?? 0) - 1)"" class=" line">
-                            <div class="movingLine" :class="getLineStyle(Number(index))"></div>
-                        </div>
+                    </div>
+                    <div ref="navLine" class="navLine">
+                        <div class="bus" :style="{ top: getBusPosition() }"></div>
                     </div>
                 </template>
             </div>
             <div class="serviceViewContainer">
-                <div v-for="(service, index, key) in services" class="serviceOnView"
+                <div v-for="(service, index, key) in services" :key="key" class="serviceOnView"
                     @click="handleContentClick(Number(index))" :class="{ active: visibleIndex === Number(index) }">
                     <p>{{ service.title }}</p>
                 </div>
@@ -33,45 +33,43 @@
 </template>
 
 <script lang="ts" setup>
-const emit = defineEmits(['contentClicked'])
+import { ref, watch, onMounted } from 'vue';
+
+const emit = defineEmits(['contentClicked']);
 const props = defineProps({
     services: Object,
     visibleIndex: Number
-})
-const lines = ref<HTMLElement[]>([]);
+});
+
 const previousVisibleIndex = ref<number>(-1);
-const animationDirection = ref<"topToBottom" | "bottomToTop">("topToBottom");
+const busPosition = ref('')
+
 watch(() => props.visibleIndex, (newIndex, oldIndex) => {
     if (oldIndex !== undefined) {
         previousVisibleIndex.value = oldIndex;
+        busPosition.value = getBusPosition()
     }
 });
-const handleContentClick = (index: number) => {
-    emit('contentClicked', index)
-}
-const getLineStyle = (index: number) => {
-    if (props.visibleIndex === undefined) {
-        return
-    }
-    let isAnimating
-    if (props.visibleIndex > previousVisibleIndex.value) {
-        isAnimating = index === previousVisibleIndex.value;
-        if (index === previousVisibleIndex.value) {
-            return 'topToBottom'
 
+const handleContentClick = (index: number) => {
+    emit('contentClicked', index);
+};
+
+const getBusPosition = () => {
+    if (props.visibleIndex) {
+        let visibleIndex = props.visibleIndex
+        if (visibleIndex < 0) {
+            visibleIndex = 0
         }
-    } else if (props.visibleIndex < previousVisibleIndex.value) {
-        isAnimating = index === props.visibleIndex;
-        if (index === props.visibleIndex) {
-            return 'bottomToTop'
-        }
+        const pointHeight = 18;
+        const gap = 54;
+        const offset = visibleIndex * (pointHeight + gap);
+        return `${offset}px`;
+    } else {
+        return '0px'
     }
 };
 
-onMounted(() => {
-    console.log(props.services)
-    console.log(lines.value)
-})
 </script>
 
 <style scoped lang="scss">
@@ -105,6 +103,25 @@ onMounted(() => {
             flex-direction: column;
             justify-content: center;
             gap: 16px;
+            position: relative;
+
+            .navLine {
+                height: calc(100% - 38px);
+                width: 2px;
+                background-color: red;
+                position: absolute;
+                background-color: #1d1b1b;
+                left: 50%;
+                transform: translateX(-50%);
+
+                .bus {
+                    transition: 300ms;
+                    height: 18px;
+                    width: 100%;
+                    position: absolute;
+                    background-color: white;
+                }
+            }
 
             .servicePoint {
                 display: flex;
@@ -113,63 +130,14 @@ onMounted(() => {
                 position: relative;
 
                 .point {
+                    z-index: 2;
                     height: 18px;
                     width: 18px;
-                    background-color: rgba(0, 0, 0, 0);
+                    background-color: #0D0E0F;
                     border-radius: 50%;
                     outline: 2px #1B1B1D solid;
                     transition: 400ms;
                     transition-delay: 0.2s;
-                }
-
-                .line {
-                    position: absolute;
-                    height: 54px;
-                    width: 2px;
-                    background-color: #1d1b1b;
-                    top: calc(100% + 8px);
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    overflow: hidden;
-
-                    .movingLine {
-                        width: 2px;
-                        height: 40px;
-                        background-color: white;
-                        position: absolute;
-                        display: none;
-                    }
-
-                    .topToBottom {
-                        display: unset;
-                        animation: moveTopToBottom 0.3s linear forwards;
-                        transform: translateY(100%);
-                    }
-
-                    .bottomToTop {
-                        display: unset;
-                        animation: moveBottomToTop 0.3s linear forwards;
-                    }
-
-                    @keyframes moveTopToBottom {
-                        from {
-                            top: -80px;
-                        }
-
-                        to {
-                            top: 54px;
-                        }
-                    }
-
-                    @keyframes moveBottomToTop {
-                        from {
-                            top: 54px;
-                        }
-
-                        to {
-                            top: -54px;
-                        }
-                    }
                 }
 
                 &.active {

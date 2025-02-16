@@ -21,28 +21,28 @@ let services = [
         title: 'სარეპეტიციო სივრცე', icon: '/images/icons/room.svg', bgImage: '/images/hero.png', price: 30, duration: 2, details: {
             includedServices: ['დარბაზი', 'აპარატურა'],
             addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
-            deals: ['4 საათზე 12.5 ფასდაკლება']
+            deals: ['4 საათზე 12.5% ფასდაკლება']
         }
     },
     {
         title: 'ჩაწერა', icon: '/images/icons/mic.svg', bgImage: '/images/hero.png', price: 100, duration: 1, details: {
             includedServices: ['დარბაზი', 'აპარატურა'],
             addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
-            deals: ['4 საათზე 12.5 ფასდაკლება']
+            deals: ['4 საათზე 12.5% ფასდაკლება']
         }
     },
     {
         title: 'ვიდეო გადაღება', icon: '/images/icons/vid.svg', bgImage: '/images/hero.png', price: 400, duration: 0, details: {
             includedServices: ['დარბაზი', 'აპარატურა'],
             addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
-            deals: ['4 საათზე 12.5 ფასდაკლება']
+            deals: ['4 საათზე 12.5% ფასდაკლება']
         }
     },
     {
         title: 'ხმის გამოხმოვანება კონცერტებზე', icon: '/images/icons/sound.svg', bgImage: '/images/hero.png', price: 0, duration: 0, details: {
             includedServices: ['დარბაზი', 'აპარატურა'],
             addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
-            deals: ['4 საათზე 12.5 ფასდაკლება']
+            deals: ['4 საათზე 12.5% ფასდაკლება']
         }
     }
 ];
@@ -55,8 +55,6 @@ const setServiceRef = (el: any, index: number) => {
     if (el) serviceSection.value[index] = el;
 };
 const scrollToContent = (index: number) => {
-    console.log(index)
-    console.log(serviceScrollPoint.value)
     serviceScrollPoint.value[index].scrollIntoView({
         behavior: 'smooth',
         block: 'center',
