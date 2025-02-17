@@ -1,21 +1,58 @@
 <template>
-  <article v-on:wheel="handleWheel" v-on:mouseenter="isHovered = true" v-on:mouseleave="isHovered = false">
-    <div class="overViewContainer">
-      <div class="bgImage"></div>
-      <h1 class="overViewTitle">პროფესიონალური აპარატურა</h1>
+  <article ref="scrollContainer">
+    <div class="mainOverViewContainer">
+      <div class="overViewContainer">
+        <div class="bgImage"></div>
+        <h1 class="overViewTitle">პროფესიონალური აპარატურა {{scrollProgress}}%</h1>
+      </div>
+
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
+import { useElementVisibility } from '@vueuse/core';
+const scrollContainer = ref<HTMLElement | null>(null);
+
+let scrollTop = 0;
+let maxScroll = 0;
+const scrollProgress = ref(0)
+
 const isHovered = ref(false)
-const handleWheel = (event: WheelEvent) => {
-  if (event.deltaY > 0) {
-    console.log("Scrolling down");
-  } else if (event.deltaY < 0) {
-    console.log("Scrolling up");
+function handleScroll(event) {
+  if (scrollContainer.value) {
+    const containerTop = scrollContainer.value.offsetTop;
+    const currentScroll = window.scrollY - containerTop;
+    const maxScroll = scrollContainer.value.scrollHeight - window.innerHeight;
+
+    // Calculate scroll progress as a percentage
+    scrollProgress.value = currentScroll / maxScroll * 100;
+    if (scrollProgress.value > 100) {
+      scrollProgress.value = 100
+      return
+    } else if (scrollProgress.value < 0) {
+      scrollProgress.value = 0
+      return
+    }
+    scrollProgress.value = Math.round(scrollProgress.value)
   }
 };
+
+onMounted(() => {
+  const isVisible = useElementVisibility(scrollContainer, { rootMargin: `0px 0px 0px 0px` });
+  watch(isVisible, (visible) => {
+    if (visible) {
+      window.addEventListener("scroll", handleScroll);
+    } else {
+      window.removeEventListener("scroll", handleScroll);
+    }
+  });
+});
+
+onUnmounted(() => {
+
+});
+
 </script>
 
 <style lang="scss" scoped>
@@ -24,7 +61,13 @@ article {
   height: 400dvh;
   margin: 0;
   padding: 0;
-  padding-top: 124px;
+
+  .mainOverViewContainer {
+    width: 100vw;
+    height: 400dvh;
+    margin: 0;
+    padding: 0;
+  }
 
   .overViewContainer {
     width: 100vw;

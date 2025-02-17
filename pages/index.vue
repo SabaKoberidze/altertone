@@ -4,7 +4,7 @@
   <div class="servicePage" ref="servicePage">
     <service />
   </div>
-  <OverView></OverView>
+  <OverView ref="overView"></OverView>
 </template>
 <script setup lang="ts">
 const route = useRoute()
@@ -14,6 +14,7 @@ const scrollToServices = () => {
     servicePage.value.scrollIntoView({ behavior: 'smooth' })
   }
 }
+const overView = ref<HTMLElement | null>(null)
 </script>
 
 <style lang="scss"></style>
