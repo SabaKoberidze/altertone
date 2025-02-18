@@ -15,5 +15,8 @@
     "sass": "^1.84.0",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@nuxtjs/i18n": "^9.2.0"
   }
 }

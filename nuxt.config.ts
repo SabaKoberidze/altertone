@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/styles/main.scss'],
   components: true,
+
   vite: {
     css: {
       preprocessorOptions: {
@@ -13,6 +14,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   app:{
     head: {
       link: [
@@ -26,5 +28,7 @@ export default defineNuxtConfig({
         }
       ]
     }
-  }
+  },
+
+  modules: ['@nuxtjs/i18n']
 })
