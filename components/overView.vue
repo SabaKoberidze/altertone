@@ -89,18 +89,13 @@ function handleScroll(event) {
     lastProgress.value = scrollProgress.value
   }
 };
-
-function scrollAnimation() {
-  if (scrollProgress.value >= progressIndexes[0] && scrollProgress.value <= progressIndexes[1]) { 
-    const scale = 1 - ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[1] - progressIndexes[0])); 
-    mainTitle.value.style.transform = `scale(${scale})`;
-    
-    devices.value.forEach(device => {   
+function moveDevices(startIndex, endIndex){
+  devices.value.forEach(device => {   
       device.currentPosition.x = device.startPosition.x + 
-        (device.endPosition.x - device.startPosition.x) * ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[1] - progressIndexes[0]));
+        (device.endPosition.x - device.startPosition.x) * ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]));
       
       device.currentPosition.y = device.startPosition.y + 
-        (device.endPosition.y - device.startPosition.y) * ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[1] - progressIndexes[0]));
+        (device.endPosition.y - device.startPosition.y) * ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]));
       
         if(scrollProgress.value > progressIndexes[1] / 4){
           device.opacity = 1
@@ -109,16 +104,29 @@ function scrollAnimation() {
           device.opacity = 0
         }
     });
+}
+function scrollAnimation() {
+  if (scrollProgress.value >= progressIndexes[0] && scrollProgress.value <= progressIndexes[1]) { 
+    const scale = 1 - ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[1] - progressIndexes[0])); 
+    mainTitle.value.style.transform = `scale(${scale})`;
+    moveDevices(0,1)
+    
   }
   else if (scrollProgress.value >= progressIndexes[1] && scrollProgress.value <= progressIndexes[2]) {
     mainTitle.value.style.transform = `scale(0)`;
     devices.value.forEach(device => {
       device.currentPosition.x = device.endPosition.x
       device.currentPosition.y = device.endPosition.y
+      device.opacity = 1
     })
   }
   else if (scrollProgress.value >= progressIndexes[2] && scrollProgress.value <= progressIndexes[3]) {
     mainTitle.value.style.transform = `scale(0)`;
+    devices.value.forEach(device => {
+      device.currentPosition.x = device.endPosition.x
+      device.currentPosition.y = device.endPosition.y
+      device.opacity = 1
+    })
   }
 }
 
