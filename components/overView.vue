@@ -134,7 +134,7 @@ const examples = ref([
     img: 'Rock',
     title: 'როკი',
     startPosition: { x: 50, y: 48, scale: 2.3, rotation: 0 },
-    endPosition: { x: 50, y: 47, scale: 1.3, rotation: 0 },
+    endPosition: { x: 50, y: 50, scale: 1.3, rotation: 0 },
     currentPosition: { x: 50, y: 48, scale: 2.3, rotation: 0 },
     zIndex: 3,
   },
@@ -147,8 +147,8 @@ const examples = ref([
     zIndex: 2,
   },
   {
-    img: 'Rock',
-    title: 'როკი',
+    img: 'Metal',
+    title: 'მეტალი',
     startPosition: { x: 55, y: 50, scale: 1.9, rotation: 16 },
     endPosition: { x: 83, y: 50, scale: 1, rotation: 0 },
     currentPosition: { x: 55, y: 50, scale: 1.9, rotation: 16 },
@@ -186,7 +186,7 @@ function scrollAnimation() {
       mainTitle.value.style.transform = `scale(${scale})`;
     }
     moveDevices(0, 2)
-
+    moveCardContainer(1, 3)
     examplesHeader.value.opacity = 0
   } else if (scrollProgress.value >= progressIndexes[1] && scrollProgress.value <= progressIndexes[2]) {
     const scale = 1 - ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[2] - progressIndexes[0]));
@@ -274,7 +274,12 @@ function moveText(startIndex: number, endIndex: number, stage: number) {
 }
 
 function spreadCards(startIndex: number, endIndex: number) {
-  examples.value.forEach((example) => {
+  examples.value.forEach((example, index) => {
+
+    if (index === 2) {
+      example.endPosition.y = 50 - (90 * 0.3 / window.innerHeight) * 100
+    }
+
     const { startPosition, endPosition } = example;
     const { x: startPositionX, y: startPositionY, scale: startScale, rotation: startRotation } = startPosition;
     const { x: endPositionX, y: endPositionY, scale: endScale, rotation: endRotation } = endPosition;
@@ -327,6 +332,13 @@ onMounted(() => {
       window.removeEventListener("scroll", handleScroll);
     }
   });
+  window.addEventListener('resize', () => {
+    if (scrollProgress.value > 0) {
+      scrollToTop()
+    }
+  })
+
+
   handleScroll()
   scrollAnimation()
 });
@@ -334,6 +346,15 @@ onMounted(() => {
 onUnmounted(() => {
 
 });
+
+function scrollToTop() {
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollIntoView({
+      behavior: 'instant',
+      inline: 'nearest'
+    });
+  }
+}
 
 </script>
 
@@ -436,13 +457,20 @@ article {
             border-radius: 50%;
           }
 
+
+
           p {
             position: absolute;
-            top: calc(100% + 20px);
+            top: calc(100% + 30px);
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
             transition: 200ms;
+            font-family: 'SF Georgian';
+            font-feature-settings: 'case';
+            font-size: 14px;
+
+
 
             &.showTitle {
               opacity: 1;
@@ -471,6 +499,18 @@ article {
         }
 
       }
+
+      &:nth-child(3) {
+        .cardHolder {
+          .cardInnerContainer {
+            p {
+              transform: scale(0.7) translate(-50%, -50%);
+              top: calc(100% + 30px);
+            }
+          }
+        }
+      }
+
     }
   }
 
