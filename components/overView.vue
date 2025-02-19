@@ -459,7 +459,7 @@ article {
 
           p {
             position: absolute;
-            top: calc(100% + 30px);
+            top: calc(110%);
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
@@ -503,7 +503,7 @@ article {
           .cardInnerContainer {
             p {
               transform: scale(0.7) translate(-50%, -50%);
-              top: calc(100% + 30px);
+              top: calc(110%);
             }
           }
         }
