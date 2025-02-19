@@ -8,6 +8,7 @@
         <div v-for="(device, index) in devices" :key="index" class="device"
           :class="{ enableInteraction: (scrollProgress <= 40) }"
           :style="{ left: `${device.currentPosition.x}%`, top: `${device.currentPosition.y}%`, opacity: `${device.opacity}` }">
+          <img :src="`/images/devices/${device.img}.png`" />
           {{ device.name }}
         </div>
         <h1 class="examplesHeader" :style="{
@@ -30,7 +31,7 @@
             <div class="cardHolder"">
               <img class=" vinyl" src="/images/examples/vinyl.png" />
             <div class="cardInnerContainer">
-              <img class="cardImage" :src="`images/examples/${example.title}.png`" />
+              <img class="cardImage" :src="`images/examples/${example.img}.png`" />
               <div class="cardHole"></div>
               <p :class="{ showTitle: (scrollProgress > 90) }">
                 {{ example.title }}
@@ -60,6 +61,7 @@ let progressIndexes: number[] = [0, 30, 45, 60, 100]
 const devices = ref([
   {
     name: 'კომბები',
+    img: 'amp',
     startPosition: { x: 15, y: -5 },
     currentPosition: { x: 0, y: 0 },
     endPosition: { x: 50, y: 50 },
@@ -67,6 +69,7 @@ const devices = ref([
   },
   {
     name: 'მიქშერი',
+    img: 'mixer',
     startPosition: { x: 80, y: 0 },
     currentPosition: { x: 100, y: 0 },
     endPosition: { x: 50, y: 50 },
@@ -74,6 +77,7 @@ const devices = ref([
   },
   {
     name: 'დინამიკები',
+    img: 'speakers',
     startPosition: { x: -5, y: 55 },
     currentPosition: { x: 0, y: 50 },
     endPosition: { x: 50, y: 50 },
@@ -81,6 +85,7 @@ const devices = ref([
   },
   {
     name: 'მიკროფონები',
+    img: 'microphone',
     startPosition: { x: 35, y: 100 },
     currentPosition: { x: 30, y: 100 },
     endPosition: { x: 50, y: 50 },
@@ -88,6 +93,7 @@ const devices = ref([
   },
   {
     name: 'დრამები',
+    img: 'drum',
     startPosition: { x: 105, y: 75 },
     currentPosition: { x: 100, y: 100 },
     endPosition: { x: 50, y: 50 },
@@ -109,35 +115,40 @@ const exampleContainer = ref({
 })
 const examples = ref([
   {
-    title: 'Punk',
+    img: 'Punk',
+    title: 'პანკი',
     startPosition: { x: 45, y: 50, scale: 1.9, rotation: -16 },
     endPosition: { x: 16, y: 50, scale: 1, rotation: 0 },
     currentPosition: { x: 45, y: 50, scale: 1.9, rotation: -16 },
     zIndex: 1,
   },
   {
-    title: 'Jazz',
+    img: 'Jazz',
+    title: 'ჯაზი',
     startPosition: { x: 47, y: 48, scale: 2, rotation: -10 },
     endPosition: { x: 33, y: 50, scale: 1, rotation: 0 },
     currentPosition: { x: 47, y: 48, scale: 2, rotation: -10 },
     zIndex: 2,
   },
   {
-    title: 'Metal',
+    img: 'Rock',
+    title: 'როკი',
     startPosition: { x: 50, y: 48, scale: 2.3, rotation: 0 },
     endPosition: { x: 50, y: 47, scale: 1.3, rotation: 0 },
     currentPosition: { x: 50, y: 48, scale: 2.3, rotation: 0 },
     zIndex: 3,
   },
   {
-    title: 'Blues',
+    img: 'Blues',
+    title: 'ბლუზი',
     startPosition: { x: 53, y: 48, scale: 2, rotation: 10 },
     endPosition: { x: 67, y: 50, scale: 1, rotation: 0 },
     currentPosition: { x: 53, y: 48, scale: 2, rotation: 10 },
     zIndex: 2,
   },
   {
-    title: 'Rock',
+    img: 'Rock',
+    title: 'როკი',
     startPosition: { x: 55, y: 50, scale: 1.9, rotation: 16 },
     endPosition: { x: 83, y: 50, scale: 1, rotation: 0 },
     currentPosition: { x: 55, y: 50, scale: 1.9, rotation: 16 },
@@ -516,6 +527,10 @@ article {
     background: radial-gradient(125.76% 125.76% at 50% 145.45%, rgba(245, 194, 92, 0) 0%, rgba(0, 0, 0, 0.00) 100%), linear-gradient(180deg, rgba(23, 24, 25, 0.00) 0%, rgba(23, 24, 25, 0.80) 100%), #000;
     transition: 200ms;
     pointer-events: none;
+    font-size: 12px;
+    font-family: "SF Georgian";
+    font-feature-settings: 'case' on;
+    font-weight: 700;
 
     &.enableInteraction {
       pointer-events: unset;
