@@ -48,13 +48,11 @@
 <script setup lang="ts">
 import { useElementVisibility } from '@vueuse/core';
 const scrollContainer = ref<HTMLElement | null>(null);
-
 let scrollTop = 0;
 let maxScroll = 0;
 const scrollProgress = ref(0)
 const lastProgress = ref(0)
 const mainTitle = ref<HTMLElement | null>(null);
-const exampleTitle = ref(null)
 
 let progressIndexes: number[] = [0, 30, 45, 60, 100]
 
@@ -328,16 +326,12 @@ onMounted(() => {
   watch(isVisible, (visible) => {
     if (visible) {
       window.addEventListener("scroll", handleScroll);
+      window.addEventListener('resize', handleResize)
     } else {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('resize', handleResize)
     }
   });
-  window.addEventListener('resize', () => {
-    if (scrollProgress.value > 0) {
-      scrollToTop()
-    }
-  })
-
 
   handleScroll()
   scrollAnimation()
@@ -346,6 +340,10 @@ onMounted(() => {
 onUnmounted(() => {
 
 });
+
+function handleResize() {
+  handleScroll()
+}
 
 function scrollToTop() {
   if (scrollContainer.value) {
