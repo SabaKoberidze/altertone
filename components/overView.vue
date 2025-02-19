@@ -7,9 +7,38 @@
         <div v-for="(device, index) in devices" 
           :key="index" 
           class="device" 
-          :style="{left: `${device.currentPosition.x}%`, top: `${device.currentPosition.y}%`, opacity: `${device.opacity}` }">
-        {{ device.name }}
-      </div>
+          :style="{left: `${device.currentPosition.x}%`, top: `${device.currentPosition.y}%`, opacity: `${device.opacity}` }"
+          >
+          {{ device.name }}
+        </div>
+       <h1 class="examplesHeader" 
+        :style="{
+        left: `${examplesHeader.currentPosition.x}%`, 
+        top: `${examplesHeader.currentPosition.y}%`, 
+        opacity: examplesHeader.opacity, 
+        transform: ` translate(-50%, -50%) scale(${examplesHeader.currentPosition.scale}) `,
+        }"
+       >ჩვენი ჩაწერილი მუსიკა{{scrollProgress}}%</h1>
+        <div class="cardContainer"
+        :style="{
+          left: `${exampleContainer.currentPosition.x}%`, 
+          top: `${exampleContainer.currentPosition.y}%`, 
+          opacity: exampleContainer.opacity
+          }"
+        >
+          <div class="card" v-for="(example, index) in examples">
+            <div class="cardHolder">
+              <img class="vinyl" src="/images/examples/vinyl.png"/>
+              <div class="cardInnerContainer">
+                <img class="cardImage" :src="`images/examples/${example.title}.png`"/>       
+                <div class="cardHole"></div> 
+                <p>
+                  {{ example.title }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </article>
@@ -23,49 +52,78 @@ let scrollTop = 0;
 let maxScroll = 0;
 const scrollProgress = ref(0)
 const lastProgress = ref(0)
+const mainTitle = ref(null)
+const exampleTitle = ref(null)
 
-let progressIndexes: number[] = [0, 30, 60, 100]
+let progressIndexes: number[] = [0, 30, 45, 60, 100]
 
 const devices = ref([
   {
     name: 'კომბები',
     startPosition: { x: 15, y: -5 },
-    currentPosition: reactive({ x: 0, y: 0 }),
+    currentPosition: { x: 0, y: 0 },
     endPosition: { x: 50, y: 50 },
-    opacity: reactive(0),
+    opacity: 0,
   },
   {
     name: 'მიქშერი',
     startPosition: { x: 80, y: 0 },
-    currentPosition: reactive({ x: 100, y: 0 }),
+    currentPosition: { x: 100, y: 0 },
     endPosition: { x: 50, y: 50 },
-    opacity: reactive(0),
+    opacity: 0,
   },
   {
     name: 'დინამიკები',
     startPosition: { x: -5, y: 55 },
-    currentPosition: reactive({ x: 0, y: 50 }),
+    currentPosition: { x: 0, y: 50 },
     endPosition: { x: 50, y: 50 },
-    opacity: reactive(0),
+    opacity: 0,
   },
   {
     name: 'მიკროფონები',
     startPosition: { x: 35, y: 100 },
-    currentPosition: reactive({ x: 30, y: 100 }),
+    currentPosition: { x: 30, y: 100 },
     endPosition: { x: 50, y: 50 },
-    opacity: reactive(0),
+    opacity: 0,
   },
   {
     name: 'დრამები',
     startPosition: { x: 105, y: 75 },
-    currentPosition: reactive({ x: 100, y: 100 }),
+    currentPosition: { x: 100, y: 100 },
     endPosition: { x: 50, y: 50 },
-    opacity: reactive(0),
+    opacity: 0,
   },
 ]);
+const examplesHeader = ref({
+  startPosition: { x: 50,  y: 100, scale: 1},
+  currentPosition: {x: 50, y: 100, scale: 1},
+  middlePosition: {x:50,  y: 50, scale: 1},
+  endPosition: {x: 50, y: 20, scale: 0.6},
+  opacity: 0
+})
+const exampleContainer = ref({
+  startPosition: JSON.parse(JSON.stringify(examplesHeader.value.startPosition)), 
+  endPosition: JSON.parse(JSON.stringify(examplesHeader.value.middlePosition)),   
+  currentPosition: {x: 50, y: 100},
+})
+const examples = ref([
+  {
+   title: 'Punk' 
+  },
+  {
+   title: 'Jazz' 
+  },
+  {
+   title: 'Metal' 
+  },
+  {
+   title: 'Blues' 
+  },
+  {
+   title: 'Rock' 
+  },
+])
 
-
-const mainTitle = ref(null)
 
 const isHovered = ref(false)
 function handleScroll(event) {
@@ -89,15 +147,50 @@ function handleScroll(event) {
     lastProgress.value = scrollProgress.value
   }
 };
+function scrollAnimation() {
+  if (scrollProgress.value >= progressIndexes[0] && scrollProgress.value <= progressIndexes[1]) { 
+    const scale = 1 - ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[2] - progressIndexes[0])); 
+    mainTitle.value.style.transform = `scale(${scale})`;
+    moveDevices(0,2)
+
+    examplesHeader.value.opacity = 0
+  }else if(scrollProgress.value >= progressIndexes[1] && scrollProgress.value <= progressIndexes[2]) {
+    const scale = 1 - ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[2] - progressIndexes[0])); 
+    mainTitle.value.style.transform = `scale(${scale})`;
+    moveDevices(0,2)
+    moveText(1, 3, 1)
+    moveCardContainer(1, 3)
+  }
+  else if (scrollProgress.value >= progressIndexes[2] && scrollProgress.value <= progressIndexes[3]) {
+    mainTitle.value.style.transform = `scale(0)`;
+    devices.value.forEach(device => {
+      device.currentPosition.x = device.endPosition.x
+      device.currentPosition.y = device.endPosition.y
+      device.opacity = 0
+    })
+    moveText(1, 3, 1)
+    moveCardContainer(1, 3)
+  }
+  else if (scrollProgress.value >= progressIndexes[3] && scrollProgress.value <= progressIndexes[4]) {
+    mainTitle.value.style.transform = `scale(0)`;
+    devices.value.forEach(device => {
+      device.currentPosition.x = device.endPosition.x
+      device.currentPosition.y = device.endPosition.y
+      device.opacity = 0
+    })
+    moveText(3, 4, 2)
+  }
+}
+
 function moveDevices(startIndex, endIndex){
   devices.value.forEach(device => {   
       device.currentPosition.x = device.startPosition.x + 
-        (device.endPosition.x - device.startPosition.x) * ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]));
+        (device.endPosition.x - device.startPosition.x) * AnimationProgress(startIndex, endIndex);
       
       device.currentPosition.y = device.startPosition.y + 
-        (device.endPosition.y - device.startPosition.y) * ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]));
+        (device.endPosition.y - device.startPosition.y) * AnimationProgress(startIndex, endIndex);
       
-        if(scrollProgress.value > progressIndexes[1] / 4){
+        if(scrollProgress.value > progressIndexes[2] / 4){
           device.opacity = 1
         }
         else{
@@ -105,30 +198,51 @@ function moveDevices(startIndex, endIndex){
         }
     });
 }
-function scrollAnimation() {
-  if (scrollProgress.value >= progressIndexes[0] && scrollProgress.value <= progressIndexes[1]) { 
-    const scale = 1 - ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[1] - progressIndexes[0])); 
-    mainTitle.value.style.transform = `scale(${scale})`;
-    moveDevices(0,1)
-    
+function moveText(startIndex, endIndex, stage) {
+  const { startPosition, middlePosition, endPosition } = examplesHeader.value;
+  const [start, end] = stage === 1 
+    ? [startPosition, middlePosition] 
+    : [middlePosition, endPosition];
+  const { x: startPositionX, y: startPositionY, scale: startScale } = start;
+  const { x: endPositionX, y: endPositionY, scale: endScale } = end;
+
+
+  examplesHeader.value.currentPosition.x = startPositionX + 
+    (endPositionX - startPositionX) * AnimationProgress(startIndex, endIndex);
+  examplesHeader.value.currentPosition.y = startPositionY + 
+    (endPositionY - startPositionY) * AnimationProgress(startIndex, endIndex);
+  examplesHeader.value.currentPosition.scale = startScale + 
+    (endScale - startScale) * AnimationProgress(startIndex, endIndex);
+
+  if(scrollProgress.value > progressIndexes[2] - progressIndexes[2] / 8){
+    examplesHeader.value.opacity = 1
   }
-  else if (scrollProgress.value >= progressIndexes[1] && scrollProgress.value <= progressIndexes[2]) {
-    mainTitle.value.style.transform = `scale(0)`;
-    devices.value.forEach(device => {
-      device.currentPosition.x = device.endPosition.x
-      device.currentPosition.y = device.endPosition.y
-      device.opacity = 1
-    })
-  }
-  else if (scrollProgress.value >= progressIndexes[2] && scrollProgress.value <= progressIndexes[3]) {
-    mainTitle.value.style.transform = `scale(0)`;
-    devices.value.forEach(device => {
-      device.currentPosition.x = device.endPosition.x
-      device.currentPosition.y = device.endPosition.y
-      device.opacity = 1
-    })
-  }
+  else{
+    examplesHeader.value.opacity = 0
+  }    
 }
+function moveCardContainer(startIndex, endIndex){
+  const { startPosition, endPosition } = exampleContainer.value;
+  const { x: startPositionX, y: startPositionY } = startPosition;
+  const { x: endPositionX, y: endPositionY } = endPosition;
+
+  exampleContainer.value.currentPosition.x = startPositionX + 
+        (endPositionX - startPositionX) * AnimationProgress(startIndex, endIndex);
+      
+  exampleContainer.value.currentPosition.y = startPositionY + 
+    (endPositionY - startPositionY) * AnimationProgress(startIndex, endIndex);
+
+  if(scrollProgress.value > progressIndexes[2] - progressIndexes[2] / 8){
+    exampleContainer.value.opacity = 1
+  }
+  else{
+    exampleContainer.value.opacity = 0
+  }    
+}
+function AnimationProgress(startIndex, endIndex){
+  return ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]))
+}
+
 
 onMounted(() => {
   const isVisible = useElementVisibility(scrollContainer, { rootMargin: `0px 0px 0px 0px` });
@@ -161,6 +275,101 @@ article {
     height: 400dvh;
     margin: 0;
     padding: 0;
+  }
+  .examplesHeader{
+    position: absolute;
+    font-family: "SF Georgian";
+    font-feature-settings: 'case';
+    font-size: 96px;
+    font-weight: 700;
+    text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
+    width: 1088px;
+    text-align: center;
+    transition: 200ms;
+  }
+  .cardContainer{
+    display: flex;
+    width: 100%;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: 400ms;
+  
+    .card{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 12%;
+      transition: 200ms;
+      .cardHolder{
+        width: 180px;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: 200ms;
+        .vinyl{
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          z-index: -1;
+          transition: 200ms;
+        }
+        .cardInnerContainer{
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          transition: 200ms;
+          outline: 0px solid #000000;
+          .cardImage{
+            width: 100%;
+            height: 100%;
+          }
+          .cardHole{
+            width: 0;
+            height: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: 0px solid #952532;
+            background-color: black;
+            transition: 200ms;
+            border-radius: 50%;
+          }
+          p{
+            position: absolute;
+            top: calc(100% + 20px);
+            left: 50%;
+            transform: translateX(-50%);
+          }
+        }
+  
+        &:hover{
+          cursor: pointer;
+          width: 240px;
+          height: 240px;
+          .cardInnerContainer{
+            width: 51%;
+            height: 51%;
+            border-radius: 50%;
+            outline: 3px solid #952532;
+            .cardHole{
+              width: 16px;
+              height: 16px;
+              border: 2px solid #952532;
+            }
+          }
+      }
+
+      }
+    }
   }
 
   .overViewContainer {
