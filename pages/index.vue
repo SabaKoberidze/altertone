@@ -5,6 +5,7 @@
     <service />
   </div>
   <OverView ref="overView"></OverView>
+  <Reserve></Reserve>
 </template>
 <script setup lang="ts">
 const route = useRoute()

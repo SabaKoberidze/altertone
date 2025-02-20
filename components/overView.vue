@@ -33,7 +33,7 @@
             <div class="cardInnerContainer">
               <img class="cardImage" :src="`images/examples/${example.img}.png`" />
               <div class="cardHole"></div>
-              <p :class="{ showTitle: (scrollProgress > 90) }">
+              <p>
                 {{ example.title }}
               </p>
             </div>
@@ -54,7 +54,7 @@ const scrollProgress = ref(0)
 const lastProgress = ref(0)
 const mainTitle = ref<HTMLElement | null>(null);
 
-let progressIndexes: number[] = [0, 30, 45, 60, 100]
+let progressIndexes: number[] = [0, 30, 45, 46, 60, 100]
 
 const devices = ref([
   {
@@ -99,8 +99,8 @@ const devices = ref([
   },
 ]);
 const examplesHeader = ref({
-  startPosition: { x: 50, y: 100, scale: 1 },
-  currentPosition: { x: 50, y: 100, scale: 1 },
+  startPosition: { x: 50, y: 110, scale: 1 },
+  currentPosition: { x: 50, y: 110, scale: 1 },
   middlePosition: { x: 50, y: 50, scale: 1 },
   endPosition: { x: 50, y: 20, scale: 0.6 },
   opacity: 0
@@ -132,7 +132,7 @@ const examples = ref([
     img: 'Rock',
     title: 'როკი',
     startPosition: { x: 50, y: 48, scale: 2.3, rotation: 0 },
-    endPosition: { x: 50, y: 50, scale: 1.3, rotation: 0 },
+    endPosition: { x: 50, y: 50, scale: 1, rotation: 0 },
     currentPosition: { x: 50, y: 48, scale: 2.3, rotation: 0 },
     zIndex: 3,
   },
@@ -184,7 +184,7 @@ function scrollAnimation() {
       mainTitle.value.style.transform = `scale(${scale})`;
     }
     moveDevices(0, 2)
-    moveCardContainer(1, 3)
+    moveCardContainer(1, 4)
     examplesHeader.value.opacity = 0
   } else if (scrollProgress.value >= progressIndexes[1] && scrollProgress.value <= progressIndexes[2]) {
     const scale = 1 - ((scrollProgress.value - progressIndexes[0]) / (progressIndexes[2] - progressIndexes[0]));
@@ -192,8 +192,7 @@ function scrollAnimation() {
       mainTitle.value.style.transform = `scale(${scale})`;
     }
     moveDevices(0, 2)
-    moveText(1, 3, 1)
-    moveCardContainer(1, 3)
+    moveCardContainer(1, 4)
   }
   else if (scrollProgress.value >= progressIndexes[2] && scrollProgress.value <= progressIndexes[3]) {
     if (mainTitle.value) {
@@ -211,9 +210,8 @@ function scrollAnimation() {
       example.currentPosition.scale = example.startPosition.scale
       example.currentPosition.rotation = example.startPosition.rotation
     })
-    moveText(1, 3, 1)
-    moveCardContainer(1, 3)
-
+    moveCardContainer(1, 4)
+    moveText(0, 0, 1)
   }
   else if (scrollProgress.value >= progressIndexes[3] && scrollProgress.value <= progressIndexes[4]) {
     if (mainTitle.value) {
@@ -226,8 +224,22 @@ function scrollAnimation() {
       device.currentPosition.y = device.endPosition.y
       device.opacity = 0
     })
-    moveText(3, 4, 2)
-    spreadCards(3, 4)
+    moveCardContainer(1, 4)
+    moveText(3, 4, 1)
+  }
+  else if (scrollProgress.value >= progressIndexes[4] && scrollProgress.value <= progressIndexes[5]) {
+    if (mainTitle.value) {
+      mainTitle.value.style.transform = `scale(0)`;
+    }
+    exampleContainer.value.opacity = 1
+    exampleContainer.value.currentPosition.y = exampleContainer.value.endPosition.y
+    devices.value.forEach(device => {
+      device.currentPosition.x = device.endPosition.x
+      device.currentPosition.y = device.endPosition.y
+      device.opacity = 0
+    })
+    moveText(4, 5, 2)
+    spreadCards(4, 5)
   }
 }
 
@@ -263,7 +275,7 @@ function moveText(startIndex: number, endIndex: number, stage: number) {
   examplesHeader.value.currentPosition.scale = startScale +
     (endScale - startScale) * AnimationProgress(startIndex, endIndex);
 
-  if (scrollProgress.value > progressIndexes[2] - progressIndexes[2] / 8) {
+  if (scrollProgress.value > progressIndexes[3] + progressIndexes[3] / 32) {
     examplesHeader.value.opacity = 1
   }
   else {
@@ -273,10 +285,6 @@ function moveText(startIndex: number, endIndex: number, stage: number) {
 
 function spreadCards(startIndex: number, endIndex: number) {
   examples.value.forEach((example, index) => {
-
-    if (index === 2) {
-      example.endPosition.y = 50 - (90 * 0.3 / window.innerHeight) * 100
-    }
 
     const { startPosition, endPosition } = example;
     const { x: startPositionX, y: startPositionY, scale: startScale, rotation: startRotation } = startPosition;
@@ -301,13 +309,12 @@ function moveCardContainer(startIndex: number, endIndex: number) {
   const { x: startPositionX, y: startPositionY } = startPosition;
   const { x: endPositionX, y: endPositionY } = endPosition;
 
-
   exampleContainer.value.currentPosition.x = startPositionX +
     (endPositionX - startPositionX) * AnimationProgress(startIndex, endIndex);
 
   exampleContainer.value.currentPosition.y = startPositionY +
     (endPositionY - startPositionY) * AnimationProgress(startIndex, endIndex);
-
+  console.log(AnimationProgress(startIndex, endIndex))
   if (scrollProgress.value > progressIndexes[2] - progressIndexes[2] / 8) {
     exampleContainer.value.opacity = 1
   }
@@ -379,9 +386,9 @@ article {
     text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
     width: 1088px;
     text-align: center;
-    transition: 200ms;
     z-index: 10;
     pointer-events: none;
+    transition: 200ms;
   }
 
   .cardContainer {
@@ -467,12 +474,6 @@ article {
             font-family: 'SF Georgian';
             font-feature-settings: 'case';
             font-size: 14px;
-
-
-
-            &.showTitle {
-              opacity: 1;
-            }
           }
 
         }
@@ -494,19 +495,12 @@ article {
               border: 2px solid #952532;
             }
           }
-        }
 
-      }
-
-      &:nth-child(3) {
-        .cardHolder {
-          .cardInnerContainer {
-            p {
-              transform: scale(0.7) translate(-50%, -50%);
-              top: calc(110%);
-            }
+          p {
+            opacity: 1;
           }
         }
+
       }
 
     }
