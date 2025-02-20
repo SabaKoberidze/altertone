@@ -560,7 +560,6 @@ article {
     position: absolute;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.09);
-    mix-blend-mode: luminosity;
     transform: translate(-50%, -50%);
     background: radial-gradient(125.76% 125.76% at 50% 145.45%, rgba(245, 194, 92, 0) 0%, rgba(0, 0, 0, 0.00) 100%), linear-gradient(180deg, rgba(23, 24, 25, 0.00) 0%, rgba(23, 24, 25, 0.80) 100%), #000;
     transition: 200ms;
