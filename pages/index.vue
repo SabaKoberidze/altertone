@@ -5,17 +5,17 @@
     <service />
   </div>
   <OverView ref="overView"></OverView>
-  <Reserve></Reserve>
+  <!-- <Reserve></Reserve> -->
 </template>
 <script setup lang="ts">
-const route = useRoute()
-const servicePage = ref<HTMLElement | null>(null)
+const route = useRoute();
+const servicePage = ref<HTMLElement | null>(null);
 const scrollToServices = () => {
   if (servicePage.value) {
-    servicePage.value.scrollIntoView({ behavior: 'smooth' })
+    servicePage.value.scrollIntoView({ behavior: "smooth" });
   }
-}
-const overView = ref<HTMLElement | null>(null)
+};
+const overView = ref<HTMLElement | null>(null);
 </script>
 
 <style lang="scss"></style>
