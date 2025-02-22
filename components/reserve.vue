@@ -7,14 +7,30 @@
                     <p v-show="currentStep <= step">{{ step }}</p>
                 </div>
             </div>
-            <div class="modalClose">
+            <div class="modalClose" v-on:click="show = false">
                 გაუქმება
                 <button><img src="/images/icons/modalClose.svg" /></button>
             </div>
         </div>
         <div class="modalContent">
             <div v-for="step in steps">
-                <div></div>
+                <div class="contentHeader">
+                    <p class="mainText">
+                    </p>
+                    <p class="subText">
+                    </p>
+                </div>
+                <div v-show="step === 1" class="date">
+                </div>
+                <div v-show="step === 2" class="time">
+
+                </div>
+                <div v-show="step === 3" class="info">
+
+                </div>
+                <div v-show="step === 1" class="submit">
+
+                </div>
             </div>
             <div class="buttonContainer">
                 <button v-show="currentStep > 1" class="previousStep" v-on:click="previousStep()">
@@ -39,7 +55,7 @@
     </div>
 </template>
 <script setup lang="ts">
-const show = ref(true)
+const show = ref(false)
 const currentStep = ref(1)
 const steps = 3
 function nextStep() {
@@ -87,12 +103,12 @@ function previousStep() {
                 justify-content: center;
                 align-items: center;
                 border-radius: 26px;
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid $modalBorder-color;
+                background: $modalBorder-color;
                 transition: 200ms;
 
                 p {
-                    color: var(--colors-invert-invert2-26, rgba(255, 255, 255, 0.26));
+                    color: rgba(255, 255, 255, 0.26);
                     text-align: center;
                     font-family: "Helvetica Neue LT GEO";
                     font-size: 14px;
@@ -120,7 +136,7 @@ function previousStep() {
             justify-content: center;
             align-items: center;
             gap: 16px;
-            color: rgba(255, 255, 255, 0.56);
+            color: $modalText-color;
             font-size: 16px;
             transition: 200ms;
 
@@ -130,7 +146,7 @@ function previousStep() {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: rgba(255, 255, 255, 0.04);
+                background-color: $modalBorder-color;
                 border-radius: 10px;
                 border: 0;
                 outline: 0;
@@ -154,6 +170,7 @@ function previousStep() {
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
 
 
         .buttonContainer {
@@ -186,8 +203,8 @@ function previousStep() {
 
             .previousStep {
                 width: 110px;
-                color: rgba(255, 255, 255, 0.56);
-                background-color: rgba(255, 255, 255, 0.04);
+                color: $modalText-color;
+                background-color: $modalBorder-color
             }
         }
 
