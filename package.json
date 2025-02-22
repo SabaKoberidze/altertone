@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@nuxtjs/i18n": "^9.2.0",
-    "@pinia/nuxt": "^0.10.1"
+    "@pinia/nuxt": "^0.10.1",
     "@types/nodemailer": "^6.4.17"
   }
 }
