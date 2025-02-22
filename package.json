@@ -10,7 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.48.1",
     "@vueuse/core": "^12.6.1",
+    "cloudipsp-node-js-sdk": "^1.0.8",
+    "nodemailer": "^6.10.0",
     "nuxt": "^3.15.4",
     "pixi.js": "^8.8.0",
     "sass": "^1.84.0",
@@ -21,5 +24,6 @@
   "devDependencies": {
     "@nuxtjs/i18n": "^9.2.0",
     "@pinia/nuxt": "^0.10.1"
+    "@types/nodemailer": "^6.4.17"
   }
 }
