@@ -2,7 +2,7 @@
   <article ref="scrollContainer">
     <div class="mainOverViewContainer">
       <div class="overViewContainer">
-        <div class="bgImage"></div>
+        <div class="bgImage" :class="{ playerOpen: playerOpen }"></div>
         <h1 class="overViewTitle" ref="mainTitle">პროფესიონალური აპარატურა
         </h1>
         <div v-for="(device, index) in devices" :key="index" class="device"
@@ -13,34 +13,35 @@
         </div>
         <h1 class="examplesHeader" :style="{
           left: `${examplesHeader.currentPosition.x}%`,
-          top: `${examplesHeader.currentPosition.y}%`,
-          opacity: examplesHeader.opacity,
+          top: `${playerOpen ? 10 : examplesHeader.currentPosition.y}%`,
+          opacity: playerOpen ? 0 : examplesHeader.opacity,
           transform: ` translate(-50%, -50%) scale(${examplesHeader.currentPosition.scale}) `,
         }">ჩვენი ჩაწერილი მუსიკა</h1>
-        <div :class="{ enableInteraction: (scrollProgress >= 90) }" class="cardContainer" :style="{
-          left: `${exampleContainer.currentPosition.x}%`,
-          top: `${exampleContainer.currentPosition.y}%`,
-          opacity: exampleContainer.opacity
-        }">
+        <div :class="{ enableInteraction: (scrollProgress >= 90), playerOpen: playerOpen }" class="cardContainer"
+          :style="{
+            left: `${exampleContainer.currentPosition.x}%`,
+            top: `${playerOpen ? 25 : exampleContainer.currentPosition.y}%`,
+            opacity: exampleContainer.opacity
+          }">
           <div class="card" v-for="(example, index) in examples" :style="{
             left: `${example.currentPosition.x}%`,
             top: `${example.currentPosition.y}%`,
             'z-index': example.zIndex,
             transform: `translate(-50%, -50%) rotate(${example.currentPosition.rotation}deg) scale(${example.currentPosition.scale})`
           }">
-            <div class="cardHolder" @click="openMusic(index)">
+            <div class="cardHolder" :class="{ spinning: pickedMusicIndex === index }" @click="openMusic(index)">
               <img class="vinyl" src="/images/examples/vinyl.png" />
               <div class="cardInnerContainer">
                 <img class="cardImage" :src="`images/examples/${example.img}.png`" />
                 <div class="cardHole"></div>
-                <p>
-                  {{ example.title }}
-                </p>
               </div>
             </div>
+            <p class="exampleTitle" :style="{ opacity: pickedMusicIndex === index || scrollProgress < 90 ? 0 : 1 }">
+              {{ example.title }}
+            </p>
           </div>
         </div>
-        <AudioPlayer ref="audioPlayerComponent" />
+        <AudioPlayer v-if="playerOpen" ref="audioPlayerComponent" />
       </div>
     </div>
   </article>
@@ -55,6 +56,8 @@ const scrollProgress = ref(0)
 const lastProgress = ref(0)
 const mainTitle = ref<HTMLElement | null>(null);
 const audioPlayerComponent = ref()
+const playerOpen = ref(false)
+const pickedMusicIndex = ref(-1)
 let progressIndexes: number[] = [0, 30, 45, 46, 60, 100]
 
 const devices = ref([
@@ -149,7 +152,7 @@ const examples = ref([
     img: 'Metal',
     title: 'მეტალი',
     startPosition: { x: 55, y: 50, scale: 1.9, rotation: 16 },
-    endPosition: { x: 83, y: 50, scale: 1, rotation: 0 },
+    endPosition: { x: 84, y: 50, scale: 1, rotation: 0 },
     currentPosition: { x: 55, y: 50, scale: 1.9, rotation: 16 },
     zIndex: 1,
   },
@@ -283,24 +286,25 @@ function moveText(startIndex: number, endIndex: number, stage: number) {
   }
 }
 
-function spreadCards(startIndex: number, endIndex: number) {
+function spreadCards(startIndex: number, endIndex: number, finish?: boolean) {
   examples.value.forEach((example, index) => {
 
     const { startPosition, endPosition } = example;
     const { x: startPositionX, y: startPositionY, scale: startScale, rotation: startRotation } = startPosition;
     const { x: endPositionX, y: endPositionY, scale: endScale, rotation: endRotation } = endPosition;
+    let progress = (finish ? 1 : AnimationProgress(startIndex, endIndex))
 
     example.currentPosition.x = startPositionX +
-      (endPositionX - startPositionX) * AnimationProgress(startIndex, endIndex);
+      (endPositionX - startPositionX) * (progress);
 
     example.currentPosition.y = startPositionY +
-      (endPositionY - startPositionY) * AnimationProgress(startIndex, endIndex);
+      (endPositionY - startPositionY) * progress;
 
     example.currentPosition.scale = startScale +
-      (endScale - startScale) * AnimationProgress(startIndex, endIndex);
+      (endScale - startScale) * progress;
 
     example.currentPosition.rotation = startRotation +
-      (endRotation - startRotation) * AnimationProgress(startIndex, endIndex);
+      (endRotation - startRotation) * progress;
   })
 }
 
@@ -314,7 +318,6 @@ function moveCardContainer(startIndex: number, endIndex: number) {
 
   exampleContainer.value.currentPosition.y = startPositionY +
     (endPositionY - startPositionY) * AnimationProgress(startIndex, endIndex);
-  console.log(AnimationProgress(startIndex, endIndex))
   if (scrollProgress.value > progressIndexes[2] - progressIndexes[2] / 8) {
     exampleContainer.value.opacity = 1
   }
@@ -328,7 +331,13 @@ function AnimationProgress(startIndex: number, endIndex: number) {
 }
 
 function openMusic(index: number) {
-  audioPlayerComponent.value.pickMusic(index)
+  playerOpen.value = true
+  document.body.style.overflow = 'hidden';
+  spreadCards(4, 5, true)
+  requestAnimationFrame(() => {
+    pickedMusicIndex.value = index
+    audioPlayerComponent.value.pickMusic(index)
+  })
 }
 
 onMounted(() => {
@@ -352,7 +361,9 @@ onUnmounted(() => {
 });
 
 function handleResize() {
-  handleScroll()
+  if (!playerOpen) {
+    handleScroll()
+  }
 }
 
 function scrollToTop() {
@@ -367,6 +378,16 @@ function scrollToTop() {
 </script>
 
 <style lang="scss" scoped>
+@keyframes vinylPlaying {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 article {
   width: 100vw;
   height: 400dvh;
@@ -408,19 +429,10 @@ article {
     pointer-events: none;
     z-index: 5;
 
+
     &.enableInteraction {
       pointer-events: unset;
-
-      .card {
-        .cardHolder {
-          .cardInnerContainer {
-            p {
-              opacity: 1;
-            }
-
-          }
-        }
-      }
+      transition: 1000ms;
     }
 
     .card {
@@ -478,21 +490,12 @@ article {
 
 
 
-          p {
-            position: absolute;
-            top: calc(110%);
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: 200ms;
-            font-family: 'SF Georgian';
-            font-feature-settings: 'case';
-            font-size: 14px;
-          }
+
 
         }
 
-        &:hover {
+        &:hover,
+        &.spinning {
           cursor: pointer;
           width: 240px;
           height: 240px;
@@ -515,9 +518,35 @@ article {
           }
         }
 
+        &.spinning {
+          animation-name: vinylPlaying;
+          animation-duration: 5s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+        }
+
+
       }
 
+      .exampleTitle {
+        position: absolute;
+        top: calc(110%);
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: 200ms;
+        font-family: 'SF Georgian';
+        font-feature-settings: 'case';
+        font-size: 14px;
+      }
     }
+
+    &.playerOpen {
+      transition: 1000ms;
+      height: 50%;
+    }
+
+
   }
 
   .overViewContainer {
@@ -538,11 +567,29 @@ article {
     background-size: cover;
     background-position: center;
     position: absolute;
-    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.9) 5%, rgba(0, 0, 0, 0) 70%);
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%);
     mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%);
     top: 0;
     left: 0;
     z-index: -1;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      opacity: 0;
+      transition: 1000ms;
+    }
+
+    &.playerOpen {
+      &::after {
+        opacity: 1;
+      }
+    }
   }
 
   .overViewTitle {

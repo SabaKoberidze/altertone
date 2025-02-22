@@ -8,7 +8,7 @@
         </div>
         <div class="controls">
           <div class="trackControls">
-            <button v-on:click="playAudio()" class="playSong"><img
+            <button :class="{ loaded: loaded }" v-on:click="playAudio()" class="playSong"><img
                 src="/images/icons/audioControls/playSong.svg" /></button>
             <div class="line"></div>
             <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
@@ -43,14 +43,19 @@ let muted = ref([false, false, false, false])
 const canvasContainer = ref<HTMLDivElement | null>(null);
 let app: Application
 let audioPlayer: AudioPlayer
-let loaded: boolean
+const loaded = ref(false)
 
-function pickMusic(index: number) {
-  alert(musicTypes[index])
+const pickMusic = (index: number) => {
 }
+defineExpose({
+  pickMusic
+})
 
 function playAudio() {
-  if (!audioPlayer.isPlaying[0]) {
+  if (!loaded.value) {
+    return
+  }
+  else if (!audioPlayer.isPlaying[0]) {
     audioPlayer.unlockAudio();
   } else {
     audioPlayer.pauseAudio();
@@ -72,65 +77,70 @@ onMounted(() => {
     console.error('Canvas container not found!');
     return;
   }
+  setTimeout(() => {
+    app = new Application();
 
-  app = new Application();
+    (async () => {
+      if (!canvasContainer.value) return;
 
-  (async () => {
-    if (!canvasContainer.value) return;
+      // Initialize PixiJS application
+      await app.init({
+        width: canvasContainer.value.clientWidth,
+        height: canvasContainer.value.clientHeight,
+        antialias: true,
+        backgroundColor: 0x000000,
+        backgroundAlpha: 0
+      });
+      // Setup background
+      const background = new Graphics();
+      background.rect(0, 0, app.screen.width, app.screen.height);
+      background.fill({ color: 'transparent' })
+      app.stage.addChild(background);
+      background.interactive = true;
 
-    // Initialize PixiJS application
-    await app.init({
-      width: canvasContainer.value.clientWidth,
-      height: canvasContainer.value.clientHeight,
-      antialias: true,
-      backgroundColor: 0x000000,
-      backgroundAlpha: 0
-    });
-    // Setup background
-    const background = new Graphics();
-    background.rect(0, 0, app.screen.width, app.screen.height);
-    background.fill({ color: 'transparent' })
-    app.stage.addChild(background);
-    background.interactive = true;
+      canvasContainer.value.appendChild(app.canvas as HTMLCanvasElement);
 
-    canvasContainer.value.appendChild(app.canvas as HTMLCanvasElement);
+      let loadedTracks = []
+      audioPlayer = new AudioPlayer(app, (index: number) => {
+        loadedTracks.push(index)
+        if (loadedTracks.length >= 4) {
+          loaded.value = true
+        }
+      })
 
-
-    audioPlayer = new AudioPlayer(app, () => {
-      loaded = true
-    })
-
-    const audioFiles = [
-      "/audio/examples/Rock/Vocal.mp3",
-      "/audio/examples/Rock/Music.mp3",
-      "/audio/examples/Rock/Bass.mp3",
-      "/audio/examples/Rock/Drums.mp3",
-    ]
-    audioFiles.forEach((url, index) => {
-      audioPlayer.init(url, index);
-    });
+      const audioFiles = [
+        "/audio/examples/Rock/Vocal.mp3",
+        "/audio/examples/Rock/Music.mp3",
+        "/audio/examples/Rock/Bass.mp3",
+        "/audio/examples/Rock/Drums.mp3",
+      ]
+      audioFiles.forEach((url, index) => {
+        audioPlayer.init(index);
+      });
+      audioFiles.forEach((url, index) => {
+        audioPlayer.setAudio(url, index);
+      });
 
 
-    window.addEventListener('resize', () => {
-      if (canvasContainer.value && loaded) {
-        // Resize PixiJS canvas and update the app stage
-        app.renderer.resize(canvasContainer.value.clientWidth, canvasContainer.value.clientHeight);
-        // Call resize function from AudioPlayer to adjust visual elements
-        background.width = app.screen.width
-        background.height = app.screen.height
-        audioPlayer.resize();
-      }
-    });
+      window.addEventListener('resize', () => {
+        if (canvasContainer.value && loaded.value) {
+          app.renderer.resize(canvasContainer.value.clientWidth, canvasContainer.value.clientHeight);
+          background.width = app.screen.width
+          background.height = app.screen.height
+          audioPlayer.resize();
+        }
+      });
 
-    document.addEventListener('pointerup', () => {
-      audioPlayer.dragging = false
-    })
-  })();
+      document.addEventListener('pointerup', () => {
+        audioPlayer.dragging = false
+      })
+    })();
+  }, 1000);
+
+
 });
 
-defineExpose({
-  pickMusic
-})
+
 </script>
 
 <style lang="scss" scoped>
@@ -140,11 +150,10 @@ defineExpose({
   height: 100dvh;
   align-items: end;
   top: 0;
-  z-index: 1;
   background: linear-gradient(233deg, rgba(31, 11, 18, 0.50) 0%, rgba(32, 11, 19, 0.00) 71.38%);
   position: fixed;
   bottom: 0;
-  z-index: 0;
+  z-index: 1;
 
   .playerControls {
     height: 50%;
@@ -230,6 +239,16 @@ defineExpose({
             width: 56px;
             height: 56px;
             max-width: 56px;
+
+            img {
+              display: none;
+            }
+
+            &.loaded {
+              img {
+                display: unset;
+              }
+            }
           }
 
         }

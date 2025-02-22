@@ -1,4 +1,4 @@
-import { Application, Graphics, Container } from 'pixi.js';
+import { Application, Graphics, Container, Ticker } from 'pixi.js';
 
 export class AudioPlayer {
   private audio: HTMLAudioElement[];
@@ -13,12 +13,13 @@ export class AudioPlayer {
   private audioUrls: string[];
   private progressColorContainers: Container[];
   private beforeProgressColors: Graphics[]; 
-  private onLoaded: () => void;
+  private onLoaded: (index: number) => void;
   public isPlaying: boolean[]
   public isMuted: boolean;
+  private ticker: any;
   
 
-  constructor(private app: Application, onLoaded: ()=> void) {
+  constructor(private app: Application, onLoaded: (index: number)=> void) {
     app.stage.interactive = true;
     this.audio = [];
     this.audioContext = [];
@@ -34,42 +35,50 @@ export class AudioPlayer {
     this.onLoaded = onLoaded;
     this.isPlaying = [false, false, false, false]
     this.isMuted = false
+    this.ticker = null
   }
 
-  public async init(audioUrl: string, index: number) {
-    this.audioUrls[index] = audioUrl;
-    this.audio[index] = new Audio(audioUrl);
-    this.audio[index].crossOrigin = "anonymous";
-    this.audioContext[index] = new AudioContext();
-    this.dragging= false;
+  public async init(index: number) {
+    this.dragging = false;
     this.waveGraphics[index] = new Graphics();
-    this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
-    this.sources[index].connect(this.audioContext[index].destination);
+    
     if (!this.progressLine) {
         this.progressLine = new Graphics();
         this.app.stage.addChild(this.progressLine);
     }
+    
     this.progressColors[index] = new Graphics();
     this.progressColorContainers[index] = new Container();    
 
-    try {
-      const response = await fetch(audioUrl);
-      const data = await response.arrayBuffer();
-      const audioBuffer = await this.audioContext[index].decodeAudioData(data);
-      this.visualizeWaveform(audioBuffer, index);
-    } catch (error) {
-      console.error("Audio load or decode error", error);
-    }
-
+    this.app.stage.addChild(this.progressColorContainers[index]);
+    this.app.stage.addChild(this.waveGraphics[index]);
 
     this.beforeProgressColors[index] = new Graphics();
-    this.beforeProgressColors[index].rect(0, this.app.screen.height / 4 * index, this.app.screen.width, this.app.screen.height / 4).fill('grey')
-    this.progressColorContainers[index].addChild(this.beforeProgressColors[index])
+    this.beforeProgressColors[index].rect(0, this.app.screen.height / 4 * index, this.app.screen.width, this.app.screen.height / 4).fill('grey');
+    this.progressColorContainers[index].addChild(this.beforeProgressColors[index]);
     this.progressColorContainers[index].mask = this.waveGraphics[index];
     
-    
-    this.onLoaded()
-  }
+    this.setupDragEvents(index);
+}
+
+  public async setAudio(url: string, index: number) {
+    this.audioUrls[index] = url;
+    this.audio[index] = new Audio(url);
+    this.audio[index].crossOrigin = "anonymous";
+    this.audioContext[index] = new AudioContext();
+    this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
+    this.sources[index].connect(this.audioContext[index].destination);
+
+    try {
+        const response = await fetch(url);
+        const data = await response.arrayBuffer();
+        const audioBuffer = await this.audioContext[index].decodeAudioData(data);
+        this.visualizeWaveform(audioBuffer, index);
+    } catch (error) {
+        console.error("Audio load or decode error", error);
+    }
+    this.onLoaded(index);
+}
 
   public async unlockAudio() {
     await Promise.all(
@@ -80,7 +89,9 @@ export class AudioPlayer {
             this.audio[i].play();
             this.isPlaying[i] = true
         })
-    );
+    ).then(()=>{
+      this.startTicker()
+    });
   }
 
   public pauseAudio(){
@@ -88,6 +99,7 @@ export class AudioPlayer {
       audio.pause();
       this.isPlaying[index] = false
     });
+    this.stopTicker()
   }
 
   private visualizeWaveform(audioBuffer: AudioBuffer, index: number) {
@@ -101,13 +113,8 @@ export class AudioPlayer {
         }
         return sum / blockSize;
     });
-    
-    this.app.stage.addChild(this.progressColorContainers[index]);
-    this.app.stage.addChild(this.waveGraphics[index]);
     this.drawWaveform(index);
-
-    this.app.ticker.add(() => this.updateProgressLine(index));
-    this.setupDragEvents(index);
+    //this.app.ticker.add(() => this.updateProgressLine(index));
   }
 
   private drawWaveform(index: number) {
@@ -155,6 +162,7 @@ export class AudioPlayer {
 
   private setupDragEvents(index: number) {
     this.app.stage.on("pointerdown", (event) => {
+      this.startTicker()
       const clickX = event.global.x;
       const seekRatio = clickX / this.app.screen.width;
       this.audio[index].currentTime = seekRatio * this.audio[index].duration;
@@ -170,11 +178,29 @@ export class AudioPlayer {
     });
 
     this.app.stage.on("pointerup", () => {
+      this.stopTicker()
       this.dragging = false;
     });
 
   }
-
+  private startTicker() {
+    if (!this.ticker) {
+      const callback = () => {
+        this.audio.forEach((_, index) => {
+          this.updateProgressLine(index);  
+        });
+      };
+      this.ticker = callback;
+      this.app.ticker.add(callback);
+    }
+  }
+  
+  private stopTicker() {
+    if (this.ticker && !this.isPlaying[0]) {
+      this.app.ticker.remove(this.ticker);
+      this.ticker = null;
+    }
+  }
   public toggleSound(index: number) {
     if(!this.audio[index].muted){
       this.audio[index].muted = true
