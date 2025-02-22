@@ -37,25 +37,36 @@ import { Application, Graphics } from 'pixi.js';
 import { AudioPlayer } from '../classes/AudioPlayer';
 
 // Reference to the container for the PixiJS canvas
+let musicTypes = ['პანკი', 'ჯაზი', 'როკი', 'ბლუზი', 'მტეალი']
 let soundTypes = ['Music', 'Vocal', 'Bass', 'Drums']
 let muted = ref([false, false, false, false])
 const canvasContainer = ref<HTMLDivElement | null>(null);
 let app: Application
 let audioPlayer: AudioPlayer
 let loaded: boolean
+
+function pickMusic(index: number) {
+  alert(musicTypes[index])
+}
+
 function playAudio() {
-  audioPlayer.unlockAudio();
+  if (!audioPlayer.isPlaying[0]) {
+    audioPlayer.unlockAudio();
+  } else {
+    audioPlayer.pauseAudio();
+  }
 }
 function changeTrack(next: boolean) {
 
 }
 function toggleMute() {
-
+  audioPlayer.toggleMute()
 }
 function toggleSound(index: number) {
   audioPlayer.toggleSound(index)
   muted.value[index] = !muted.value[index]
 }
+
 onMounted(() => {
   if (!canvasContainer.value) {
     console.error('Canvas container not found!');
@@ -117,107 +128,9 @@ onMounted(() => {
   })();
 });
 
-// function initApp(app: Application) {
-//   const background = new Graphics();
-//   background.rect(0, 0, app.screen.width, app.screen.height);
-//   background.fill({
-//     color: '#444444',
-//   })
-//   app.stage.addChild(background);
-//   background.interactive = true;
-//   app.stage.interactive = true;
-
-//   const audio = new Audio("/audio/examples/Rock/drum.mp3");
-//   audio.crossOrigin = "anonymous";
-
-//   const audioContext = new AudioContext();
-//   const source = audioContext.createMediaElementSource(audio);
-//   source.connect(audioContext.destination);
-
-//   async function unlockAudio() {
-//     if (audioContext.state === "suspended") {
-//       await audioContext.resume();
-//     }
-//   }
-//   document.addEventListener("click", unlockAudio);
-
-//   fetch("/audio/examples/Rock/drum.mp3")
-//     .then((res) => res.arrayBuffer())
-//     .then((data) => audioContext.decodeAudioData(data))
-//     .then((buffer) => visualizeWaveform(buffer));
-
-//   function visualizeWaveform(audioBuffer: AudioBuffer) {
-//     const rawData = audioBuffer.getChannelData(0);
-//     const samples = 200;
-//     const blockSize = Math.floor(rawData.length / samples);
-//     const waveform = new Array(samples).fill(0).map((_, i) => {
-//       const blockStart = i * blockSize;
-//       let sum = 0;
-//       for (let j = 0; j < blockSize; j++) {
-//         sum += Math.abs(rawData[blockStart + j]);
-//       }
-//       return sum / blockSize;
-//     });
-
-//     // Waveform bars
-//     const waveGraphics = new Graphics();
-//     const progressLine = new Graphics();
-//     app.stage.addChild(waveGraphics, progressLine);
-
-//     function drawWaveform(progress = 0) {
-//       waveGraphics.clear();
-//       const barWidth = app.screen.width / samples;
-//       const maxHeight = app.screen.height / 2;
-
-//       for (let i = 0; i < samples; i++) {
-//         const barHeight = waveform[i] * maxHeight;
-//         const x = i * barWidth;
-//         const y = (app.screen.height - barHeight) / 2;
-
-//         waveGraphics.rect(x, y, barWidth - 2, barHeight);
-//         waveGraphics.fill();
-//       }
-//     }
-
-//     function updateProgressLine() {
-//       const progress = audio.currentTime / audio.duration;
-//       progressLine.clear();
-//       const x = progress * app.screen.width;
-//       progressLine.moveTo(x, 0);
-//       progressLine.lineTo(x, app.screen.height);
-//       progressLine.stroke({ width: 2 })
-//     }
-
-//     drawWaveform();
-//     app.ticker.add(updateProgressLine); // Update line position on each frame
-
-//     // Seek functionality by dragging
-//     let dragging = false;
-
-
-//     app.stage.on("pointerdown", (event) => {
-//       const clickX = event.global.x;
-//       const seekRatio = clickX / app.screen.width;
-//       audio.currentTime = seekRatio * audio.duration;
-//       dragging = true;
-//     });
-
-//     app.stage.on("pointermove", (event) => {
-//       if (dragging) {
-//         const moveX = event.data.global.x;
-//         const seekRatio = Math.max(0, Math.min(moveX / app.screen.width, 1));
-//         audio.currentTime = seekRatio * audio.duration;
-//       }
-//     });
-
-//     app.stage.on("pointerup", () => {
-//       dragging = false;
-//     });
-//   }
-// }
-
-
-
+defineExpose({
+  pickMusic
+})
 </script>
 
 <style lang="scss" scoped>
@@ -227,8 +140,11 @@ onMounted(() => {
   height: 100dvh;
   align-items: end;
   top: 0;
-  z-index: 1000;
+  z-index: 1;
   background: linear-gradient(233deg, rgba(31, 11, 18, 0.50) 0%, rgba(32, 11, 19, 0.00) 71.38%);
+  position: fixed;
+  bottom: 0;
+  z-index: 0;
 
   .playerControls {
     height: 50%;
@@ -236,7 +152,7 @@ onMounted(() => {
     display: flex;
 
     .mainControls {
-      width: 60%;
+      flex-grow: 1;
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -334,7 +250,7 @@ onMounted(() => {
     }
 
     .secondaryControls {
-      flex-grow: 1;
+      width: 300px;
       display: flex;
       flex-direction: column;
       justify-content: center;

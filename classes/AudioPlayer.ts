@@ -14,7 +14,9 @@ export class AudioPlayer {
   private progressColorContainers: Container[];
   private beforeProgressColors: Graphics[]; 
   private onLoaded: () => void;
-  private isPlaying: boolean[]
+  public isPlaying: boolean[]
+  public isMuted: boolean;
+  
 
   constructor(private app: Application, onLoaded: ()=> void) {
     app.stage.interactive = true;
@@ -31,6 +33,7 @@ export class AudioPlayer {
     this.beforeProgressColors = [];
     this.onLoaded = onLoaded;
     this.isPlaying = [false, false, false, false]
+    this.isMuted = false
   }
 
   public async init(audioUrl: string, index: number) {
@@ -78,6 +81,13 @@ export class AudioPlayer {
             this.isPlaying[i] = true
         })
     );
+  }
+
+  public pauseAudio(){
+    this.audio.forEach((audio : HTMLAudioElement, index: number) => {
+      audio.pause();
+      this.isPlaying[index] = false
+    });
   }
 
   private visualizeWaveform(audioBuffer: AudioBuffer, index: number) {
@@ -172,6 +182,13 @@ export class AudioPlayer {
     else{
       this.audio[index].muted = false
     }
+  }
+
+  public toggleMute(){
+    this.isMuted = !this.isMuted
+    this.audio.forEach(audio =>{
+        audio.muted = this.isMuted
+    })
   }
 
   public resize() {

@@ -6,7 +6,7 @@
   </div>
   <OverView ref="overView"></OverView>
   <Reserve></Reserve>
-  <AudioPlayer />
+
 </template>
 <script setup lang="ts">
 const route = useRoute()

@@ -28,7 +28,7 @@
             'z-index': example.zIndex,
             transform: `translate(-50%, -50%) rotate(${example.currentPosition.rotation}deg) scale(${example.currentPosition.scale})`
           }">
-            <div class="cardHolder">
+            <div class="cardHolder" @click="openMusic(index)">
               <img class="vinyl" src="/images/examples/vinyl.png" />
               <div class="cardInnerContainer">
                 <img class="cardImage" :src="`images/examples/${example.img}.png`" />
@@ -40,6 +40,7 @@
             </div>
           </div>
         </div>
+        <AudioPlayer ref="audioPlayerComponent" />
       </div>
     </div>
   </article>
@@ -53,7 +54,7 @@ let maxScroll = 0;
 const scrollProgress = ref(0)
 const lastProgress = ref(0)
 const mainTitle = ref<HTMLElement | null>(null);
-
+const audioPlayerComponent = ref()
 let progressIndexes: number[] = [0, 30, 45, 46, 60, 100]
 
 const devices = ref([
@@ -155,7 +156,6 @@ const examples = ref([
 ])
 
 
-const isHovered = ref(false)
 function handleScroll() {
   if (scrollContainer.value) {
     const containerTop = scrollContainer.value.offsetTop;
@@ -327,6 +327,9 @@ function AnimationProgress(startIndex: number, endIndex: number) {
   return ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]))
 }
 
+function openMusic(index: number) {
+  audioPlayerComponent.value.pickMusic(index)
+}
 
 onMounted(() => {
   const isVisible = useElementVisibility(scrollContainer, { rootMargin: `0px 0px 0px 0px` });
