@@ -30,5 +30,5 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxtjs/i18n']
+  modules: ['@nuxtjs/i18n', '@pinia/nuxt']
 })

@@ -220,7 +220,7 @@ const getBusPosition = () => {
             width: 181px;
             height: 44px;
             border-radius: 12px;
-            background-color: rgba(255, 255, 255, 0.04);
+            background-color: $modalBorder-color;
             border: 0;
             display: flex;
             color: white;
