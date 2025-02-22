@@ -1,3 +1,3 @@
-// export default defineEventHandler(async (event) => {
-//   return await getReserveTimes();
-// });
+export default defineEventHandler(async (event) => {
+  return await getReserveTimes();
+});

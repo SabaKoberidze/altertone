@@ -28,19 +28,19 @@
             'z-index': example.zIndex,
             transform: `translate(-50%, -50%) rotate(${example.currentPosition.rotation}deg) scale(${example.currentPosition.scale})`
           }">
-            <div class="cardHolder"">
-              <img class=" vinyl" src="/images/examples/vinyl.png" />
-            <div class="cardInnerContainer">
-              <img class="cardImage" :src="`images/examples/${example.img}.png`" />
-              <div class="cardHole"></div>
-              <p>
-                {{ example.title }}
-              </p>
+            <div class="cardHolder">
+              <img class="vinyl" src="/images/examples/vinyl.png" />
+              <div class="cardInnerContainer">
+                <img class="cardImage" :src="`images/examples/${example.img}.png`" />
+                <div class="cardHole"></div>
+                <p>
+                  {{ example.title }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   </article>
 </template>
@@ -407,6 +407,17 @@ article {
 
     &.enableInteraction {
       pointer-events: unset;
+
+      .card {
+        .cardHolder {
+          .cardInnerContainer {
+            p {
+              opacity: 1;
+            }
+
+          }
+        }
+      }
     }
 
     .card {

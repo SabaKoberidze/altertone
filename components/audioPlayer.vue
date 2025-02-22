@@ -8,11 +8,13 @@
         </div>
         <div class="controls">
           <div class="trackControls">
-            <button v-on:click="playAudio()">play</button>
-            <button v-on:click="changeTrack(true)">next</button>
-            <button v-on:click="changeTrack(false)">prev</button>
+            <button v-on:click="playAudio()" class="playSong"><img
+                src="/images/icons/audioControls/playSong.svg" /></button>
+            <div class="line"></div>
+            <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
+            <button v-on:click="changeTrack(false)"><img src="/images/icons/audioControls/previousSong.svg" /></button>
           </div>
-          <div class="sound" v-on:click="toggleMute()">sound</div>
+          <div class="sound" v-on:click="toggleMute()"><img src="/images/icons/audioControls/muteSong.svg" /></div>
         </div>
       </div>
       <div class="secondaryControls">
@@ -281,19 +283,37 @@ onMounted(() => {
           height: 100%;
           display: flex;
           justify-content: center;
-          gap: 10px;
+          align-items: center;
+          gap: 16px;
           border-radius: 20px;
           border: rgba(255, 255, 255, 0.04);
           background: rgba(255, 255, 255, 0.04);
+          padding: 8px 18px 8px 8px;
 
           button {
+            cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
             flex-grow: 1;
             border: 0;
             background-color: transparent;
+            height: 100%;
+          }
+
+          .line {
+            height: 24px;
+            width: 2px;
+            border-radius: 1px;
+            background-color: rgba(255, 255, 255, 0.16);
+          }
+
+          .playSong {
+            background-color: white;
+            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            max-width: 56px;
           }
 
         }
@@ -307,6 +327,7 @@ onMounted(() => {
           border-radius: 20px;
           border: rgba(255, 255, 255, 0.04);
           background: rgba(255, 255, 255, 0.04);
+          cursor: pointer;
         }
 
       }
@@ -316,12 +337,13 @@ onMounted(() => {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: center;
       align-items: center;
-      padding: 0 8%;
+      padding: 56px 56px;
 
       &>div {
         width: 100%;
+        height: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
