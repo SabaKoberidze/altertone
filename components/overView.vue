@@ -29,7 +29,8 @@
             'z-index': example.zIndex,
             transform: `translate(-50%, -50%) rotate(${example.currentPosition.rotation}deg) scale(${example.currentPosition.scale})`
           }">
-            <div class="cardHolder" :class="{ spinning: pickedMusicIndex === index }" @click="openMusic(index)">
+            <div class="cardHolder" ref="cardHolder" :class="{ spinning: pickedMusicIndex === index }"
+              @click="openMusic(index)">
               <img class="vinyl" src="/images/examples/vinyl.png" />
               <div class="cardInnerContainer">
                 <img class="cardImage" :src="`images/examples/${example.img}.png`" />
@@ -60,6 +61,7 @@ const mainTitle = ref<HTMLElement | null>(null);
 const audioPlayerComponent = ref()
 const playerOpen = ref(false)
 const pickedMusicIndex = ref(-1)
+const cardHolder = ref([])
 let progressIndexes: number[] = [0, 30, 45, 46, 60, 100]
 
 const devices = ref([
@@ -340,6 +342,13 @@ function openMusic(index: number) {
     pickedMusicIndex.value = index
     audioPlayerComponent.value.pickMusic(index)
   })
+  gsap.to(cardHolder.value[index], {
+    rotation: 360,
+    scale: 1.5,
+    duration: 2,
+    ease: "power2.inOut",
+    transformOrigin: "center",
+  });
 }
 
 onMounted(() => {
@@ -385,11 +394,11 @@ function scrollToTop() {
 <style lang="scss" scoped>
 @keyframes vinylPlaying {
   0% {
-    transform: rotate(0);
+    rotate: 0;
   }
 
   100% {
-    transform: rotate(360deg);
+    rotate: 360deg;
   }
 }
 
@@ -466,7 +475,7 @@ article {
     font-feature-settings: 'case';
     font-size: 96px;
     font-weight: 700;
-    text-shadow: 0px 0px 50px rgb(0, 0, 0);
+    text-shadow: 0px 0px 20px rgb(0, 0, 0);
     width: 1088px;
     text-align: center;
     transition: 200ms;
@@ -478,7 +487,7 @@ article {
     font-feature-settings: 'case';
     font-size: 96px;
     font-weight: 700;
-    text-shadow: 0px 0px 50px rgb(0, 0, 0);
+    text-shadow: 0px 0px 20px rgb(0, 0, 0);
     width: 1088px;
     text-align: center;
     z-index: 10;
@@ -514,6 +523,8 @@ article {
       transition: 200ms;
       position: absolute;
 
+
+
       .cardHolder {
         width: 180px;
         height: 180px;
@@ -525,6 +536,24 @@ article {
         transition: 200ms;
         border-radius: 50%;
         box-shadow: 0px 0px 15px black;
+
+        @include respond-to('mediumDesktop') {
+          transform: scale(0.8);
+        }
+
+        @include respond-to('smallDesktop') {
+          transform: scale(0.6);
+        }
+
+        @include respond-to('tablet') {
+          transform: scale(0.45);
+        }
+
+        @include respond-to('desktop') {
+          transform: scale(1.4);
+        }
+
+
 
         .vinyl {
           position: absolute;
@@ -596,7 +625,7 @@ article {
 
       .exampleTitle {
         position: absolute;
-        top: calc(110%);
+        top: 110%;
         left: 50%;
         transform: translateX(-50%);
         opacity: 0;
@@ -605,6 +634,25 @@ article {
         font-feature-settings: 'case';
         font-size: 14px;
         text-shadow: 0px 0px 20px rgb(0, 0, 0);
+
+        @include respond-to('mediumDesktop') {
+          top: 100%;
+        }
+
+        @include respond-to('smallDesktop') {
+          top: 90%;
+          font-size: 12px;
+        }
+
+        @include respond-to('tablet') {
+          top: 80%;
+          font-size: 8px;
+        }
+
+        @include respond-to('desktop') {
+          top: 130%;
+          font-size: 16px;
+        }
       }
     }
 
