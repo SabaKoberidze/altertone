@@ -39,7 +39,7 @@ header {
     color: #FFF;
     padding: 40px 56px;
     position: fixed;
-    z-index: 5;
+    z-index: 25;
     top: 0;
 
     &::before {

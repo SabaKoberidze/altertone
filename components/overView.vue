@@ -401,7 +401,7 @@ article {
 
   &.playerOpen {
     position: relative;
-    z-index: 10000;
+    z-index: 20;
 
     //sticky urevs
     .overViewContainer {
