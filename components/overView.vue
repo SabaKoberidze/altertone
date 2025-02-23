@@ -1,8 +1,8 @@
 <template>
-  <article ref="scrollContainer">
+  <article ref="scrollContainer" :class="{ playerOpen: playerOpen }">
     <div class="mainOverViewContainer">
       <div class="overViewContainer">
-        <div class="bgImage" :class="{ playerOpen: playerOpen }"></div>
+        <div class="bgImage"></div>
         <h1 class="overViewTitle" ref="mainTitle">პროფესიონალური აპარატურა
         </h1>
         <div v-for="(device, index) in devices" :key="index" class="device"
@@ -41,7 +41,9 @@
             </p>
           </div>
         </div>
-        <AudioPlayer v-if="playerOpen" ref="audioPlayerComponent" />
+        <Transition name="slide-up">
+          <AudioPlayer v-if="playerOpen" ref="audioPlayerComponent" />
+        </Transition>
       </div>
     </div>
   </article>
@@ -361,7 +363,10 @@ onUnmounted(() => {
 });
 
 function handleResize() {
-  if (!playerOpen) {
+  console.log('ha?')
+  if (!playerOpen.value) {
+
+    console.log('hssa?')
     handleScroll()
   }
 }
@@ -394,11 +399,76 @@ article {
   margin: 0;
   padding: 0;
 
+  &.playerOpen {
+    position: relative;
+    z-index: 10000;
+
+    //sticky urevs
+    .overViewContainer {
+      position: fixed;
+
+      &::after {
+        opacity: 1;
+      }
+
+    }
+  }
+
   .mainOverViewContainer {
     width: 100vw;
     height: 400dvh;
     margin: 0;
     padding: 0;
+  }
+
+
+
+  .overViewContainer {
+    width: 100vw;
+    height: 100dvh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      opacity: 0;
+      transition: 1000ms;
+    }
+  }
+
+  .bgImage {
+    width: 100vw;
+    height: 100dvh;
+    background-image: url('/images/hero.png');
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%);
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%);
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+
+  .overViewTitle {
+    font-family: "SF Georgian";
+    font-feature-settings: 'case';
+    font-size: 96px;
+    font-weight: 700;
+    text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
+    width: 1088px;
+    text-align: center;
+    transition: 200ms;
   }
 
   .examplesHeader {
@@ -487,11 +557,6 @@ article {
             transition: 200ms;
             border-radius: 50%;
           }
-
-
-
-
-
         }
 
         &:hover,
@@ -547,60 +612,6 @@ article {
     }
 
 
-  }
-
-  .overViewContainer {
-    width: 100vw;
-    height: 100dvh;
-    position: sticky;
-    top: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
-
-  .bgImage {
-    width: 100vw;
-    height: 100dvh;
-    background-image: url('/images/hero.png');
-    background-size: cover;
-    background-position: center;
-    position: absolute;
-    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%);
-    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%);
-    top: 0;
-    left: 0;
-    z-index: -1;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: black;
-      opacity: 0;
-      transition: 1000ms;
-    }
-
-    &.playerOpen {
-      &::after {
-        opacity: 1;
-      }
-    }
-  }
-
-  .overViewTitle {
-    font-family: "SF Georgian";
-    font-feature-settings: 'case';
-    font-size: 96px;
-    font-weight: 700;
-    text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
-    width: 1088px;
-    text-align: center;
-    transition: 200ms;
   }
 
   .device {

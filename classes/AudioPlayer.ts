@@ -58,6 +58,7 @@ export class AudioPlayer {
     this.progressColorContainers[index].addChild(this.beforeProgressColors[index]);
     this.progressColorContainers[index].mask = this.waveGraphics[index];
     
+    this.drawMutedWaveform(index)
     this.setupDragEvents(index);
 }
 
@@ -102,6 +103,20 @@ export class AudioPlayer {
     this.stopTicker()
   }
 
+  private drawMutedWaveform(index: number) {
+    const waveGraphic = this.waveGraphics[index];
+    waveGraphic.clear();
+
+    const barWidth = this.app.screen.width / this.samples;
+    const y = (this.app.screen.height / 4 * index + this.app.screen.height / 8);
+
+    for (let i = 0; i < this.samples; i++) {
+        const x = i * barWidth;
+        waveGraphic.roundRect(x, y - 0.5, 2, 1, (barWidth - 2) / 2); 
+        waveGraphic.fill({ color: 0xffffff });
+    }
+}
+
   private visualizeWaveform(audioBuffer: AudioBuffer, index: number) {
     const rawData = audioBuffer.getChannelData(0);
     const blockSize = Math.floor(rawData.length / this.samples);
@@ -118,6 +133,7 @@ export class AudioPlayer {
   }
 
   private drawWaveform(index: number) {
+    if(this.audio[index].muted === true) return
     const waveGraphic = this.waveGraphics[index];
     waveGraphic.clear()
     const barWidth = this.app.screen.width / this.samples;
@@ -204,9 +220,11 @@ export class AudioPlayer {
   public toggleSound(index: number) {
     if(!this.audio[index].muted){
       this.audio[index].muted = true
+      this.drawMutedWaveform(index)
     }
     else{
       this.audio[index].muted = false
+      this.drawWaveform(index)
     }
   }
 
@@ -227,7 +245,11 @@ export class AudioPlayer {
       this.progressLine.lineTo(x, this.app.screen.height);
     }
     this.waveGraphics.forEach((waveGraphic, index) => {
-      this.drawWaveform(index); 
+      if(this.audio[index].muted === true){
+        this.drawMutedWaveform(index)
+      } else{
+        this.drawWaveform(index); 
+      }
       this.beforeProgressColors[index].clear()
       this.beforeProgressColors[index].rect(0, this.app.screen.height / 4 * index, this.app.screen.width, this.app.screen.height / 4).fill('grey')
     });

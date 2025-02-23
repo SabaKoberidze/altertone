@@ -1,5 +1,5 @@
 <template>
-  <div class="audioPlayerContainer">
+  <div class="audioPlayerContainer" :class="{ deployed: onPlayerMounted }">
     <div class="playerControls">
       <div class="mainControls">
         <div class="abousMusic">
@@ -43,7 +43,15 @@ let muted = ref([false, false, false, false])
 const canvasContainer = ref<HTMLDivElement | null>(null);
 let app: Application
 let audioPlayer: AudioPlayer
+const onPlayerMounted = ref(false)
 const loaded = ref(false)
+
+const audioFiles = [
+  "/audio/examples/Rock/Vocal.mp3",
+  "/audio/examples/Rock/Music.mp3",
+  "/audio/examples/Rock/Bass.mp3",
+  "/audio/examples/Rock/Drums.mp3",
+]
 
 const pickMusic = (index: number) => {
 }
@@ -77,51 +85,45 @@ onMounted(() => {
     console.error('Canvas container not found!');
     return;
   }
-  setTimeout(() => {
-    app = new Application();
 
-    (async () => {
-      if (!canvasContainer.value) return;
+  app = new Application();
 
-      // Initialize PixiJS application
-      await app.init({
-        width: canvasContainer.value.clientWidth,
-        height: canvasContainer.value.clientHeight,
-        antialias: true,
-        backgroundColor: 0x000000,
-        backgroundAlpha: 0
-      });
-      // Setup background
-      const background = new Graphics();
-      background.rect(0, 0, app.screen.width, app.screen.height);
-      background.fill({ color: 'transparent' })
-      app.stage.addChild(background);
-      background.interactive = true;
+  (async () => {
+    if (!canvasContainer.value) return;
 
-      canvasContainer.value.appendChild(app.canvas as HTMLCanvasElement);
+    // Initialize PixiJS application
+    await app.init({
+      width: canvasContainer.value.clientWidth,
+      height: canvasContainer.value.clientHeight,
+      antialias: true,
+      backgroundColor: 0x000000,
+      backgroundAlpha: 0
+    });
+    // Setup background
+    const background = new Graphics();
+    background.rect(0, 0, app.screen.width, app.screen.height);
+    background.fill({ color: 'transparent' })
+    app.stage.addChild(background);
+    background.interactive = true;
 
-      let loadedTracks = []
-      audioPlayer = new AudioPlayer(app, (index: number) => {
-        loadedTracks.push(index)
-        if (loadedTracks.length >= 4) {
-          loaded.value = true
-        }
-      })
+    canvasContainer.value.appendChild(app.canvas as HTMLCanvasElement);
 
-      const audioFiles = [
-        "/audio/examples/Rock/Vocal.mp3",
-        "/audio/examples/Rock/Music.mp3",
-        "/audio/examples/Rock/Bass.mp3",
-        "/audio/examples/Rock/Drums.mp3",
-      ]
-      audioFiles.forEach((url, index) => {
-        audioPlayer.init(index);
-      });
+    let loadedTracks = []
+    audioPlayer = new AudioPlayer(app, (index: number) => {
+      loadedTracks.push(index)
+      if (loadedTracks.length >= 4) {
+        loaded.value = true
+      }
+    })
+
+    audioFiles.forEach((url, index) => {
+      audioPlayer.init(index);
+    });
+
+    setTimeout(() => {
       audioFiles.forEach((url, index) => {
         audioPlayer.setAudio(url, index);
       });
-
-
       window.addEventListener('resize', () => {
         if (canvasContainer.value && loaded.value) {
           app.renderer.resize(canvasContainer.value.clientWidth, canvasContainer.value.clientHeight);
@@ -131,13 +133,14 @@ onMounted(() => {
         }
       });
 
-      document.addEventListener('pointerup', () => {
-        audioPlayer.dragging = false
-      })
-    })();
-  }, 1000);
-
-
+      // document.addEventListener('pointerup', () => {
+      //   audioPlayer.dragging = false
+      // })
+    }, 1000);
+  })();
+  setTimeout(() => {
+    onPlayerMounted.value = true
+  }, 200)
 });
 
 
@@ -159,6 +162,7 @@ onMounted(() => {
     height: 50%;
     width: 50vw;
     display: flex;
+
 
     .mainControls {
       flex-grow: 1;
@@ -343,6 +347,22 @@ onMounted(() => {
       width: calc(100% - 112px);
       height: calc(100% - 112px);
       position: relative;
+    }
+  }
+
+  .playerControls,
+  .playerContainer {
+    transition: transform 1s;
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  &.deployed {
+
+    .playerControls,
+    .playerContainer {
+      transform: translateY(0%);
+      opacity: 1;
     }
   }
 }
