@@ -466,7 +466,7 @@ article {
     font-feature-settings: 'case';
     font-size: 96px;
     font-weight: 700;
-    text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
+    text-shadow: 0px 0px 50px rgb(0, 0, 0);
     width: 1088px;
     text-align: center;
     transition: 200ms;
@@ -478,7 +478,7 @@ article {
     font-feature-settings: 'case';
     font-size: 96px;
     font-weight: 700;
-    text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
+    text-shadow: 0px 0px 50px rgb(0, 0, 0);
     width: 1088px;
     text-align: center;
     z-index: 10;
@@ -604,6 +604,7 @@ article {
         font-family: 'SF Georgian';
         font-feature-settings: 'case';
         font-size: 14px;
+        text-shadow: 0px 0px 20px rgb(0, 0, 0);
       }
     }
 
