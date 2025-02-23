@@ -443,6 +443,7 @@ article {
       background-color: black;
       opacity: 0;
       transition: 1000ms;
+      pointer-events: none;
     }
   }
 

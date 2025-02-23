@@ -34,7 +34,7 @@ export default defineNuxtConfig({
     },
   },
   
-  modules: ["@nuxtjs/i18n",  '@pinia/nuxt'],
+  modules: ["@nuxtjs/i18n", '@pinia/nuxt', "v-gsap-nuxt"],
   runtimeConfig: {
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseKey: process.env.SUPABASE_KEY,

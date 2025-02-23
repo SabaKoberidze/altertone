@@ -119,18 +119,18 @@ onMounted(() => {
     audioFiles.forEach((url, index) => {
       audioPlayer.init(index);
     });
+    window.addEventListener('resize', () => {
+      if (canvasContainer.value) {
+        app.renderer.resize(canvasContainer.value.clientWidth, canvasContainer.value.clientHeight);
+        background.width = app.screen.width
+        background.height = app.screen.height
+        audioPlayer.resize(loaded.value);
+      }
+    });
 
     setTimeout(() => {
       audioFiles.forEach((url, index) => {
         audioPlayer.setAudio(url, index);
-      });
-      window.addEventListener('resize', () => {
-        if (canvasContainer.value && loaded.value) {
-          app.renderer.resize(canvasContainer.value.clientWidth, canvasContainer.value.clientHeight);
-          background.width = app.screen.width
-          background.height = app.screen.height
-          audioPlayer.resize();
-        }
       });
 
       // document.addEventListener('pointerup', () => {
