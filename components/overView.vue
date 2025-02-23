@@ -342,13 +342,6 @@ function openMusic(index: number) {
     pickedMusicIndex.value = index
     audioPlayerComponent.value.pickMusic(index)
   })
-  gsap.to(cardHolder.value[index], {
-    rotation: 360,
-    scale: 1.5,
-    duration: 2,
-    ease: "power2.inOut",
-    transformOrigin: "center",
-  });
 }
 
 onMounted(() => {
