@@ -133,9 +133,9 @@ onMounted(() => {
         audioPlayer.setAudio(url, index);
       });
 
-      // document.addEventListener('pointerup', () => {
-      //   audioPlayer.dragging = false
-      // })
+      document.addEventListener('pointerup', () => {
+        audioPlayer.dragging = false
+      })
     }, 1000);
   })();
   setTimeout(() => {
