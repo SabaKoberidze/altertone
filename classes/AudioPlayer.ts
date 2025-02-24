@@ -14,14 +14,17 @@ export class AudioPlayer {
   private audioUrls: string[];
   private progressColorContainers: Container[];
   private beforeProgressColors: Graphics[]; 
-  private onLoaded: (index: number) => void;
-  public isPlaying: boolean[]
+  private onLoaded: (isLoaded: boolean) => void;
   public isMuted: boolean;
   private ticker: any;
   private barObjects: Graphics[][];
-  
+  private loaded: boolean[]
+  private progress: number;
+  public audioPlayerState: {playing: boolean, paused: boolean, loading: boolean}
+  private firstLoad: boolean
 
-  constructor(private app: Application, onLoaded: (index: number)=> void) {
+
+  constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void) {
     app.stage.interactive = true;
     this.audio = [];
     this.audioContext = [];
@@ -35,10 +38,14 @@ export class AudioPlayer {
     this.progressColorContainers = [];
     this.beforeProgressColors = [];
     this.onLoaded = onLoaded;
-    this.isPlaying = [false, false, false, false]
+    this.loaded =  [false, false, false, false]
     this.isMuted = false
     this.ticker = null
     this.barObjects = []
+    this.progress = 0
+    this.audioPlayerState = {playing: false, paused: false, loading: true}
+    this.firstLoad = false
+    this.setupDragEvents()
   }
   public async init(index: number) {
     this.dragging = false;
@@ -61,17 +68,18 @@ export class AudioPlayer {
     this.progressColorContainers[index].mask = this.waveGraphics[index];
     
     this.drawMutedWaveform(index, true)
-    this.setupDragEvents(index);
+
 }
 
   public async setAudio(url: string, index: number) {
     this.audioUrls[index] = url;
     this.audio[index] = new Audio(url);
+    // this.audio[index].preload = 'auto'
     this.audio[index].crossOrigin = "anonymous";
     this.audioContext[index] = new AudioContext();
     this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
     this.sources[index].connect(this.audioContext[index].destination);
-
+    this.setAudioPlayerState({playing: false, loading: true, paused: false})
     try {
         const response = await fetch(url);
         const data = await response.arrayBuffer();
@@ -80,27 +88,51 @@ export class AudioPlayer {
     } catch (error) {
         console.error("Audio load or decode error", error);
     }
-    this.onLoaded(index);
-}
 
-  public async unlockAudio() {
-    await Promise.all(
-        this.audioContext.map(async (ctx, i) => {
-            if (ctx.state === "suspended") {
-            await ctx.resume();
-            }
-            this.audio[i].play();
-            this.isPlaying[i] = true
-        })
-    ).then(()=>{
-      this.startTicker()
-    });
+    this.setAudioPlayerState({playing: false, loading: false, paused: true})
+    this.audioLoaded(index, true)
+    if(this.loaded.every(elem => elem === true)){
+      this.firstLoad = true
+    }
+  }
+  private audioLoaded(index:number, isLoaded: boolean){ 
+    this.loaded[index] = isLoaded
+    if(this.loaded.every(elem => elem === true)){
+      this.onLoaded(true);
+    }else{
+      this.onLoaded(false);
+    }
   }
 
-  public pauseAudio(){
+  public setAudioPlayerState(newState: {playing: boolean, loading: boolean, paused: boolean}){
+    this.audioPlayerState = newState
+  }
+
+  private async unlockAudioContext() {
+    await Promise.all(
+      this.audioContext.map(async (ctx) => {
+        if (ctx.state === "suspended") {
+          await ctx.resume();
+        }
+      })
+    );
+  }
+
+  public async playAudio() {
+    await this.unlockAudioContext(); 
+    this.audio.forEach((audio, i) => {
+      audio.play();
+    });
+    this.startTicker();
+    this.setAudioPlayerState({playing: true, loading: false, paused: false})
+  }
+
+  public pauseAudio(isLoading: boolean){
+    if(!isLoading){
+      this.setAudioPlayerState({playing: false, loading: false, paused: true})
+    }
     this.audio.forEach((audio : HTMLAudioElement, index: number) => {
       audio.pause();
-      this.isPlaying[index] = false
     });
     this.stopTicker()
   }
@@ -215,18 +247,21 @@ export class AudioPlayer {
     }
   }
 
-  private updateProgressLine(index: number) {
-    const progress = this.audio[index].currentTime / this.audio[index].duration;
-  
-    this.progressLine.clear();
-    const x = progress * this.app.screen.width;
-    this.progressLine.moveTo(x, 0);
-    this.progressLine.lineTo(x, this.app.screen.height);
-    this.progressLine.stroke({ width: 2, color: 0xffffff });
-  
-    if(this.isPlaying[index]){
-        this.setProgressColors(index, progress)
-      }
+  private updateProgressLine() {
+    const progress = this.audio[0].currentTime / this.audio[0].duration;
+    if(progress !== this.progress){    
+      this.progressLine.clear();
+      const x = progress * this.app.screen.width;
+      this.progressLine.moveTo(x, 0);
+      this.progressLine.lineTo(x, this.app.screen.height);
+      this.progressLine.stroke({ width: 2, color: 0xffffff });
+    }
+      
+    if(this.audioPlayerState.playing){
+        this.audio.forEach((_, index)=>{
+          this.setProgressColors(index, progress)
+        })
+    }
 
     this.progressLine.zIndex = 3
   }
@@ -240,34 +275,60 @@ export class AudioPlayer {
       this.progressColorContainers[index].addChild(this.progressColors[index]);
   }
 
-  private setupDragEvents(index: number) {
+  private async seekToTime(seekRatio: number) {
+    this.onLoaded(false)
+    this.pauseAudio(true);
+    this.setAudioPlayerState({playing: this.audioPlayerState.playing, loading: true, paused: false})
+    const targetTime = seekRatio * this.audio[0].duration; 
+    this.audio.forEach((audio) => {
+      audio.currentTime = targetTime;
+    });
+    this.audio.forEach((_, index) => this.updateProgressLine());
+    await Promise.all(
+      this.audio.map((audio, index) =>
+        new Promise((resolve) => {
+          if (audio.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+            resolve(true); 
+          } else {
+            audio.addEventListener("canplay", () => resolve(true), { once: true });
+          }
+        }).then(() => this.audioLoaded(index, true))
+      )
+    );
+    if (this.audioPlayerState.playing) {
+      await this.playAudio();
+      this.setAudioPlayerState({playing: this.audioPlayerState.playing, loading: true, paused: false})
+    } 
+  }
+
+  private setupDragEvents() {
     this.app.stage.on("pointerdown", (event) => {
-      this.startTicker()
+      if(!this.firstLoad) return
+      this.dragging = true;
       const clickX = event.global.x;
       const seekRatio = clickX / this.app.screen.width;
-      this.audio[index].currentTime = seekRatio * this.audio[index].duration;
-      this.dragging = true;
+      this.seekToTime(seekRatio); 
     });
-
+  
     this.app.stage.on("pointermove", (event) => {
       if (this.dragging) {
         const moveX = event.global.x;
         const seekRatio = Math.max(0, Math.min(moveX / this.app.screen.width, 1));
-        this.audio[index].currentTime = seekRatio * this.audio[index].duration;
+        this.updateProgressLine()
+        this.seekToTime(seekRatio); 
       }
     });
-
+  
     this.app.stage.on("pointerup", () => {
-      this.stopTicker()
       this.dragging = false;
     });
-
   }
+
   private startTicker() {
     if (!this.ticker) {
       const callback = () => {
         this.audio.forEach((_, index) => {
-          this.updateProgressLine(index);  
+          this.updateProgressLine();  
         });
       };
       this.ticker = callback;
@@ -276,7 +337,7 @@ export class AudioPlayer {
   }
   
   private stopTicker() {
-    if (this.ticker && !this.isPlaying[0]) {
+    if (this.ticker && !this.audioPlayerState.playing) {
       this.app.ticker.remove(this.ticker);
       this.ticker = null;
     }
@@ -329,3 +390,4 @@ export class AudioPlayer {
     });
 }
 }
+
