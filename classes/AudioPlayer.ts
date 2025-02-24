@@ -64,23 +64,40 @@ export class AudioPlayer {
     this.setupDragEvents(index);
 }
 
-  public async setAudio(url: string, index: number) {
-    this.audioUrls[index] = url;
-    this.audio[index] = new Audio(url);
-    this.audio[index].crossOrigin = "anonymous";
-    this.audioContext[index] = new AudioContext();
-    this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
-    this.sources[index].connect(this.audioContext[index].destination);
+public async setAudio(url: string, index: number) {
+  // Cleanup previous context
+  if (this.audioContext[index]) {
+      await this.audioContext[index].close();
+  }
 
-    try {
-        const response = await fetch(url);
-        const data = await response.arrayBuffer();
-        const audioBuffer = await this.audioContext[index].decodeAudioData(data);
-        this.visualizeWaveform(audioBuffer, index);
-    } catch (error) {
-        console.error("Audio load or decode error", error);
-    }
-    this.onLoaded(index);
+  this.audioUrls[index] = url;
+  this.audio[index] = new Audio(url);
+  this.audio[index].crossOrigin = "anonymous";
+  this.audio[index].preload = "auto"; // Ensures it preloads fully
+
+  // Ensure audio loads completely
+  await new Promise((resolve, reject) => {
+      this.audio[index].addEventListener("canplaythrough", resolve, { once: true });
+      this.audio[index].addEventListener("error", reject, { once: true });
+  });
+
+  // Create AudioContext and connect source
+  this.audioContext[index] = new AudioContext();
+  this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
+  this.sources[index].connect(this.audioContext[index].destination);
+
+  try {
+      // Fetch audio for visualization
+      const response = await fetch(url);
+      const data = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext[index].decodeAudioData(data);
+      this.visualizeWaveform(audioBuffer, index);
+  } catch (error) {
+      console.error("Audio load or decode error", error);
+  }
+
+  // Call onLoaded only after full loading
+  this.onLoaded(index);
 }
 
   public async unlockAudio() {
