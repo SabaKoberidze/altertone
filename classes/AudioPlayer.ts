@@ -71,6 +71,7 @@ export class AudioPlayer {
   public async setAudio(url: string, index: number) {
     this.audioUrls[index] = url;
     this.audio[index] = new Audio(url);
+    // this.audio[index].preload = 'auto'
     this.audio[index].crossOrigin = "anonymous";
     this.audioContext[index] = new AudioContext();
     this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
