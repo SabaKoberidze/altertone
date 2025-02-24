@@ -1,4 +1,4 @@
-import { Application, Graphics, Container, Ticker } from 'pixi.js';
+import { Application, Graphics, Container, Ticker, Assets } from 'pixi.js';
 import gsap from 'gsap';
 
 export class AudioPlayer {
@@ -65,38 +65,31 @@ export class AudioPlayer {
 }
 
 public async setAudio(url: string, index: number) {
-  // Cleanup previous context
   if (this.audioContext[index]) {
-      await this.audioContext[index].close();
+      this.audioContext[index].close();
   }
 
   this.audioUrls[index] = url;
-  this.audio[index] = new Audio(url);
-  this.audio[index].crossOrigin = "anonymous";
-  this.audio[index].preload = "auto"; // Ensures it preloads fully
-
-  // Ensure audio loads completely
-  await new Promise((resolve, reject) => {
-      this.audio[index].addEventListener("canplaythrough", resolve, { once: true });
-      this.audio[index].addEventListener("error", reject, { once: true });
-  });
-
-  // Create AudioContext and connect source
   this.audioContext[index] = new AudioContext();
-  this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
-  this.sources[index].connect(this.audioContext[index].destination);
 
   try {
-      // Fetch audio for visualization
-      const response = await fetch(url);
-      const data = await response.arrayBuffer();
+      const response = await Assets.load({ alias: `audio_${index}`, src: url });
+      if (!response) {
+          throw new Error("Failed to load audio from Pixi Assets");
+      }
+
+      this.audio[index] = new Audio(url);
+      this.audio[index].crossOrigin = "anonymous";
+      this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
+      this.sources[index].connect(this.audioContext[index].destination);
+
+      const data = await (await fetch(url)).arrayBuffer();
       const audioBuffer = await this.audioContext[index].decodeAudioData(data);
       this.visualizeWaveform(audioBuffer, index);
   } catch (error) {
       console.error("Audio load or decode error", error);
   }
 
-  // Call onLoaded only after full loading
   this.onLoaded(index);
 }
 
