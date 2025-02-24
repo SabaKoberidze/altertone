@@ -1,4 +1,4 @@
-import { Application, Graphics, Container, Ticker, Assets } from 'pixi.js';
+import { Application, Graphics, Container, Ticker } from 'pixi.js';
 import gsap from 'gsap';
 
 export class AudioPlayer {
@@ -65,32 +65,36 @@ export class AudioPlayer {
 }
 
 public async setAudio(url: string, index: number) {
-  if (this.audioContext[index]) {
-      this.audioContext[index].close();
-  }
-
-  this.audioUrls[index] = url;
-  this.audioContext[index] = new AudioContext();
-
   try {
-      const response = await Assets.load({url});
-      if (!response) {
-          throw new Error("Failed to load audio from Pixi Assets");
-      }
+      this.audioUrls[index] = url;
 
       this.audio[index] = new Audio(url);
       this.audio[index].crossOrigin = "anonymous";
+
+      await new Promise((resolve) => {
+          this.audio[index].addEventListener('loadedmetadata', resolve, { once: true });
+      });
+
+      await new Promise((resolve, reject) => {
+          this.audio[index].addEventListener('canplaythrough', resolve, { once: true });
+          this.audio[index].addEventListener('error', reject, { once: true });
+      });
+
+      this.audioContext[index] = new AudioContext();
       this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
       this.sources[index].connect(this.audioContext[index].destination);
 
-      const data = await (await fetch(url)).arrayBuffer();
+      const response = await fetch(url);
+      const data = await response.arrayBuffer();
       const audioBuffer = await this.audioContext[index].decodeAudioData(data);
+
       this.visualizeWaveform(audioBuffer, index);
+
+      this.onLoaded(index);
   } catch (error) {
       console.error("Audio load or decode error", error);
+      throw error; 
   }
-
-  this.onLoaded(index);
 }
 
   public async unlockAudio() {

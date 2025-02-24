@@ -1,5 +1,3 @@
-import { selectTimesFromDatabase } from "./reserve.repository";
-
 export function isTimeslotValid(start_date: string, end_date: string): boolean {
   const timeslots = [
     { start: "10:00", end: "12:00" },

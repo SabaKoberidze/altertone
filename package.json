@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pixi/sound": "^6.0.1",
     "@supabase/supabase-js": "^2.48.1",
     "@vueuse/core": "^12.6.1",
     "cloudipsp-node-js-sdk": "^1.0.8",
