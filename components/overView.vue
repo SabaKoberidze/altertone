@@ -29,8 +29,8 @@
             'z-index': example.zIndex,
             transform: `translate(-50%, -50%) rotate(${example.currentPosition.rotation}deg) scale(${example.currentPosition.scale})`
           }">
-            <div class="cardHolder" ref="cardHolder" :class="{ spinning: pickedMusicIndex === index }"
-              @click="openMusic(index)">
+            <div class="cardHolder" ref="cardHolder"
+              :class="{ spinning: pickedMusicIndex === index, paused: musicPaused }" @click="openMusic(index)">
               <img class="vinyl" src="/images/examples/vinyl.png" />
               <div class="cardInnerContainer">
                 <img class="cardImage" :src="`images/examples/${example.img}.png`" />
@@ -43,7 +43,8 @@
           </div>
         </div>
         <Transition name="slide-up">
-          <AudioPlayer v-if="playerOpen" ref="audioPlayerComponent" />
+          <AudioPlayer v-if="playerOpen" ref="audioPlayerComponent"
+            @onPause="(paused: boolean) => { musicPaused = paused }" />
         </Transition>
       </div>
     </div>
@@ -62,6 +63,7 @@ const audioPlayerComponent = ref()
 const playerOpen = ref(false)
 const pickedMusicIndex = ref(-1)
 const cardHolder = ref([])
+const musicPaused = ref(false)
 let progressIndexes: number[] = [0, 30, 45, 46, 60, 100]
 
 const devices = ref([
@@ -608,6 +610,10 @@ article {
           animation-duration: 5s;
           animation-iteration-count: infinite;
           animation-timing-function: linear;
+
+          &.paused {
+            animation-play-state: paused;
+          }
         }
 
 

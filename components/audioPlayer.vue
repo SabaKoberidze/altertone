@@ -36,7 +36,7 @@ import { onMounted, ref } from 'vue';
 import { Application, Graphics } from 'pixi.js';
 import { AudioPlayer } from '../classes/AudioPlayer';
 
-// Reference to the container for the PixiJS canvas
+const emit = defineEmits(['onPause']);
 let musicTypes = ['პანკი', 'ჯაზი', 'როკი', 'ბლუზი', 'მტეალი']
 let soundTypes = ['Music', 'Vocal', 'Bass', 'Drums']
 let muted = ref([false, false, false, false])
@@ -65,8 +65,11 @@ function playAudio() {
   }
   else if (!audioPlayer.isPlaying[0]) {
     audioPlayer.unlockAudio();
+    emit('onPause', false)
   } else {
     audioPlayer.pauseAudio();
+    emit('onPause', true)
+
   }
 }
 function changeTrack(next: boolean) {
