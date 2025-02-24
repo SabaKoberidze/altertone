@@ -20,6 +20,7 @@ export class AudioPlayer {
   private ticker: any;
   private barObjects: Graphics[][];
   private loaded: boolean[]
+  private progress: number;
   
 
   constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void) {
@@ -41,6 +42,7 @@ export class AudioPlayer {
     this.isMuted = false
     this.ticker = null
     this.barObjects = []
+    this.progress = 0
   }
   public async init(index: number) {
     this.dragging = false;
@@ -235,13 +237,14 @@ export class AudioPlayer {
 
   private updateProgressLine(index: number) {
     const progress = this.audio[index].currentTime / this.audio[index].duration;
-  
-    this.progressLine.clear();
-    const x = progress * this.app.screen.width;
-    this.progressLine.moveTo(x, 0);
-    this.progressLine.lineTo(x, this.app.screen.height);
-    this.progressLine.stroke({ width: 2, color: 0xffffff });
-  
+    if(progress !== this.progress){    
+      this.progressLine.clear();
+      const x = progress * this.app.screen.width;
+      this.progressLine.moveTo(x, 0);
+      this.progressLine.lineTo(x, this.app.screen.height);
+      this.progressLine.stroke({ width: 2, color: 0xffffff });
+    }
+      
     if(this.isPlaying[index]){
         this.isPlaying.forEach((_, index)=>{
           this.setProgressColors(index, progress)
@@ -267,6 +270,7 @@ export class AudioPlayer {
     this.audio.forEach((audio) => {
       audio.currentTime = targetTime;
     });
+    this.audio.forEach((_, index) => this.updateProgressLine(index));
     await Promise.all(
       this.audio.map((audio, index) =>
         new Promise((resolve) => {
@@ -280,9 +284,7 @@ export class AudioPlayer {
     );
     if (wasPlaying) {
       await this.playAudio();
-    } else {
-      this.audio.forEach((_, index) => this.updateProgressLine(index));
-    }
+    } 
   }
 
   private setupDragEvents(index: number) {
