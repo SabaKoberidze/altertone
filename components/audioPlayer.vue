@@ -63,7 +63,7 @@ function playAudio() {
   if (!loaded.value) {
     return
   }
-  else if (audioPlayer.isPlaying.every((el) => el === false)) {
+  else if (!audioPlayer.audioPlayerState.playing) {
     audioPlayer.playAudio();
     emit('onPause', false)
   } else {
