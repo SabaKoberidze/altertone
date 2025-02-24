@@ -63,8 +63,8 @@ function playAudio() {
   if (!loaded.value) {
     return
   }
-  else if (!audioPlayer.isPlaying[0]) {
-    audioPlayer.unlockAudio();
+  else if (audioPlayer.isPlaying.every((el) => el === false)) {
+    audioPlayer.playAudio();
     emit('onPause', false)
   } else {
     audioPlayer.pauseAudio();
@@ -111,13 +111,9 @@ onMounted(() => {
 
     canvasContainer.value.appendChild(app.canvas as HTMLCanvasElement);
 
-    let loadedTracks = []
-    audioPlayer = new AudioPlayer(app, (index: number) => {
-      loadedTracks.push(index)
-      console.log(loadedTracks, index, 'audio loadeda')
-      if (loadedTracks.length >= audioFiles.length) {
-        loaded.value = true
-      }
+
+    audioPlayer = new AudioPlayer(app, (isLoaded: boolean) => {
+      loaded.value = isLoaded
     })
 
     audioFiles.forEach((url, index) => {
