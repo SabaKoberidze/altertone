@@ -5,9 +5,8 @@
     <service />
   </div>
   <OverView ref="overView"></OverView>
-  <Transition name="fade">
-    <Reserve class="reserve"></Reserve>
-  </Transition>
+
+  <Reserve class="reserve"></Reserve>
 
 </template>
 <script setup lang="ts">
@@ -22,14 +21,4 @@ const scrollToServices = () => {
 const overView = ref<HTMLElement | null>(null)
 </script>
 
-<style lang="scss" scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 200ms
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0
-}
-</style>
+<style lang="scss" scoped></style>
