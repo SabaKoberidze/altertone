@@ -73,7 +73,7 @@ public async setAudio(url: string, index: number) {
   this.audioContext[index] = new AudioContext();
 
   try {
-      const response = await Assets.load({ alias: `audio_${index}`, src: url });
+      const response = await Assets.load({url});
       if (!response) {
           throw new Error("Failed to load audio from Pixi Assets");
       }
