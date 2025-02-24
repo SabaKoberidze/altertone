@@ -111,7 +111,8 @@ onMounted(() => {
     let loadedTracks = []
     audioPlayer = new AudioPlayer(app, (index: number) => {
       loadedTracks.push(index)
-      if (loadedTracks.length >= 4) {
+      console.log(loadedTracks, index, 'audio loadeda')
+      if (loadedTracks.length >= audioFiles.length) {
         loaded.value = true
       }
     })

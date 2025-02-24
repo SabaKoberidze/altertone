@@ -295,7 +295,11 @@ export class AudioPlayer {
   public toggleMute(){
     this.isMuted = !this.isMuted
     this.audio.forEach(audio =>{
-        audio.muted = this.isMuted
+      if(this.isMuted){
+        audio.volume = 0
+      }else{
+        audio.volume = 1
+      }
     })
   }
 

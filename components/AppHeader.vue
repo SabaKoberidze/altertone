@@ -6,14 +6,14 @@
         </div>
         <div id="headerButtons">
             <button type="button">კონტაქტი</button>
-            <button type="button">დაჯავშნე</button>
+            <button type="button" @click="reserveStore.toggleModal(true)">დაჯავშნე</button>
         </div>
     </header>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-
+const reserveStore = ReserveStore()
 const isScrolled = ref(false);
 
 const handleScroll = () => {

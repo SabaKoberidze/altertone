@@ -365,10 +365,7 @@ onUnmounted(() => {
 });
 
 function handleResize() {
-  console.log('ha?')
   if (!playerOpen.value) {
-
-    console.log('hssa?')
     handleScroll()
   }
 }

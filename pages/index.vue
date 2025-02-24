@@ -5,7 +5,9 @@
     <service />
   </div>
   <OverView ref="overView"></OverView>
-  <Reserve></Reserve>
+  <Transition name="fade">
+    <Reserve class="reserve"></Reserve>
+  </Transition>
 
 </template>
 <script setup lang="ts">
@@ -18,23 +20,16 @@ const scrollToServices = () => {
   }
 }
 const overView = ref<HTMLElement | null>(null)
-
-
-
-interface ReservedData {
-  success: boolean;
-  data: any;
-}
-async function getReservedData() {
-  const { data, error } = await useFetch<ReservedData>('/api/reserve');
-
-  if (data.value && data.value.success) {
-    console.log(data.value.data);
-  } else if (error.value) {
-    console.error('Error fetching reserved data:', error.value);
-  }
-}
-//getReservedData()
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 200ms
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0
+}
+</style>
