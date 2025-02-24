@@ -265,6 +265,7 @@ export class AudioPlayer {
 
   private async seekToTime(seekRatio: number) {
     const wasPlaying = this.isPlaying.some((playing) => playing);
+    this.onLoaded(false)
     this.pauseAudio();
     const targetTime = seekRatio * this.audio[0].duration; 
     this.audio.forEach((audio) => {
