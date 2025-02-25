@@ -12,16 +12,21 @@ export const ReserveStore = defineStore('ReserveStore', {
         }
       },
       actions: {
-        toggleModal(open: boolean) {
-            this.isModalOpen = open
+        toggleModal() {
+            this.isModalOpen = !this.isModalOpen
         },
-        async getReservedData(){
-            const { data, error } = await useFetch<ReservedData>('/api/reserve');
-            if (data.value && data.value.success) {
-              console.log(data.value.data);
-            } else if (error.value) {
-              console.error('Error fetching reserved data:', error.value);
+        async getReservedData() {
+            try {
+              const response = await $fetch<ReservedData>('/api/reserve');
+              if (response.success) {
+                this.reservations = response.data;
+                return this.reservations;
+              } else {
+                console.error('API returned unsuccessful response:', response);
+              }
+            } catch (error) {
+              console.error('Error fetching reserved data:', error);
             }
-        }
+          },
       },
 })

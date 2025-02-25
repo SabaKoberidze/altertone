@@ -8,15 +8,14 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+interface TimeInterval {
+    start: string;
+    end: string;
+}
+defineProps<{
+    intervals: TimeInterval[];
+}>();
 
-const intervals = ref([
-    { start: "10:00", end: "12:00" },
-    { start: "12:00", end: "14:00" },
-    { start: "14:00", end: "16:00" },
-    { start: "16:00", end: "18:00" },
-    { start: "18:00", end: "20:00" },
-    { start: "20:00", end: "22:00" },
-]);
 </script>
 
 <style lang="scss" scoped>

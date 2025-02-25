@@ -4,12 +4,13 @@
   <div class="servicePage" ref="servicePage">
     <service />
   </div>
+  <Reserve class="reserve" v-if="reserveStore.isModalOpen"></Reserve>
   <OverView ref="overView"></OverView>
 
-  <Reserve class="reserve"></Reserve>
 
 </template>
 <script setup lang="ts">
+const reserveStore = ReserveStore()
 const route = useRoute()
 const servicePage = ref<HTMLElement | null>(null)
 let reservedData;

@@ -1,67 +1,69 @@
 <template>
-    <Transition name="fade">
-        <div id="reservation" v-if="reserveStore.isModalOpen">
-            <div class="modalHeader">
-                <div class="steps">
-                    <div class="step" :class="{ active: step - 1 === currentStep }" v-for="step in stepInfo.length">
-                        <img v-show="currentStep > step - 1" src="/images/icons/checkmark.svg">
-                        <p v-show="currentStep <= step - 1">{{ step }}</p>
-                    </div>
-                </div>
-                <div class="modalClose" v-on:click="reserveStore.toggleModal(false)">
-                    გაუქმება
-                    <button><img src="/images/icons/modalClose.svg" /></button>
+    <div id="reservation">
+        <div class="modalHeader">
+            <div class="steps">
+                <div class="step" :class="{ active: step - 1 === currentStep }" v-for="step in stepInfo.length">
+                    <img v-show="currentStep > step - 1" src="/images/icons/checkmark.svg">
+                    <p v-show="currentStep <= step - 1">{{ step }}</p>
                 </div>
             </div>
-            <div class="modalContent">
-                <transition :name="transitionName" mode="out-in">
-                    <div :key="currentStep" class="currentStep">
-                        <div class="contentHeader">
-                            <p class="mainText">{{ stepInfo[currentStep].title }}</p>
-                            <p class="subText">{{ stepInfo[currentStep].subText }}</p>
-                        </div>
-                        <div v-if="currentStep === 0" class="date">
-                            <ReserveStepsOne />
-                        </div>
-                        <div v-else-if="currentStep === 1" class="time">
-                            <ReserveStepsTwo />
-                        </div>
-                        <div v-else-if="currentStep === 2" class="info">
-                            <!-- Info content -->
-                        </div>
-                        <div v-else-if="currentStep === 3" class="submit">
-                            <!-- Submit content -->
-                        </div>
-                    </div>
-                </transition>
-                <div class="buttonContainer">
-                    <button v-show="currentStep > 0" class="previousStep" v-on:click="previousStep()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path
-                                d="M15.3905 4.80061C15.8458 5.22339 15.8722 5.93521 15.4494 6.39051L10.1602 12L15.4494 17.6095C15.8722 18.0648 15.8458 18.7766 15.3905 19.1994C14.9352 19.6222 14.2234 19.5958 13.8006 19.1405L7.80061 12.7655C7.3998 12.3339 7.3998 11.6661 7.80061 11.2345L13.8006 4.8595C14.2234 4.4042 14.9352 4.37783 15.3905 4.80061Z"
-                                fill="white" fill-opacity="0.56" />
-                        </svg>
-                        უკან
-                    </button>
-                    <button class="nextStep" v-on:click="nextStep()">
-                        გაგრძელება
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path
-                                d="M8.6095 4.80061C8.1542 5.22339 8.12783 5.93521 8.55061 6.39051L13.8398 12L8.55061 17.6095C8.12783 18.0648 8.1542 18.7766 8.6095 19.1994C9.0648 19.6222 9.77662 19.5958 10.1994 19.1405L16.1994 12.7655C16.6002 12.3339 16.6002 11.6661 16.1994 11.2345L10.1994 4.8595C9.77662 4.4042 9.0648 4.37783 8.6095 4.80061Z"
-                                fill="#0D0E0F" />
-                        </svg>
-                    </button>
-                </div>
-
+            <div class="modalClose" v-on:click="reserveStore.toggleModal()">
+                გაუქმება
+                <button><img src="/images/icons/modalClose.svg" /></button>
             </div>
         </div>
-    </Transition>
+        <div class="modalContent">
+            <transition :name="transitionName" mode="out-in">
+                <div :key="currentStep" class="currentStep">
+                    <div class="contentHeader">
+                        <p class="mainText">{{ stepInfo[currentStep].title }}</p>
+                        <p class="subText">{{ stepInfo[currentStep].subText }}</p>
+                    </div>
+                    <div v-if="currentStep === 0" class="date">
+                        <ReserveStepsOne ref="stepOne" :intervals="reserveHours" />
+                    </div>
+                    <div v-else-if="currentStep === 1" class="time">
+                        <ReserveStepsTwo :intervals="reserveHours" />
+                    </div>
+                    <div v-else-if="currentStep === 2" class="info">
+                        <!-- Info content -->
+                    </div>
+                    <div v-else-if="currentStep === 3" class="submit">
+                        <!-- Submit content -->
+                    </div>
+                </div>
+            </transition>
+            <div class="buttonContainer">
+                <button v-show="currentStep > 0" class="previousStep" v-on:click="previousStep()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.3905 4.80061C15.8458 5.22339 15.8722 5.93521 15.4494 6.39051L10.1602 12L15.4494 17.6095C15.8722 18.0648 15.8458 18.7766 15.3905 19.1994C14.9352 19.6222 14.2234 19.5958 13.8006 19.1405L7.80061 12.7655C7.3998 12.3339 7.3998 11.6661 7.80061 11.2345L13.8006 4.8595C14.2234 4.4042 14.9352 4.37783 15.3905 4.80061Z"
+                            fill="white" fill-opacity="0.56" />
+                    </svg>
+                    უკან
+                </button>
+                <button class="nextStep" v-on:click="nextStep()">
+                    გაგრძელება
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M8.6095 4.80061C8.1542 5.22339 8.12783 5.93521 8.55061 6.39051L13.8398 12L8.55061 17.6095C8.12783 18.0648 8.1542 18.7766 8.6095 19.1994C9.0648 19.6222 9.77662 19.5958 10.1994 19.1405L16.1994 12.7655C16.6002 12.3339 16.6002 11.6661 16.1994 11.2345L10.1994 4.8595C9.77662 4.4042 9.0648 4.37783 8.6095 4.80061Z"
+                            fill="#0D0E0F" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
 </template>
 <script setup lang="ts">
+import type { ReserveStepsOne } from '#components';
+
 const reserveStore = ReserveStore()
 const show = ref(false)
 const currentStep = ref(0)
 const transitionName = ref("fade-slide-forward");
+const reservation = ref<Record<string, any> | undefined>({})
+const stepOne = ref<InstanceType<typeof ReserveStepsOne> | null>(null)
 watch(currentStep, (newVal, oldVal) => {
     if (oldVal === undefined) {
         transitionName.value = "fade-slide-forward";
@@ -69,6 +71,13 @@ watch(currentStep, (newVal, oldVal) => {
         transitionName.value = newVal > oldVal ? "fade-slide-forward" : "fade-slide-backward";
     }
 }, { immediate: true });
+onMounted(async () => {
+    let data = await reserveStore.getReservedData()
+    reservation.value = data;
+    if (stepOne.value) {
+        stepOne.value.getReservedDates(Array.isArray(reservation.value) ? reservation.value : [])
+    }
+});
 const stepInfo = [{
     title: 'მონიშნეთ სასურველი დრო',
     subText: 'თავისუფალი დღეები მომდევნო 2 კვირის განმავლობაში'
@@ -86,6 +95,16 @@ const stepInfo = [{
     subText: '1 საათის ღირებულება შეადგენს 30 ლარს და არ მოიცავს IEM მონიტორებს'
 },
 ]
+
+const reserveHours = ref([
+    { start: "10:00", end: "12:00" },
+    { start: "12:00", end: "14:00" },
+    { start: "14:00", end: "16:00" },
+    { start: "16:00", end: "18:00" },
+    { start: "18:00", end: "20:00" },
+    { start: "20:00", end: "22:00" },
+]);
+
 function nextStep() {
     currentStep.value++
 }
@@ -94,16 +113,6 @@ function previousStep() {
 }
 </script>
 <style lang="scss" scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-
 .fade-slide-forward-enter-active,
 .fade-slide-forward-leave-active {
     transition: opacity 600ms ease, transform 600ms ease;

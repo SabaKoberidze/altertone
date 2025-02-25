@@ -6,7 +6,7 @@
         </div>
         <div id="headerButtons">
             <button type="button">კონტაქტი</button>
-            <button type="button" @click="reserveStore.toggleModal(true)">დაჯავშნე</button>
+            <button type="button" @click="openReservation()">დაჯავშნე</button>
         </div>
     </header>
 </template>
@@ -19,7 +19,9 @@ const isScrolled = ref(false);
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 0;
 };
-
+const openReservation = async () => {
+    reserveStore.toggleModal()
+}
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
 });

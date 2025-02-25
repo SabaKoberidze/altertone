@@ -121,13 +121,14 @@ export class AudioPlayer {
   public async playAudio() {
     await this.unlockAudioContext(); 
     this.audio.forEach((audio, i) => {
-      audio.play();
+      audio.play().catch((er)=>{
+      });
     });
     this.startTicker();
     this.setAudioPlayerState({playing: true, loading: false, paused: false})
   }
 
-  public pauseAudio(isLoading: boolean){
+  public pauseAudio(isLoading?: boolean){
     if(!isLoading){
       this.setAudioPlayerState({playing: false, loading: false, paused: true})
     }

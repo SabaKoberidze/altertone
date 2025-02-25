@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-02-20", // Updated to current date
   devtools: { enabled: true },
+  ssr: true,
   css: ["~/styles/main.scss"],
   components: true,
 

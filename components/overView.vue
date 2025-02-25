@@ -340,7 +340,7 @@ function openMusic(index: number) {
   playerOpen.value = true
   document.body.style.overflow = 'hidden';
   spreadCards(4, 5, true)
-  requestAnimationFrame(() => {
+  nextTick(() => {
     pickedMusicIndex.value = index
     audioPlayerComponent.value.pickMusic(index)
   })

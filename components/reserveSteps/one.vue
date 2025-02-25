@@ -9,7 +9,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+const reservations = ref<any[]>([])
+interface TimeInterval {
+    start: string;
+    end: string;
+}
+
+
+const props = defineProps<{
+    intervals: TimeInterval[];
+}>();
+
+
 
 const monthNames: { [key: string]: string } = {
     "January": "იანვარი",
@@ -59,6 +70,47 @@ const getNextDates = (count: number) => {
 };
 
 const dates = ref(getNextDates(14));
+const getDay = (date: string) => {
+    return date.split('-')[2]
+}
+
+const formatHours = (hours: any[]) => {
+    if (!hours || !hours.length) {
+        return [
+            { start: "10:00", end: "12:00" },
+            { start: "12:00", end: "14:00" },
+            { start: "14:00", end: "16:00" },
+            { start: "16:00", end: "18:00" },
+            { start: "18:00", end: "20:00" },
+            { start: "20:00", end: "22:00" },
+        ];
+    }
+
+    const formatted = [];
+    for (let i = 0; i < hours.length - 1; i += 2) {
+        formatted.push({
+            start: hours[i],
+            end: hours[i + 1]
+        });
+    }
+    return formatted;
+};
+
+const getReservedDates = (reseveds: any[]) => {
+    reservations.value = [...reseveds]
+    reservations.value.forEach((reservation) => {
+        console.log(getDay(reservation.day))
+        console.log(formatHours(reservation.reserved))
+
+    })
+}
+
+onMounted(() => {
+    console.log(props.intervals)
+})
+defineExpose({
+    getReservedDates
+})
 </script>
 
 <style lang="scss" scoped>
