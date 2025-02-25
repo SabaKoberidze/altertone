@@ -1,10 +1,13 @@
 <template>
     <div class="grid-container">
-        <div v-for="(date, index) in dates" :key="index" class="grid-item">
-            <p class="month">{{ date.month }}</p>
-            <p class="day-number">{{ date.day }}</p>
-            <p class="weekday">{{ date.weekday }}</p>
-        </div>
+        <template v-for="(date, index) in dates" :key="index">
+            <div v-if="(!unavailableDays.some(unavailable => unavailable.day === date.day && unavailable.month === date.monthNum))"
+                class="grid-item" v-on:click="$emit('dayPicked', date.day)">
+                <p class="month">{{ date.month }}</p>
+                <p class="day-number">{{ date.day }}</p>
+                <p class="weekday">{{ date.weekday }}</p>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -17,7 +20,7 @@ interface TimeInterval {
 
 
 const props = defineProps<{
-    intervals: TimeInterval[];
+    unavailableDays: { day: number, month: number }[];
 }>();
 
 
@@ -57,9 +60,9 @@ const getNextDates = (count: number) => {
 
         const month = futureDate.toLocaleString("en-US", { month: "long" });
         const weekday = futureDate.toLocaleString("en-US", { weekday: "long" });
-
-
+        const monthNum = futureDate.getMonth() + 1;
         dates.push({
+            monthNum: monthNum,
             month: monthNames[month].slice(0, 3) || month,
             day: futureDate.getDate(),
             weekday: weekdayNames[weekday].slice(0, 3) || weekday
@@ -70,46 +73,9 @@ const getNextDates = (count: number) => {
 };
 
 const dates = ref(getNextDates(14));
-const getDay = (date: string) => {
-    return date.split('-')[2]
-}
-
-const formatHours = (hours: any[]) => {
-    if (!hours || !hours.length) {
-        return [
-            { start: "10:00", end: "12:00" },
-            { start: "12:00", end: "14:00" },
-            { start: "14:00", end: "16:00" },
-            { start: "16:00", end: "18:00" },
-            { start: "18:00", end: "20:00" },
-            { start: "20:00", end: "22:00" },
-        ];
-    }
-
-    const formatted = [];
-    for (let i = 0; i < hours.length - 1; i += 2) {
-        formatted.push({
-            start: hours[i],
-            end: hours[i + 1]
-        });
-    }
-    return formatted;
-};
-
-const getReservedDates = (reseveds: any[]) => {
-    reservations.value = [...reseveds]
-    reservations.value.forEach((reservation) => {
-        console.log(getDay(reservation.day))
-        console.log(formatHours(reservation.reserved))
-
-    })
-}
 
 onMounted(() => {
-    console.log(props.intervals)
-})
-defineExpose({
-    getReservedDates
+    console.log(props.unavailableDays)
 })
 </script>
 

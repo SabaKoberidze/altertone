@@ -20,10 +20,10 @@
                         <p class="subText">{{ stepInfo[currentStep].subText }}</p>
                     </div>
                     <div v-if="currentStep === 0" class="date">
-                        <ReserveStepsOne ref="stepOne" :intervals="reserveHours" />
+                        <ReserveStepsOne ref="stepOne" :unavailableDays="unavailableDays" @dayPicked="dayPicked" />
                     </div>
                     <div v-else-if="currentStep === 1" class="time">
-                        <ReserveStepsTwo :intervals="reserveHours" />
+                        <ReserveStepsTwo :intervals="reserveHours" :unavailableHours="unavailableHours" />
                     </div>
                     <div v-else-if="currentStep === 2" class="info">
                         <!-- Info content -->
@@ -57,13 +57,19 @@
 </template>
 <script setup lang="ts">
 import type { ReserveStepsOne } from '#components';
-
+interface TimeInterval {
+    start: string;
+    end: string;
+}
 const reserveStore = ReserveStore()
 const show = ref(false)
 const currentStep = ref(0)
 const transitionName = ref("fade-slide-forward");
 const reservation = ref<Record<string, any> | undefined>({})
 const stepOne = ref<InstanceType<typeof ReserveStepsOne> | null>(null)
+const unavailableDays = ref<{ day: number, month: number }[]>([])
+const unavailableHours = ref<TimeInterval[]>([])
+const reserveInfo: { [key: number]: any } = {}
 watch(currentStep, (newVal, oldVal) => {
     if (oldVal === undefined) {
         transitionName.value = "fade-slide-forward";
@@ -71,11 +77,60 @@ watch(currentStep, (newVal, oldVal) => {
         transitionName.value = newVal > oldVal ? "fade-slide-forward" : "fade-slide-backward";
     }
 }, { immediate: true });
+
+const getMonth = (date: string) => {
+    return Number(date.split('-')[1])
+}
+
+const getDay = (date: string) => {
+    return Number(date.split('-')[2])
+}
+
+const formatHours = (hours: any[]) => {
+    const formatted = [];
+    for (let i = 0; i <= hours.length - 1; i += 1) {
+        let currentHours = hours[i].split('-')
+        formatted.push({
+            start: currentHours[i],
+            end: currentHours[i + 1]
+        });
+    }
+    return formatted;
+};
+
+const getReservedDates = (reserveds: any[]) => {
+    reservation.value = [...reserveds]
+    reservation.value.forEach((reservation: any) => {
+        let month = getMonth(reservation.day)
+        let day = getDay(reservation.day)
+        let reservedHours = formatHours(reservation.reserved)
+        if (isFullDayBooked(reservedHours)) {
+            unavailableDays.value.push({ day: day, month: month })
+        } else {
+            reserveInfo[day] = reservedHours
+        }
+    })
+}
+
+function isFullDayBooked(currentReservedHours: any) {
+    return reserveHours.value.every(refSlot =>
+        currentReservedHours.some((resSlot: any) =>
+            resSlot.start === refSlot.start && resSlot.end === refSlot.end
+        )
+    );
+}
+function dayPicked(day: number) {
+    unavailableHours.value = reserveInfo[day] || []
+}
+
 onMounted(async () => {
     let data = await reserveStore.getReservedData()
     reservation.value = data;
-    if (stepOne.value) {
-        stepOne.value.getReservedDates(Array.isArray(reservation.value) ? reservation.value : [])
+    unavailableDays.value = []
+    unavailableHours.value = []
+    console.log(data, 'data')
+    if (Array.isArray(reservation.value)) {
+        getReservedDates(reservation.value)
     }
 });
 const stepInfo = [{

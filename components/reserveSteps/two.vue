@@ -1,6 +1,6 @@
 <template>
     <div class="grid-container">
-        <div v-for="(interval, index) in intervals" :key="index" class="grid-item">
+        <div v-for="(interval, index) in filteredIntervals" :key="index" class="grid-item">
             <p class="time-interval">{{ interval.start }} - {{ interval.end }}</p>
         </div>
     </div>
@@ -12,9 +12,26 @@ interface TimeInterval {
     start: string;
     end: string;
 }
-defineProps<{
+const props = defineProps<{
     intervals: TimeInterval[];
+    unavailableHours: TimeInterval[]
 }>();
+
+const filteredIntervals = computed(() => {
+    return props.intervals.filter(interval =>
+        !props.unavailableHours.some(unavailableHour =>
+            interval.start === unavailableHour.start && interval.end === unavailableHour.end
+        )
+    );
+});
+
+onMounted(() => {
+    const isAnyUnavailableHourIncluded = props.unavailableHours.some(unavailableHour =>
+        props.intervals.some(interval =>
+            interval.start === unavailableHour.start && interval.end === unavailableHour.end
+        )
+    );
+});
 
 </script>
 
