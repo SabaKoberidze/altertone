@@ -1,4 +1,4 @@
-import { updateReservationStatus } from "~/server/utils/reserve.repository";
+import { updateReservationStatus } from "~/server/utils/altertone.repository";
 
 export default defineEventHandler(async (event) => {
   try {

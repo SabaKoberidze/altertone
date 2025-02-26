@@ -34,7 +34,7 @@ export function validateQueryForDownload(genre: string, fileType: string) {
   ) {
     return {
       status: 400,
-      error: "genre can only be one of this: vocal, music, drums, bass",
+      error: "fileType can only be one of this: vocal, music, drums, bass",
     };
   }
 }

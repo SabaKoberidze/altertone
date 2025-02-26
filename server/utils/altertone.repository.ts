@@ -76,3 +76,24 @@ export async function updateReservationStatus(
     throw error;
   }
 }
+
+export async function getWaveForms(genre: string, audio: string) {
+  try {
+    console.log(genre, audio);
+    const { data, error } = await supabase
+      .from("waveforms")
+      .select("wavelengths")
+      .eq("genre", genre)
+      .eq("audio", audio);
+
+    console.log(data);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}

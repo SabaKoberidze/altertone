@@ -1,5 +1,5 @@
 import { sendSuccessMail } from "~/server/utils/mailer.service";
-import { createReservation } from "~/server/utils/reserve.repository";
+import { createReservation } from "~/server/utils/altertone.repository";
 
 export default defineEventHandler(async (event) => {
   try {
