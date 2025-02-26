@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { defineEventHandler, readBody } from "h3";
+import { defineEventHandler, readBody, getQuery } from "h3";
 import {
   validateBodyForDownload,
   validateQueryForDownload,
@@ -64,17 +64,14 @@ export default defineEventHandler(async (event) => {
 
     const arrayBuffer = await data.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const base64 = buffer.toString("base64");
 
-    const fileName = filePath.split("/").pop();
+    setResponseHeaders(event, {
+      "Content-Type": data.type,
+      "Content-Disposition": `attachment; filename="${fileType}.mp3"`,
+      "Content-Length": buffer.length.toString(),
+    });
 
-    return {
-      status: 200,
-      fileName: `${fileType}.mp3`,
-      size: buffer.length,
-      contentType: data.type,
-      data: base64,
-    };
+    return buffer;
   } catch (error) {
     console.error("Download route error:", error);
     return {
