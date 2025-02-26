@@ -1,30 +1,26 @@
 <template>
     <div class="grid-container">
-        <template v-for="(date, index) in dates" :key="index">
-            <div v-if="(!unavailableDays.some(unavailable => unavailable.day === date.day && unavailable.month === date.monthNum))"
-                class="grid-item" v-on:click="$emit('dayPicked', date.day)">
-                <p class="month">{{ date.month }}</p>
-                <p class="day-number">{{ date.day }}</p>
-                <p class="weekday">{{ date.weekday }}</p>
+        <template v-for="(row, rowIndex) in groupedDates" :key="rowIndex">
+            <div class="grid-row">
+                <template v-for="(date, index) in row" :key="index">
+                    <div v-if="!unavailableDays.some(unavailable => unavailable.day === date.day && unavailable.month === date.monthNum)"
+                        class="grid-item" v-on:click="pickDay(date.day)" :class="{ picked: date.day === pickedDay }">
+                        <p class="month">{{ date.month }}</p>
+                        <p class="day-number">{{ date.day }}</p>
+                        <p class="weekday">{{ date.weekday }}</p>
+                    </div>
+                </template>
             </div>
         </template>
     </div>
 </template>
 
 <script lang="ts" setup>
-const reservations = ref<any[]>([])
-interface TimeInterval {
-    start: string;
-    end: string;
-}
-
-
 const props = defineProps<{
     unavailableDays: { day: number, month: number }[];
 }>();
-
-
-
+const emit = defineEmits(['dayPicked'])
+const pickedDay = ref<number>(-1)
 const monthNames: { [key: string]: string } = {
     "January": "იანვარი",
     "February": "თებერვალი",
@@ -72,10 +68,22 @@ const getNextDates = (count: number) => {
     return dates;
 };
 
+const pickDay = (day: number) => {
+    pickedDay.value = day
+    emit('dayPicked', day)
+}
+
 const dates = ref(getNextDates(14));
 
+const groupedDates = computed(() => {
+    const rows = [];
+    for (let i = 0; i < dates.value.length; i += 7) {
+        rows.push(dates.value.slice(i, i + 7));
+    }
+    return rows;
+});
+
 onMounted(() => {
-    console.log(props.unavailableDays)
 })
 </script>
 
@@ -85,14 +93,24 @@ p {
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 16px;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     padding: 20px;
     max-width: 800px;
     margin: auto;
+}
+
+.grid-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .grid-item {
@@ -101,16 +119,15 @@ p {
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.04);
-    display: flex;
     width: 104px;
     height: 117px;
     padding: 18px 12px;
     gap: 12px;
-    align-items: center;
     border-radius: 12px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: 200ms;
+    border: 1px solid rgba(255, 255, 255, 0);
 
     &.picked {
         background-color: transparent;

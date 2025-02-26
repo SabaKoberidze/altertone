@@ -1,20 +1,36 @@
 <template>
     <div class="grid-container">
-        <div v-for="(interval, index) in filteredIntervals" :key="index" class="grid-item">
+        <div v-for="(interval, index) in filteredIntervals" :key="index" class="grid-item" @click="pickItem(interval)"
+            :class="{ picked: isPicked(interval) }">
             <p class="time-interval">{{ interval.start }} - {{ interval.end }}</p>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+const pickedTimes = ref<TimeInterval[]>([]);
+
 interface TimeInterval {
     start: string;
     end: string;
 }
+
+const pickItem = (interval: TimeInterval) => {
+    const index = pickedTimes.value.findIndex(item => item.start === interval.start && item.end === interval.end);
+    if (index === -1) {
+        pickedTimes.value.push(interval);
+    } else {
+        pickedTimes.value.splice(index, 1);
+    }
+};
+
+const isPicked = (interval: TimeInterval) => {
+    return pickedTimes.value.some(item => item.start === interval.start && item.end === interval.end);
+}
+
 const props = defineProps<{
     intervals: TimeInterval[];
-    unavailableHours: TimeInterval[]
+    unavailableHours: TimeInterval[];
 }>();
 
 const filteredIntervals = computed(() => {
@@ -24,15 +40,6 @@ const filteredIntervals = computed(() => {
         )
     );
 });
-
-onMounted(() => {
-    const isAnyUnavailableHourIncluded = props.unavailableHours.some(unavailableHour =>
-        props.intervals.some(interval =>
-            interval.start === unavailableHour.start && interval.end === unavailableHour.end
-        )
-    );
-});
-
 </script>
 
 <style lang="scss" scoped>
@@ -41,14 +48,12 @@ p {
 }
 
 .grid-container {
-    display: grid;
-    /* Change the number of columns as needed; for example, 3 columns creates two rows */
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    gap: 16px;
     padding: 20px;
-    max-width: 800px;
+    max-width: 550px;
     margin: auto;
 }
 
@@ -65,12 +70,15 @@ p {
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: 200ms;
+    border: 1px solid rgba(255, 255, 255, 0);
 
     &.picked {
-        background-color: transparent;
+        background-color: rgba(255, 255, 255, 0.1);
         border: 1px solid white;
     }
 }
+
+
 
 .time-interval {
     font-size: 16px;
