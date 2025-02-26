@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const reservation = await createReservation(body);
-    await sendSuccessMail("", reservation[0].id);
+    //await sendSuccessMail("", reservation[0].id);
 
     return {
       success: true,
