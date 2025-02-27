@@ -20,6 +20,8 @@
                 <p>სერვისები</p>
             </div>
         </div>
+
+        <!-- <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&loop=1&playlist=YOUR_VIDEO_ID"></iframe> -->
     </article>
 </template>
 
