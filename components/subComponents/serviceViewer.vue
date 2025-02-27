@@ -85,7 +85,6 @@ const getBusPosition = () => {
     width: 443px;
 
     h1 {
-        font-family: 'SF Georgian';
         font-size: 44px;
         font-weight: 700;
         font-feature-settings: 'case';
@@ -176,7 +175,6 @@ const getBusPosition = () => {
                 border-radius: 12px;
                 padding: 16px;
                 font-size: 15px;
-                font-family: "SF Georgian";
                 color: rgba(255, 255, 255, 0.56);
                 letter-spacing: 0.32px;
                 transition: 400ms;
@@ -211,7 +209,6 @@ const getBusPosition = () => {
         gap: 24px;
 
         .additionalInfo {
-            font-family: 'SF Georgian';
             font-size: 18px;
         }
 
@@ -231,7 +228,6 @@ const getBusPosition = () => {
             transition: 200ms;
 
             p {
-                font-family: 'SF Georgian';
                 padding-bottom: 4px;
                 font-size: 14px;
             }

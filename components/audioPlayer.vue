@@ -192,14 +192,14 @@ let loadAudio = async (genre: string, type: string, index: number) => {
         .title {
           font-size: 44px;
           font-weight: 700;
-          font-family: 'SF Georgian';
+          font-family: 'SF Georgian', sans-serif;
           font-feature-settings: 'case';
           text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
         }
 
         .description {
           color: $modalText-color;
-          font-family: 'SF Georgian';
+          font-family: 'SF Georgian', sans-serif;
           font-size: 18px;
           font-weight: 400;
           text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);

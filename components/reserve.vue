@@ -348,7 +348,6 @@ function previousStep() {
                 gap: 12px;
 
                 p {
-                    font-family: 'SF Georgian';
                     font-weight: 400;
                     text-align: center;
                 }

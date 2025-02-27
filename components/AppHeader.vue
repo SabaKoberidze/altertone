@@ -43,6 +43,7 @@ header {
     position: fixed;
     z-index: 25;
     top: 0;
+    font-family: 'Neue';
 
     &::before {
         content: '';
@@ -125,6 +126,7 @@ header {
             letter-spacing: 0.142px;
             color: inherit;
             transition: 200ms;
+            font-family: 'Neue';
 
             &:nth-child(2) {
                 border: 1px solid $border-color;

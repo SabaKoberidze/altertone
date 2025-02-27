@@ -43,10 +43,6 @@ const filteredIntervals = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-p {
-    font-family: "SF Georgian";
-}
-
 .grid-container {
     display: flex;
     flex-wrap: wrap;

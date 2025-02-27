@@ -129,10 +129,6 @@ defineProps({
         .serviceTitle {
             font-size: 24px;
             font-feature-settings: "case";
-
-            h3 {
-                font-family: 'SF Georgian';
-            }
         }
 
         .serviceInfo {
@@ -154,7 +150,6 @@ defineProps({
                 transition: 200ms;
 
                 p {
-                    font-family: 'SF Georgian';
                     color: rgba(255, 255, 255, 0.56);
                 }
             }
@@ -170,9 +165,6 @@ defineProps({
                 gap: 17px;
                 cursor: pointer;
 
-                p {
-                    font-family: 'SF Georgian';
-                }
             }
         }
 
@@ -186,7 +178,6 @@ defineProps({
             opacity: 0;
 
             p {
-                font-family: 'SF Georgian';
                 font-size: 14px;
             }
 

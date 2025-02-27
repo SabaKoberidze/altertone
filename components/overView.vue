@@ -463,7 +463,6 @@ article {
   }
 
   .overViewTitle {
-    font-family: "SF Georgian";
     font-feature-settings: 'case';
     font-size: 96px;
     font-weight: 700;
@@ -475,7 +474,6 @@ article {
 
   .examplesHeader {
     position: absolute;
-    font-family: "SF Georgian";
     font-feature-settings: 'case';
     font-size: 96px;
     font-weight: 700;
@@ -626,7 +624,6 @@ article {
         transform: translateX(-50%);
         opacity: 0;
         transition: 200ms;
-        font-family: 'SF Georgian';
         font-feature-settings: 'case';
         font-size: 14px;
         text-shadow: 0px 0px 20px rgb(0, 0, 0);
@@ -677,7 +674,6 @@ article {
     transition: 200ms;
     pointer-events: none;
     font-size: 12px;
-    font-family: "SF Georgian";
     font-feature-settings: 'case' on;
     font-weight: 700;
 

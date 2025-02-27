@@ -122,7 +122,7 @@ article {
             height: 345px;
             color: #FFF;
             text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
-            font-family: "SF Georgian";
+            font-family: 'SF Georgian', sans-serif;
             font-size: 96px;
             font-style: normal;
             font-weight: 700;
@@ -136,7 +136,7 @@ article {
             height: 54px;
             color: #FFF;
             text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
-            font-family: "SF Georgian";
+            font-family: 'SF Georgian', sans-serif;
             font-size: 18px;
             font-style: normal;
             font-weight: 300;
@@ -188,7 +188,7 @@ article {
                 font-size: 14px;
                 color: rgba(255, 255, 255, 0.56);
                 font-weight: 500;
-                font-family: "SF Georgian";
+                font-family: 'SF Georgian', sans-serif;
                 transition: 200ms;
             }
 
