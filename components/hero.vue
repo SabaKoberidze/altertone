@@ -88,6 +88,7 @@ article {
                 background-color: $border-color;
                 width: 100%;
                 border-radius: 1px;
+                background-color: rgba(255, 255, 255, 0.26);
             }
 
             &:nth-child(2),
