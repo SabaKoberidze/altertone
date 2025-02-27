@@ -46,12 +46,9 @@ let audioPlayer: AudioPlayer
 const onPlayerMounted = ref(false)
 const loaded = ref(false)
 
-const audioFiles = [
-  "/audio/examples/Rock/Vocal.mp3",
-  "/audio/examples/Rock/Music.mp3",
-  "/audio/examples/Rock/Bass.mp3",
-  "/audio/examples/Rock/Drums.mp3",
-]
+const audioGenres = ["rock", "punk", "jazz", "blues", "metal"]
+const audioTypes = ['vocal', 'drums', 'music', 'bass']
+
 
 const pickMusic = (index: number) => {
 }
@@ -116,9 +113,10 @@ onMounted(() => {
       loaded.value = isLoaded
     })
 
-    audioFiles.forEach((url, index) => {
+    audioTypes.forEach((url, index) => {
       audioPlayer.init(index);
     });
+    await audioPlayer.loadAssets()
     window.addEventListener('resize', () => {
       if (canvasContainer.value) {
         app.renderer.resize(canvasContainer.value.clientWidth, canvasContainer.value.clientHeight);
@@ -128,14 +126,19 @@ onMounted(() => {
       }
     });
 
-    setTimeout(() => {
-      audioFiles.forEach((url, index) => {
-        audioPlayer.setAudio(url, index);
-      });
-
-      document.addEventListener('pointerup', () => {
-        audioPlayer.dragging = false
-      })
+    setTimeout(async () => {
+      let genre = audioGenres[0]
+      await loadAudio(genre, soundTypes[0], 0);
+      await loadAudio(genre, soundTypes[1], 1);
+      await loadAudio(genre, soundTypes[2], 2);
+      await loadAudio(genre, soundTypes[3], 3);
+      // setTimeout(async () => {
+      //   console.log('second')
+      //   await loadAudio(genre, soundTypes[2], 0);
+      //   await loadAudio(genre, soundTypes[3], 1);
+      //   await loadAudio(genre, soundTypes[1], 2);
+      //   await loadAudio(genre, soundTypes[0], 3);
+      // }, 15000)
     }, 1000);
   })();
   setTimeout(() => {
@@ -143,6 +146,10 @@ onMounted(() => {
   }, 200)
 });
 
+let loadAudio = async (genre: string, type: string, index: number) => {
+  await audioPlayer.setAudio(genre, type, index);
+  return
+}
 
 </script>
 
@@ -342,10 +349,11 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0px 0px 56px 0px;
 
     .audioPlayer {
-      width: calc(100% - 112px);
-      height: calc(100% - 112px);
+      width: 100%;
+      height: 100%;
       position: relative;
     }
   }

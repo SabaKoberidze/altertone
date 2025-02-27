@@ -75,14 +75,30 @@ const pickDay = (day: number) => {
 
 const dates = ref(getNextDates(14));
 
+const availableDates = computed(() =>
+    dates.value.filter(
+        (date) =>
+            !props.unavailableDays.some(
+                (unavailable) =>
+                    unavailable.day === date.day && unavailable.month === date.monthNum
+            )
+    )
+);
+
+
 const groupedDates = computed(() => {
-    const rows = [];
-    for (let i = 0; i < dates.value.length; i += 7) {
-        rows.push(dates.value.slice(i, i + 7));
+    if (availableDates.value.length === 0) return [];
+    const rows: typeof availableDates.value[] = [];
+    let index = 0;
+    const maxColumns = 7;
+    while (index < availableDates.value.length) {
+        const remaining = availableDates.value.length - index;
+        const rowSize = Math.min(remaining, maxColumns);
+        rows.push(availableDates.value.slice(index, index + rowSize));
+        index += rowSize;
     }
     return rows;
 });
-
 onMounted(() => {
 })
 </script>
