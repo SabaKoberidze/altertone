@@ -37,7 +37,6 @@ import { Application, Graphics } from 'pixi.js';
 import { AudioPlayer } from '../classes/AudioPlayer';
 
 const emit = defineEmits(['onPause']);
-let musicTypes = ['პანკი', 'ჯაზი', 'როკი', 'ბლუზი', 'მტეალი']
 let soundTypes = ['Music', 'Vocal', 'Bass', 'Drums']
 let muted = ref([false, false, false, false])
 const canvasContainer = ref<HTMLDivElement | null>(null);
@@ -46,11 +45,15 @@ let audioPlayer: AudioPlayer
 const onPlayerMounted = ref(false)
 const loaded = ref(false)
 
-const audioGenres = ["rock", "punk", "jazz", "blues", "metal"]
+const audioGenres = ["punk", "jazz", "rock", "blues", "metal"]
 const audioTypes = ['vocal', 'drums', 'music', 'bass']
 
 
 const pickMusic = (index: number) => {
+  setTimeout(async () => {
+    let genre = audioGenres[index]
+    await loadAudio(genre);
+  }, 100);
 }
 defineExpose({
   pickMusic
@@ -125,29 +128,18 @@ onMounted(() => {
         audioPlayer.resize(loaded.value);
       }
     });
-
-    setTimeout(async () => {
-      let genre = audioGenres[0]
-      await loadAudio(genre, soundTypes[0], 0);
-      await loadAudio(genre, soundTypes[1], 1);
-      await loadAudio(genre, soundTypes[2], 2);
-      await loadAudio(genre, soundTypes[3], 3);
-      // setTimeout(async () => {
-      //   console.log('second')
-      //   await loadAudio(genre, soundTypes[2], 0);
-      //   await loadAudio(genre, soundTypes[3], 1);
-      //   await loadAudio(genre, soundTypes[1], 2);
-      //   await loadAudio(genre, soundTypes[0], 3);
-      // }, 15000)
-    }, 1000);
   })();
   setTimeout(() => {
     onPlayerMounted.value = true
   }, 200)
 });
 
-let loadAudio = async (genre: string, type: string, index: number) => {
-  await audioPlayer.setAudio(genre, type, index);
+let loadAudio = async (genre: string) => {
+  for (const [index, type] of soundTypes.entries()) {
+    setTimeout(() => {
+      audioPlayer.setAudio(genre, type, index);
+    }, 100 * index)
+  }
   return
 }
 

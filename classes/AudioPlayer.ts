@@ -45,6 +45,7 @@ export class AudioPlayer {
   private currentTime: Text | null = null
   private activeGenre: string = '';
   private activeTypes: string[] = [];
+  private fetchingGenre: string[] = []
 
 constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void) {
   app.stage.interactive = true;
@@ -102,7 +103,6 @@ public async init(index: number) {
 public async setAudio(genre: string, type: string, index: number) {
   try {
     this.setAudioPlayerState({playing: false, loading: true, paused: false});
-    
     this.activeGenre = genre;
     this.activeTypes[index] = type;
     
@@ -117,7 +117,7 @@ public async setAudio(genre: string, type: string, index: number) {
       this.waveforms[index] = cachedData.waveform;
       
       this.setAudioPlayerState({playing: false, loading: false, paused: true});
-      this.audioLoaded(index, true);
+      this.audioLoaded(index, true, genre);
       
       if (this.loaded.every(elem => elem === true)) {
         this.firstLoad = true;
@@ -128,11 +128,31 @@ public async setAudio(genre: string, type: string, index: number) {
       
       this.audio[index].addEventListener('ended', () => {
         this.setAudioPlayerState({playing: false, loading: false, paused: true});
-      });
-      
+      });   
+      if(index === this.loaded.length - 1){
+        this.loaded = [true, true, true, true];
+        this.firstLoad = true;
+        this.onLoaded(true)
+        this.loaded.forEach((_, index)=>{
+          this.drawWaveform(index) 
+        })    
+      }
       return;
+    }else{
+      if(index === 0 && this.activeGenre === genre){
+        this.loaded = [false, false, false, false];
+        this.firstLoad = false;
+        this.onLoaded(false)
+        this.loaded.forEach((_, index)=>{
+          this.drawMutedWaveform(index)  
+        })    
+      }
     }
-    
+    if(this.fetchingGenre.includes(genre)){
+      return
+    } else if(index === this.loaded.length - 1){
+      this.fetchingGenre.push(genre)
+    }
     const response:any = await $fetch('/api/download', {
       method: 'POST',
       params: {
@@ -194,7 +214,7 @@ public async setAudio(genre: string, type: string, index: number) {
     }
     
     this.setAudioPlayerState({playing: false, loading: false, paused: true});
-    this.audioLoaded(index, true);
+    this.audioLoaded(index, true, genre);
 
     if (this.loaded.every(elem => elem === true)) {
       this.firstLoad = true;
@@ -212,7 +232,7 @@ public async setAudio(genre: string, type: string, index: number) {
   } catch (error) {
     console.error("Audio load error", error);
     this.setAudioPlayerState({playing: false, loading: false, paused: true});
-    this.audioLoaded(index, false);
+    this.audioLoaded(index, false, genre);
   }
   console.log(this.playerData)
 }
@@ -318,7 +338,8 @@ public cleanup() {
 
 }
 
-  private audioLoaded(index:number, isLoaded: boolean){ 
+  private audioLoaded(index:number, isLoaded: boolean, genre: string){ 
+    if(genre !== this.activeGenre) return
     this.loaded[index] = isLoaded
     if(this.loaded.every(elem => elem === true)){
       this.onLoaded(true);
@@ -539,7 +560,7 @@ public cleanup() {
           } else {
             audio.addEventListener("canplay", () => resolve(true), { once: true });
           }
-        }).then(() => this.audioLoaded(index, true))
+        }).then(() => this.audioLoaded(index, true, this.activeGenre))
       )
     );
     if (this.audioPlayerState.playing) {
