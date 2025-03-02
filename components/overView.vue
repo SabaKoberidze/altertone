@@ -64,7 +64,7 @@ const playerOpen = ref(false)
 const pickedMusicIndex = ref(-1)
 const cardHolder = ref([])
 const musicPaused = ref(false)
-let progressIndexes: number[] = [0, 30, 45, 46, 60, 100]
+let progressIndexes: number[] = [0, 25, 45, 46, 60, 90]
 
 const devices = ref([
   {
@@ -109,8 +109,8 @@ const devices = ref([
   },
 ]);
 const examplesHeader = ref({
-  startPosition: { x: 50, y: 110, scale: 1 },
-  currentPosition: { x: 50, y: 110, scale: 1 },
+  startPosition: { x: 50, y: 120, scale: 1 },
+  currentPosition: { x: 50, y: 120, scale: 1 },
   middlePosition: { x: 50, y: 50, scale: 1 },
   endPosition: { x: 50, y: 20, scale: 0.6 },
   opacity: 0
@@ -202,6 +202,7 @@ function scrollAnimation() {
     }
     moveDevices(0, 2)
     moveCardContainer(1, 4)
+    moveText(0, 0, 1)
   }
   else if (scrollProgress.value >= progressIndexes[2] && scrollProgress.value <= progressIndexes[3]) {
     if (mainTitle.value) {
@@ -250,6 +251,20 @@ function scrollAnimation() {
     moveText(4, 5, 2)
     spreadCards(4, 5)
   }
+  else if (scrollProgress.value >= progressIndexes[5] && scrollProgress.value <= 100) {
+    if (mainTitle.value) {
+      mainTitle.value.style.transform = `scale(0)`;
+    }
+    exampleContainer.value.opacity = 1
+    exampleContainer.value.currentPosition.y = exampleContainer.value.endPosition.y
+    devices.value.forEach(device => {
+      device.currentPosition.x = device.endPosition.x
+      device.currentPosition.y = device.endPosition.y
+      device.opacity = 0
+    })
+    moveText(5, 6, 2)
+    spreadCards(4, 5, true)
+  }
 }
 
 function moveDevices(startIndex: number, endIndex: number) {
@@ -283,6 +298,8 @@ function moveText(startIndex: number, endIndex: number, stage: number) {
     (endPositionY - startPositionY) * AnimationProgress(startIndex, endIndex);
   examplesHeader.value.currentPosition.scale = startScale +
     (endScale - startScale) * AnimationProgress(startIndex, endIndex);
+
+  examplesHeader.value.opacity = 1 * AnimationProgress(startIndex, endIndex);
 
   if (scrollProgress.value > progressIndexes[3] + progressIndexes[3] / 32) {
     examplesHeader.value.opacity = 1
@@ -324,12 +341,14 @@ function moveCardContainer(startIndex: number, endIndex: number) {
 
   exampleContainer.value.currentPosition.y = startPositionY +
     (endPositionY - startPositionY) * AnimationProgress(startIndex, endIndex);
-  if (scrollProgress.value > progressIndexes[2] - progressIndexes[2] / 8) {
-    exampleContainer.value.opacity = 1
-  }
-  else {
-    exampleContainer.value.opacity = 0
-  }
+
+  exampleContainer.value.opacity = 1 * AnimationProgress(startIndex, 3);
+  // if (scrollProgress.value > progressIndexes[1]) {
+  //   exampleContainer.value.opacity = 1
+  // }
+  // else {
+  //   exampleContainer.value.opacity = 0
+  // }
 
 }
 function AnimationProgress(startIndex: number, endIndex: number) {
@@ -540,7 +559,7 @@ article {
         }
 
         @include respond-to('desktop') {
-          transform: scale(1.4);
+          transform: scale(1.1);
         }
 
 

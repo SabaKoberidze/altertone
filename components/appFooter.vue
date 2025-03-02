@@ -132,6 +132,8 @@ section {
 
         img {
           background-color: #141414;
+          border: 1px solid rgba(255, 255, 255, 0.04);
+          ;
           border-radius: 16px;
           padding: 22px;
           width: 60px;
