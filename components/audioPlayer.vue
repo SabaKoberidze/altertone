@@ -3,7 +3,7 @@
     <div class="playerControls">
       <div class="mainControls">
         <div class="abousMusic">
-          <p class="title">როკი</p>
+          <p class="title">{{ audioGenres[genreIndex] }}</p>
           <p class="description">მუსიკის სახეწლი ვისია რა არი საიდან არი რამე აღწერა</p>
         </div>
         <div class="controls">
@@ -28,7 +28,6 @@
       <div class="audioPlayer" ref="canvasContainer"></div>
     </div>
   </div>
-
 </template>
 
 <script lang="ts" setup>
@@ -44,6 +43,7 @@ let app: Application
 let audioPlayer: AudioPlayer
 const onPlayerMounted = ref(false)
 const loaded = ref(false)
+const genreIndex = ref(0)
 
 const audioGenres = ["punk", "jazz", "rock", "blues", "metal"]
 const audioTypes = ['vocal', 'drums', 'music', 'bass']
@@ -52,6 +52,7 @@ const audioTypes = ['vocal', 'drums', 'music', 'bass']
 const pickMusic = (index: number) => {
   setTimeout(async () => {
     let genre = audioGenres[index]
+    genreIndex.value = index
     await loadAudio(genre);
   }, 100);
 }

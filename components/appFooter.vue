@@ -4,6 +4,18 @@
       <div class="contactsHeader">
         <h1>დაგვიკავშირდით</h1>
         <p>სამუშაო საათები: 10:00 - 22:00</p>
+      </div>
+      <div class="contactOptions">
+        <div class="contactOption" v-for="option in contactOptions" :key="option.text">
+          <img :src="option.icon" alt="contact icon">
+          <div class="contactOptionText">
+            <div class="contactOptionTextHeader">
+              <p>{{ option.text }}</p>
+              <p>{{ option.subText }}</p>
+            </div>
+            <p>{{ option.link }}</p>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -38,7 +50,26 @@
 </template>
 
 <script lang="ts" setup>
-
+const contactOptions = [
+  {
+    icon: '/images/icons/phone.svg',
+    text: 'მოგვწერეთ',
+    subText: 'Speak to our friendly team',
+    link: 'contact@altertone.ge'
+  },
+  {
+    icon: '/images/icons/phone.svg',
+    text: 'გვესტუმრეთ',
+    subText: '27 მარშალ გელოვანი, თბილისი, საქართველო',
+    link: 'გუგლის რუკაზე ნახვა'
+  },
+  {
+    icon: '/images/icons/phone.svg',
+    text: 'დაგვიკავშირდით',
+    subText: 'Speak to our friendly team',
+    link: '+995 555 22 21 43'
+  }
+]
 </script>
 
 <style lang="scss" scoped>
@@ -56,6 +87,7 @@ section {
     flex-direction: column;
     justify-content: center;
     width: 100%;
+    gap: 40px;
     align-items: center;
 
     .contactsHeader {
@@ -75,6 +107,71 @@ section {
         font-weight: 400;
         color: rgba(255, 255, 255, 0.56);
         text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
+      }
+    }
+
+    .contactOptions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+
+      .contactOption {
+        display: flex;
+        align-items: start;
+        flex-direction: column;
+        justify-content: space-between;
+        justify-content: space-between;
+        padding: 40px;
+        padding-bottom: 60px;
+        height: 328px;
+        background-color: #0A0A0A;
+        border-radius: 16px;
+        width: 416px;
+
+        img {
+          background-color: #141414;
+          border-radius: 16px;
+          padding: 22px;
+          width: 60px;
+          height: 60px;
+        }
+
+        .contactOptionText {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          height: 55%;
+
+          .contactOptionTextHeader {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            p:nth-child(1) {
+              font-feature-settings: 'case';
+              font-size: 20px;
+              font-weight: 700;
+              color: rgba(255, 255, 255, 1);
+            }
+
+            p:nth-child(2) {
+              font-size: 16px;
+              font-weight: 400;
+              color: rgba(255, 255, 255, 0.68);
+            }
+
+          }
+
+          &>p {
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            text-decoration: underline;
+          }
+        }
       }
     }
   }

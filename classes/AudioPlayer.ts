@@ -101,42 +101,54 @@ public async init(index: number) {
 }
 
 public async setAudio(genre: string, type: string, index: number) {
+  if(index === 0 && this.audioPlayerState.playing){
+    this.audio.forEach((audio, index) => {
+      audio.pause()
+      audio.currentTime = 0
+    })
+  }
+  this.setProgressColors(index, 0);
   try {
+    this.audioLoaded(index, false, genre);
     this.setAudioPlayerState({playing: false, loading: true, paused: false});
     this.activeGenre = genre;
     this.activeTypes[index] = type;
-    
     if (this.playerData[genre]?.[type]) {
       const cachedData = this.playerData[genre][type];
-      
+    
       this.audio[index] = cachedData.audio;
       this.audioContext[index] = cachedData.audioContext;
       this.sources[index] = cachedData.source;
       this.audioBuffer[index] = cachedData.audioBuffer;
       this.audioUrls[index] = cachedData.objectUrl;
       this.waveforms[index] = cachedData.waveform;
-      
-      this.setAudioPlayerState({playing: false, loading: false, paused: true});
+    
+      this.setAudioPlayerState({ playing: false, loading: false, paused: true });
       this.audioLoaded(index, true, genre);
-      
-      if (this.loaded.every(elem => elem === true)) {
+    
+      // Mark this index as loaded
+      this.loaded[index] = true;
+    
+      // Only after all are loaded, proceed with drawing and visualizations
+      if (this.loaded.every(Boolean)) {
         this.firstLoad = true;
-        this.drawTimeIndicators();
-        this.updateProgressLine();
-        this.visualizeWaveform(this.audioBuffer[index], index);
+        this.onLoaded(true);
+        this.audio[index].currentTime = 0
+        this.drawTimeIndicators();   
+        this.updateProgressLine()
+        this.setProgressColors(index, 0);
+    
+        this.loaded.forEach((_, i) => {
+          this.visualizeWaveform(this.audioBuffer[i], i);
+          this.drawWaveform(i);
+        });
       }
-      
-      this.audio[index].addEventListener('ended', () => {
-        this.setAudioPlayerState({playing: false, loading: false, paused: true});
-      });   
-      if(index === this.loaded.length - 1){
-        this.loaded = [true, true, true, true];
-        this.firstLoad = true;
-        this.onLoaded(true)
-        this.loaded.forEach((_, index)=>{
-          this.drawWaveform(index) 
-        })    
-      }
+    
+      // Handle audio end event
+      this.audio[index].addEventListener("ended", () => {
+        this.setAudioPlayerState({ playing: false, loading: false, paused: true });
+      });
+      console.log(this.playerData)
       return;
     }else{
       if(index === 0 && this.activeGenre === genre){
@@ -148,6 +160,8 @@ public async setAudio(genre: string, type: string, index: number) {
         })    
       }
     }
+    //this is for blocking multiple requests on same audio fetching
+    this.audioLoaded(index, false, genre);
     if(this.fetchingGenre.includes(genre)){
       return
     } else if(index === this.loaded.length - 1){
@@ -166,21 +180,17 @@ public async setAudio(genre: string, type: string, index: number) {
     });
 
     const objectUrl = URL.createObjectURL(response);
-    
-    this.audioUrls[index] = objectUrl;
-    this.audio[index] = new Audio(objectUrl);
-    this.audio[index].preload = 'auto';
-    this.audio[index].crossOrigin = "anonymous";
-    
-    this.audioContext[index] = new AudioContext();
-    this.sources[index] = this.audioContext[index].createMediaElementSource(this.audio[index]);
-    this.sources[index].connect(this.audioContext[index].destination);
-    
+    //this is for creating object url for the audio
+
+    let audio = new Audio(objectUrl);
+    let audioContext = new AudioContext();
+    let source = audioContext.createMediaElementSource(audio);
+    source.connect(audioContext.destination);
+
     let decodedBuffer: AudioBuffer | null = null;
     try {
       const arrayBuffer = await response.arrayBuffer();
-      decodedBuffer = await this.audioContext[index].decodeAudioData(arrayBuffer);
-      this.audioBuffer[index] = decodedBuffer;
+      decodedBuffer = await audioContext.decodeAudioData(arrayBuffer);
     } catch (error) {
       console.error("Audio visualization error", error);
     }
@@ -204,37 +214,25 @@ public async setAudio(genre: string, type: string, index: number) {
       this.waveforms[index] = waveformData;
       
       this.playerData[genre][type] = {
-        audio: this.audio[index],
+        audio: audio,
         audioBuffer: decodedBuffer,
-        audioContext: this.audioContext[index],
-        source: this.sources[index],
+        audioContext: audioContext,
+        source: source,
         objectUrl: objectUrl,
         waveform: waveformData
       };
     }
-    
-    this.setAudioPlayerState({playing: false, loading: false, paused: true});
-    this.audioLoaded(index, true, genre);
-
-    if (this.loaded.every(elem => elem === true)) {
-      this.firstLoad = true;
-      this.drawTimeIndicators();
-      this.updateProgressLine();
-      this.audioBuffer.forEach((audioBuffer, index)=>{
-        this.visualizeWaveform(audioBuffer, index);
-      });
+    if(genre !== this.activeGenre){
+      return
+    }else{
+      this.setAudio(genre, type, index)
     }
-
-    this.audio[index].addEventListener('ended', () => {
-      this.setAudioPlayerState({playing: false, loading: false, paused: true});
-    });
-    
   } catch (error) {
     console.error("Audio load error", error);
     this.setAudioPlayerState({playing: false, loading: false, paused: true});
     this.audioLoaded(index, false, genre);
   }
-  console.log(this.playerData)
+ 
 }
 
 public cleanup() {
@@ -246,6 +244,10 @@ public cleanup() {
 }
 
   private drawTimeIndicators() {
+    if(this.timeContainer.children.length > 0){
+      this.updateTimeIndicators();
+      return
+    }
     this.timeContainer.removeChildren();
     this.timeContainer.height = this.offsetY;
     
@@ -283,7 +285,7 @@ public cleanup() {
         const secs = Math.floor(seconds % 60);
         return `${minutes}:${secs < 10 ? '0' + secs : secs}`;
     };
-
+      
     if (!this.startTime) {
         this.startTime = new Text({
             text: '0:00',
@@ -338,6 +340,15 @@ public cleanup() {
 
 }
 
+private updateTimeIndicators(){
+  const endTime = this.audio[0].duration;
+    const minutes = Math.floor(endTime / 60); 
+    const seconds = Math.floor(endTime % 60); 
+    if (this.currentTime && this.endTime) {
+      this.endTime.text = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    }
+}
+
   private audioLoaded(index:number, isLoaded: boolean, genre: string){ 
     if(genre !== this.activeGenre) return
     this.loaded[index] = isLoaded
@@ -363,9 +374,10 @@ public cleanup() {
   }
 
   public async playAudio() {
-    await this.unlockAudioContext(); 
+    await this.unlockAudioContext();   
     this.audio.forEach((audio, i) => {
       audio.play().catch((er)=>{
+        console.log(er)
       });
     });
     this.startTicker();
@@ -504,7 +516,6 @@ public cleanup() {
   }
 
   private updateProgressLine() {
-    if(!this.firstLoad) return
     const progress = this.audio[0].currentTime / this.audio[0].duration;
     this.progressLine.clear();
     const availableWidth = this.app.screen.width - (this.padding * 2);
@@ -535,6 +546,7 @@ public cleanup() {
 }
 
   private setProgressColors(index: number, progress: number) {
+      console.log(progress)
       this.progressColors[index].clear();
       this.progressColors[index].rect(0, 0, progress * (this.app.screen.width - this.padding* 2), (this.app.screen.height - this.offsetY));
       this.progressColors[index].fill({ color: 'white' });
