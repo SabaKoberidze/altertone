@@ -20,6 +20,8 @@ const props = defineProps<{
     unavailableDays: { day: number, month: number }[];
 }>();
 const emit = defineEmits(['dayPicked'])
+const reserveStore = ReserveStore()
+
 const pickedDay = ref<number>(-1)
 const monthNames: { [key: string]: string } = {
     "January": "იანვარი",
@@ -69,6 +71,7 @@ const getNextDates = (count: number) => {
 };
 
 const pickDay = (day: number) => {
+    reserveStore.selectedData.date = day.toString()
     pickedDay.value = day
     emit('dayPicked', day)
 }
@@ -100,6 +103,7 @@ const groupedDates = computed(() => {
     return rows;
 });
 onMounted(() => {
+    pickedDay.value = parseInt(reserveStore.selectedData.date)
 })
 </script>
 

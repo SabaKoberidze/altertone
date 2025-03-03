@@ -1,5 +1,5 @@
 <template>
-    <div class="rowContainer" :class="{ extraFeatureAdded: extraFeatureAdded }">
+    <div class="rowContainer" :class="{ extraFeatureAdded: reserveStore.selectedData.feature }">
         <div class="basicFeatures">
             <div class="row">
                 <img src="/images/icons/Calendar.svg" />
@@ -18,21 +18,25 @@
                 <img src="/images/icons/Edit.svg" />
             </div>
         </div>
-        <div class="extraFeature" @click="extraFeatureAdded = !extraFeatureAdded">
+        <div class="extraFeature" @click="toggleExtraFeature()">
             <div class="row">
                 <img src="/images/icons/Desktop.svg" />
                 <div>
                     <p class="mainText">IEM მონიტორები</p>
                     <p class="subText">4 საათ - 40 GEL</p>
                 </div>
-                <img class="featureToggle" :src="`/images/icons/${extraFeatureAdded ? 'Delete.svg' : 'Add.svg'}`" />
+                <img class="featureToggle"
+                    :src="`/images/icons/${reserveStore.selectedData.feature ? 'Delete.svg' : 'Add.svg'}`" />
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-const extraFeatureAdded = ref(false)
+const reserveStore = ReserveStore()
+const toggleExtraFeature = () => {
+    reserveStore.selectedData.feature = !reserveStore.selectedData.feature
+}
 </script>
 
 <style lang="scss" scoped>

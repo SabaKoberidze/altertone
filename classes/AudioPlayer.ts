@@ -546,7 +546,6 @@ private updateTimeIndicators(){
 }
 
   private setProgressColors(index: number, progress: number) {
-      console.log(progress)
       this.progressColors[index].clear();
       this.progressColors[index].rect(0, 0, progress * (this.app.screen.width - this.padding* 2), (this.app.screen.height - this.offsetY));
       this.progressColors[index].fill({ color: 'white' });

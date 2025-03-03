@@ -662,7 +662,7 @@ article {
         }
 
         @include respond-to('desktop') {
-          top: 130%;
+          top: 120%;
           font-size: 16px;
         }
       }

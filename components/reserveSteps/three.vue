@@ -4,20 +4,21 @@
             <p>სახელი</p>
             <div>
                 <img src="/images/icons/Person.svg" />
-                <input placeholder="შეიყვანეთ სახელი" />
+                <input v-model="reserveStore.selectedData.name" placeholder="შეიყვანეთ სახელი" />
             </div>
         </div>
         <div class="email inputField">
             <p>ელ-ფოსტა</p>
             <div>
                 <img src="/images/icons/Mail.svg" />
-                <input placeholder="შეიყვანეთ ელ-ფოსტა" />
+                <input v-model="reserveStore.selectedData.email" placeholder="შეიყვანეთ ელ-ფოსტა" />
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+const reserveStore = ReserveStore()
 </script>
 
 <style lang="scss" scoped>

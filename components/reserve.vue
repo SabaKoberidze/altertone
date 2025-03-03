@@ -42,9 +42,13 @@
                     </svg>
                     უკან
                 </button>
-                <button class="nextStep" v-on:click="nextStep()">
-                    გაგრძელება
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <button class="nextStep" v-on:click="currentStep === 3 ? reserve() : nextStep()"
+                    :class="{ disabled: isNextDisabled }">
+                    <p v-if="currentStep === 3">გადახდა - {{ reserveStore.getPrice }} ლარი</p>
+                    <p v-else>გაგრძელება</p>
+
+                    <svg v-if="currentStep !== 3" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none">
                         <path
                             d="M8.6095 4.80061C8.1542 5.22339 8.12783 5.93521 8.55061 6.39051L13.8398 12L8.55061 17.6095C8.12783 18.0648 8.1542 18.7766 8.6095 19.1994C9.0648 19.6222 9.77662 19.5958 10.1994 19.1405L16.1994 12.7655C16.6002 12.3339 16.6002 11.6661 16.1994 11.2345L10.1994 4.8595C9.77662 4.4042 9.0648 4.37783 8.6095 4.80061Z"
                             fill="#0D0E0F" />
@@ -80,6 +84,16 @@ watch(currentStep, (newVal, oldVal) => {
     }
 }, { immediate: true });
 
+const isNextDisabled = computed(() => {
+    return (
+        (currentStep.value === 0 && reserveStore.selectedData.date === '') ||
+        (currentStep.value === 1 && reserveStore.selectedData.time.length === 0) ||
+        (currentStep.value === 2 && (
+            reserveStore.selectedData.name === '' ||
+            !(/\S+@\S+\.\S+/.test(reserveStore.selectedData.email || ''))
+        ))
+    );
+});
 const getMonth = (date: string) => {
     return Number(date.split('-')[1])
 }
@@ -134,6 +148,10 @@ onMounted(async () => {
     }
     dataLoaded.value = true
 });
+
+const reserve = () => {
+    console.log('reserved')
+}
 
 interface StepInfoItem {
     title: string;
@@ -341,6 +359,11 @@ function previousStep() {
             gap: 43px;
             transition: 200ms;
 
+            &>div {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
 
             .contentHeader {
                 display: flex;
@@ -386,13 +409,22 @@ function previousStep() {
                 border-radius: 12px;
                 border: 0;
                 cursor: pointer;
+                transition: 200ms;
             }
 
 
             .nextStep {
                 width: 240px;
                 background-color: white;
-                color: black;
+
+                p {
+                    color: black;
+                }
+
+                &.disabled {
+                    background-color: rgba(255, 255, 255, 0.56);
+                    pointer-events: none;
+                }
             }
 
             .previousStep {

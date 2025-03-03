@@ -8,24 +8,23 @@
 </template>
 
 <script lang="ts" setup>
-const pickedTimes = ref<TimeInterval[]>([]);
-
+const reserveStore = ReserveStore()
 interface TimeInterval {
     start: string;
     end: string;
 }
 
 const pickItem = (interval: TimeInterval) => {
-    const index = pickedTimes.value.findIndex(item => item.start === interval.start && item.end === interval.end);
+    const index = reserveStore.selectedData.time.findIndex(item => item.start === interval.start && item.end === interval.end);
     if (index === -1) {
-        pickedTimes.value.push(interval);
+        reserveStore.selectedData.time.push({ start: interval.start, end: interval.end })
     } else {
-        pickedTimes.value.splice(index, 1);
+        reserveStore.selectedData.time.splice(index, 1);
     }
 };
 
 const isPicked = (interval: TimeInterval) => {
-    return pickedTimes.value.some(item => item.start === interval.start && item.end === interval.end);
+    return reserveStore.selectedData.time.some(item => item.start === interval.start && item.end === interval.end);
 }
 
 const props = defineProps<{
