@@ -19,7 +19,6 @@ const scrollToServices = () => {
   }
 }
 const overView = ref<HTMLElement | null>(null)
-console.log(window)
 </script>
 
 <style lang="scss" scoped></style>

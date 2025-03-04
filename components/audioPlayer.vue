@@ -9,7 +9,7 @@
         <div class="controls">
           <div class="trackControls">
             <button :class="{ loaded: loaded }" v-on:click="playAudio()" class="playSong"><img
-                src="/images/icons/audioControls/playSong.svg" /></button>
+                :src="audioIcon" /></button>
             <div class="line"></div>
             <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
             <button v-on:click="changeTrack(false)"><img src="/images/icons/audioControls/previousSong.svg" /></button>
@@ -44,6 +44,7 @@ let audioPlayer: AudioPlayer
 const onPlayerMounted = ref(false)
 const loaded = ref(false)
 const genreIndex = ref(0)
+const audioIcon = ref('')
 
 const audioGenres = ["punk", "jazz", "rock", "blues", "metal"]
 const audioTypes = ['vocal', 'drums', 'music', 'bass']
@@ -60,6 +61,20 @@ defineExpose({
   pickMusic
 })
 
+const setAudioIcon = () => {
+  if (!audioPlayer) return '/images/icons/audioControls/Loading.svg'
+  let icon = '/images/icons/audioControls/'
+  if (audioPlayer.audioPlayerState.loading) {
+    icon += 'Loading.svg'
+  } else if (audioPlayer.audioPlayerState.playing) {
+    icon += 'Pause.svg'
+  } else {
+    icon += 'Play.svg'
+  }
+  audioIcon.value = icon
+}
+setAudioIcon()
+
 function playAudio() {
   if (!loaded.value) {
     return
@@ -70,7 +85,6 @@ function playAudio() {
   } else {
     audioPlayer.pauseAudio();
     emit('onPause', true)
-
   }
 }
 function changeTrack(next: boolean) {
@@ -114,7 +128,13 @@ onMounted(() => {
 
 
     audioPlayer = new AudioPlayer(app, (isLoaded: boolean) => {
-      loaded.value = isLoaded
+    }, (audioState: { playing: boolean, paused: boolean, loading: boolean }) => {
+      if (!audioState.loading) {
+        loaded.value = true
+      } else {
+        loaded.value = false
+      }
+      setAudioIcon()
     })
 
     audioTypes.forEach((url, index) => {
@@ -147,6 +167,16 @@ let loadAudio = async (genre: string) => {
 </script>
 
 <style lang="scss" scoped>
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .audioPlayerContainer {
   display: flex;
   width: 100vw;
@@ -244,13 +274,16 @@ let loadAudio = async (genre: string) => {
             height: 56px;
             max-width: 56px;
 
+            // img {
+            //   display: none;
+            // }
             img {
-              display: none;
+              animation: rotate 1s linear infinite;
             }
 
             &.loaded {
               img {
-                display: unset;
+                animation: none;
               }
             }
           }

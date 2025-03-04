@@ -43,7 +43,7 @@
       </div>
       <div class="additionalInfo">
         <p>© Copyright 2023 Happy Bat LLC.</p>
-        <p>Developed By <strong>Terratech</strong></p>
+        <p>Developed By <span><img src="/images/terratech.svg" /><strong>Terra Tech</strong></span></p>
       </div>
     </footer>
   </section>
@@ -179,7 +179,7 @@ section {
   }
 
   footer {
-    height: 160px;
+    height: 166px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -196,7 +196,7 @@ section {
     .graphics {
       gap: 10px;
       position: absolute;
-      top: -1px;
+      top: -8px;
 
       .line {
         height: 1px;
@@ -207,7 +207,7 @@ section {
 
     .mainContent {
       display: flex;
-      height: 100px;
+      height: 87px;
 
       .logoContainer {
         display: flex;
@@ -261,15 +261,31 @@ section {
     }
 
     .additionalInfo {
-      height: 60px;
+      height: 80px;
 
       p {
-        font-size: 13px;
+        font-size: 12px;
         color: rgba(255, 255, 255, 0.59);
-        font-weight: 500;
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+        gap: 10px;
 
-        strong {
-          color: unset;
+        span {
+          padding: 9px 14px;
+          border: 1px solid rgba(255, 255, 255, 0.10);
+          background-color: rgba(255, 255, 255, 0.04);
+          border-radius: 50px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 14px;
+          font-weight: 700;
+
+          strong {
+            font-family: 'Rubik';
+            color: unset;
+          }
         }
       }
 

@@ -1,4 +1,4 @@
-import { Application, Graphics, Container, Ticker, triangulateWithHoles, TextStyle, Text, Sprite, Texture, Assets } from 'pixi.js';
+import { Application, Graphics, Container, Ticker, triangulateWithHoles, TextStyle, Text, Sprite, Texture, Assets, fastCopy } from 'pixi.js';
 import gsap from 'gsap';
 interface PlayerData {
   [genre: string]: {
@@ -46,8 +46,9 @@ export class AudioPlayer {
   private activeGenre: string = '';
   private activeTypes: string[] = [];
   private fetchingGenre: string[] = []
+  private onAudioState: (audioState: {playing: boolean, paused: boolean, loading: boolean})=> void
 
-constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void) {
+constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void, onAudioState: (audioState: {playing: boolean, paused: boolean, loading: boolean})=> void) {
   app.stage.interactive = true;
   this.audio = [];
   this.audioContext = [];
@@ -69,6 +70,7 @@ constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void) {
   this.audioPlayerState = {playing: false, paused: false, loading: true}
   this.firstLoad = false
   this.setupDragEvents()
+  this.onAudioState = onAudioState
   this.offsetY = 56
   this.padding = 56
   this.timeContainer = new Container()
@@ -123,7 +125,7 @@ public async setAudio(genre: string, type: string, index: number) {
       this.audioUrls[index] = cachedData.objectUrl;
       this.waveforms[index] = cachedData.waveform;
     
-      this.setAudioPlayerState({ playing: false, loading: false, paused: true });
+    
       this.audioLoaded(index, true, genre);
     
       // Mark this index as loaded
@@ -142,6 +144,7 @@ public async setAudio(genre: string, type: string, index: number) {
           this.visualizeWaveform(this.audioBuffer[i], i);
           this.drawWaveform(i);
         });
+        this.setAudioPlayerState({ playing: false, loading: false, paused: true });
       }
     
       // Handle audio end event
@@ -256,27 +259,13 @@ public cleanup() {
         fontSize: 16,
         fill: 0x666666,
         align: 'center',
-        dropShadow: {
-            alpha: 0.5,
-            angle: Math.PI / 6,
-            blur: 2,
-            color: 'black',
-            distance: 2
-        }
     });
 
     const currentStyle = new TextStyle({
       fontFamily: 'SF Georgian',
       fontSize: 16,
       fill: 0xffffff,
-      align: 'center',
-      dropShadow: {
-          alpha: 0.5,
-          angle: Math.PI / 6,
-          blur: 2,
-          color: 'black',
-          distance: 2
-      }
+      align: 'center',     
   });
 
     const duration = this.audio[0]?.duration || 0;
@@ -296,8 +285,17 @@ public cleanup() {
     if (!this.currentTime) {
         this.currentTime = new Text({
             text: '0:00',
-            style: currentStyle
+            style: new TextStyle({
+                ...currentStyle,
+                dropShadow: {
+                    alpha: 0.8,
+                    color: 'black',
+                    blur: 2,
+                    distance: 2
+                }
+            })
         });
+        this.currentTime.zIndex = 10;
     }
     
     if (!this.endTime) {
@@ -361,6 +359,7 @@ private updateTimeIndicators(){
 
   public setAudioPlayerState(newState: {playing: boolean, loading: boolean, paused: boolean}){
     this.audioPlayerState = newState
+    this.onAudioState(newState)
   }
 
   private async unlockAudioContext() {
@@ -387,9 +386,13 @@ private updateTimeIndicators(){
   public pauseAudio(isLoading?: boolean){
     if(!isLoading){
       this.setAudioPlayerState({playing: false, loading: false, paused: true})
+    }else{
+      this.setAudioPlayerState({playing: this.audioPlayerState.playing, loading: true, paused: this.audioPlayerState.paused})
     }
     this.audio.forEach((audio : HTMLAudioElement, index: number) => {
-      audio.pause();
+      if(!audio.paused){
+        audio.pause();
+      }
     });
     this.stopTicker()
   }
@@ -556,8 +559,7 @@ private updateTimeIndicators(){
 
   private async seekToTime(seekRatio: number) {
     this.onLoaded(false)
-    this.pauseAudio(true);
-    this.setAudioPlayerState({playing: this.audioPlayerState.playing, loading: true, paused: false})
+    this.pauseAudio(true);   
     const targetTime = seekRatio * this.audio[0].duration; 
     this.audio.forEach((audio) => {
       audio.currentTime = targetTime;
@@ -569,15 +571,19 @@ private updateTimeIndicators(){
           if (audio.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
             resolve(true); 
           } else {
-            audio.addEventListener("canplay", () => resolve(true), { once: true });
+            audio.addEventListener("canplaythrough", () => resolve(true), { once: true });
           }
-        }).then(() => this.audioLoaded(index, true, this.activeGenre))
+        }).then(() => {
+          this.audioLoaded(index, true, this.activeGenre)
+        }
+          
+      )
       )
     );
     if (this.audioPlayerState.playing) {
       await this.playAudio();
-      this.setAudioPlayerState({playing: this.audioPlayerState.playing, loading: true, paused: false})
-    } 
+    }
+    this.setAudioPlayerState({playing: this.audioPlayerState.playing, loading: false, paused: this.audioPlayerState.paused})
   }
 
   private setupDragEvents() {
@@ -631,13 +637,17 @@ private updateTimeIndicators(){
     }
   }
   public toggleSound(index: number) {
-    if(!this.audio[index].muted){
-      this.audio[index].muted = true
-      this.muteWaveform(index)
-    }
-    else{
-      this.audio[index].muted = false
-      this.drawWaveform(index)
+    if (!this.audio[index]) return; 
+  
+    const referenceTime = this.getReferenceTime();
+  
+    if (!this.audio[index].muted) {
+      this.audio[index].muted = true;
+      this.muteWaveform(index);
+    } else {
+      this.audio[index].muted = false;
+      this.audio[index].currentTime = referenceTime;
+      this.drawWaveform(index);
     }
   }
 
@@ -650,6 +660,14 @@ private updateTimeIndicators(){
         audio.volume = 1
       }
     })
+  }
+
+  private getReferenceTime(): number {
+    const referenceAudio = this.audio.find(audio => !audio.muted);
+    if (referenceAudio) {
+      return referenceAudio.currentTime;
+    }
+    return this.audio[0]?.currentTime || 0;
   }
 
   public resize(isLoaded: boolean) {

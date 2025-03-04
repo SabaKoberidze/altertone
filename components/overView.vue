@@ -17,7 +17,7 @@
           opacity: playerOpen ? 0 : examplesHeader.opacity,
           transform: ` translate(-50%, -50%) scale(${examplesHeader.currentPosition.scale}) `,
         }">ჩვენი ჩაწერილი მუსიკა</h1>
-        <div :class="{ enableInteraction: (scrollProgress >= 90), playerOpen: playerOpen }" class="cardContainer"
+        <div :class="{ enableInteraction: (scrollProgress >= 80), playerOpen: playerOpen }" class="cardContainer"
           :style="{
             left: `${exampleContainer.currentPosition.x}%`,
             top: `${playerOpen ? 25 : exampleContainer.currentPosition.y}%`,
@@ -349,7 +349,6 @@ function moveCardContainer(startIndex: number, endIndex: number) {
   // else {
   //   exampleContainer.value.opacity = 0
   // }
-
 }
 function AnimationProgress(startIndex: number, endIndex: number) {
   return ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]))
