@@ -43,7 +43,7 @@
       </div>
       <div class="additionalInfo">
         <p>© Copyright 2023 Happy Bat LLC.</p>
-        <p>Developed By <span><img src="/images/terratech.svg" /><strong>Terra Tech</strong></span></p>
+        <p>Developed By <span><img src="/images/terraTech.svg" /><strong>Terra Tech</strong></span></p>
       </div>
     </footer>
   </section>

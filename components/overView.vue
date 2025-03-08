@@ -1,5 +1,5 @@
 <template>
-  <article ref="scrollContainer" :class="{ playerOpen: playerOpen }">
+  <article ref="scrollContainer" :class="{ playerOpen: reserveStore.AudioPlayerOpen }">
     <div class="mainOverViewContainer">
       <div class="overViewContainer">
         <div class="bgImage"></div>
@@ -13,14 +13,14 @@
         </div>
         <h1 class="examplesHeader" :style="{
           left: `${examplesHeader.currentPosition.x}%`,
-          top: `${playerOpen ? 10 : examplesHeader.currentPosition.y}%`,
-          opacity: playerOpen ? 0 : examplesHeader.opacity,
+          top: `${reserveStore.AudioPlayerOpen ? 10 : examplesHeader.currentPosition.y}%`,
+          opacity: reserveStore.AudioPlayerOpen ? 0 : examplesHeader.opacity,
           transform: ` translate(-50%, -50%) scale(${examplesHeader.currentPosition.scale}) `,
         }">ჩვენი ჩაწერილი მუსიკა</h1>
-        <div :class="{ enableInteraction: (scrollProgress >= 80), playerOpen: playerOpen }" class="cardContainer"
-          :style="{
+        <div :class="{ enableInteraction: (scrollProgress >= 80), playerOpen: reserveStore.AudioPlayerOpen }"
+          class="cardContainer" :style="{
             left: `${exampleContainer.currentPosition.x}%`,
-            top: `${playerOpen ? 25 : exampleContainer.currentPosition.y}%`,
+            top: `${reserveStore.AudioPlayerOpen ? 25 : exampleContainer.currentPosition.y}%`,
             opacity: exampleContainer.opacity
           }">
           <div class="card" v-for="(example, index) in examples" :style="{
@@ -43,7 +43,7 @@
           </div>
         </div>
         <Transition name="slide-up">
-          <AudioPlayer v-if="playerOpen" ref="audioPlayerComponent"
+          <AudioPlayer v-if="reserveStore.AudioPlayerOpen" ref="audioPlayerComponent"
             @onPause="(paused: boolean) => { musicPaused = paused }" />
         </Transition>
       </div>
@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
 import { useElementVisibility } from '@vueuse/core';
+import { toRef } from 'vue'
 const scrollContainer = ref<HTMLElement | null>(null);
 let scrollTop = 0;
 let maxScroll = 0;
@@ -60,7 +61,7 @@ const scrollProgress = ref(0)
 const lastProgress = ref(0)
 const mainTitle = ref<HTMLElement | null>(null);
 const audioPlayerComponent = ref()
-const playerOpen = ref(false)
+const reserveStore = ReserveStore()
 const pickedMusicIndex = ref(-1)
 const cardHolder = ref([])
 const musicPaused = ref(false)
@@ -354,15 +355,16 @@ function AnimationProgress(startIndex: number, endIndex: number) {
   return ((scrollProgress.value - progressIndexes[startIndex]) / (progressIndexes[endIndex] - progressIndexes[startIndex]))
 }
 
+
 function openMusic(index: number) {
-  playerOpen.value = true
-  document.body.style.overflow = 'hidden';
+  reserveStore.AudioPlayerOpen = true
   spreadCards(4, 5, true)
   nextTick(() => {
     pickedMusicIndex.value = index
     audioPlayerComponent.value.pickMusic(index)
   })
 }
+
 
 onMounted(() => {
   const isVisible = useElementVisibility(scrollContainer, { rootMargin: `0px 0px 0px 0px` });
@@ -378,14 +380,18 @@ onMounted(() => {
 
   handleScroll()
   scrollAnimation()
-});
-
-onUnmounted(() => {
-
+  watch(() => reserveStore.AudioPlayerOpen, (isOpen) => {
+    if (!isOpen) {
+      pickedMusicIndex.value = -1
+      reserveStore.blockScrolling(false)
+    } else {
+      reserveStore.blockScrolling(true)
+    }
+  })
 });
 
 function handleResize() {
-  if (!playerOpen.value) {
+  if (!reserveStore.AudioPlayerOpen) {
     handleScroll()
   }
 }

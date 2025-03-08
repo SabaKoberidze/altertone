@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import AudioPlayer from '~/components/audioPlayer.vue';
 
 interface ReservedData {
     success: boolean;
@@ -22,6 +23,7 @@ export const ReserveStore = defineStore('ReserveStore', {
               weekday: '',
             },
             isModalOpen: false,   
+            AudioPlayerOpen: false,
             price: 0,  
             singleHourPrice: 30,    
             singleHourFeaturePrice: 20,    
@@ -45,6 +47,13 @@ export const ReserveStore = defineStore('ReserveStore', {
         }
       },  
       actions: {
+        blockScrolling(block: boolean) {
+          if(block){
+            document.body.style.overflowY = 'hidden';
+          }else{
+            document.body.style.overflowY = 'auto';
+          }
+        },
         toggleModal() {
             this.isModalOpen = !this.isModalOpen
         },       

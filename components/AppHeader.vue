@@ -1,27 +1,42 @@
 <template>
     <header :class="{ scroll: isScrolled }">
         <div id="headerLogo">
-            <img alt='logo' src="/images/Logo.svg" />
+            <img alt="logo" src="/images/Logo.svg" />
             <p>Altertone</p>
         </div>
-        <div id="headerButtons">
-            <button type="button">კონტაქტი</button>
-            <button type="button" @click="openReservation()">დაჯავშნე</button>
-        </div>
+        <transition name="audioPlayer" mode="out-in">
+            <div key="headerButtons" id="headerButtons">
+                <button v-if="!reserveStore.AudioPlayerOpen" type="button">კონტაქტი</button>
+                <button v-if="!reserveStore.AudioPlayerOpen" type="button" @click="openReservation()">დაჯავშნე</button>
+                <div @click="closeAudioPlayer()" v-if="reserveStore.AudioPlayerOpen" key="closeAudioPlayer"
+                    id="closeAudioPlayer">
+                    <img src="/images/icons/modalClose.svg" alt="close" />
+                </div>
+            </div>
+        </transition>
+
     </header>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-const reserveStore = ReserveStore()
+const reserveStore = ReserveStore();
+
 const isScrolled = ref(false);
 
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 0;
 };
+
 const openReservation = async () => {
-    reserveStore.toggleModal()
+    reserveStore.toggleModal();
+};
+
+const closeAudioPlayer = () => {
+    reserveStore.AudioPlayerOpen = false
+    reserveStore.blockScrolling(false)
 }
+
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
 });
@@ -32,6 +47,16 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.audioPlayer-enter-active,
+.audioPlayer-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.audioPlayer-enter-from,
+.audioPlayer-leave-to {
+    opacity: 0;
+}
+
 header {
     display: flex;
     justify-content: space-between;
@@ -61,7 +86,6 @@ header {
         &::before {
             top: 0%;
         }
-
     }
 
     @include respond-to('tablet') {
@@ -78,8 +102,7 @@ header {
             cursor: pointer;
             width: 44px;
             height: 44px;
-            transition: 5000ms;
-            transition-timing-function: ease-in-out;
+            transition: 5000ms ease-in-out;
 
             &:hover {
                 transform: rotate(1980deg);
@@ -90,14 +113,14 @@ header {
             color: #FFF;
             font-family: Orbitron;
             font-size: 18.526px;
-            font-style: normal;
             font-weight: 800;
             line-height: normal;
             letter-spacing: 0.371px;
         }
     }
 
-    #headerButtons {
+    #headerButtons,
+    #closeAudioPlayer {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -111,16 +134,12 @@ header {
 
         button {
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             background-color: transparent;
             border: 0;
             border-radius: 12px;
             width: 111px;
             height: 44px;
             font-size: 14.224px;
-            font-style: normal;
             font-weight: 700;
             line-height: 100%;
             letter-spacing: 0.142px;

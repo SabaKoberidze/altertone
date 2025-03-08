@@ -397,6 +397,23 @@ private updateTimeIndicators(){
     this.stopTicker()
   }
 
+  private animateBar(bar: Graphics, baseY: number) {
+    const waveIntensity = Math.random() * 10 + 3;
+    const newY = baseY - waveIntensity / 2;
+  
+    gsap.to(bar, {
+      height: waveIntensity,
+      y: newY,
+      duration: 0.5,
+      yoyo: true,
+      repeat: 1, 
+      ease: "power2.inOut",
+      onComplete: () => {
+        this.animateBar(bar, baseY);
+      }
+    });
+  }
+  
   private drawMutedWaveform(index: number, firstDraw?: boolean) {
     const waveGraphic = this.waveGraphics[index];
     const barWidth = (this.app.screen.width - this.padding * 2) / this.samples ;
@@ -428,29 +445,13 @@ private updateTimeIndicators(){
         }
 
         const bar = this.barObjects[index][i];
-        const waveIntensity = Math.random() * 5 + 5;
-        const newY = y - waveIntensity / 2;
 
         if(firstDraw) {
-            gsap.to(bar, {
-                height: waveIntensity,
-                y: newY,
-                duration: 0.5,
-                ease: "power2.inOut",
-                repeat: -1,
-                yoyo: true,
-            });
+           this.animateBar(bar, y);
         }else if (!this.firstLoad) {
           gsap.killTweensOf(bar)
           bar.height = 1
-          gsap.to(bar, {
-              height: waveIntensity,
-              y: newY,
-              duration: 0.5,
-              ease: "power2.inOut",
-              repeat: -1,
-              yoyo: true,
-          });
+          this.animateBar(bar, y);
         } 
     }
   }

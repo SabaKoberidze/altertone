@@ -35,6 +35,7 @@ import { onMounted, ref } from 'vue';
 import { Application, Graphics } from 'pixi.js';
 import { AudioPlayer } from '../classes/AudioPlayer';
 
+const reserveStore = ReserveStore()
 const emit = defineEmits(['onPause']);
 let soundTypes = ['Music', 'Vocal', 'Bass', 'Drums']
 let muted = ref([false, false, false, false])
@@ -103,7 +104,7 @@ onMounted(() => {
     console.error('Canvas container not found!');
     return;
   }
-
+  reserveStore.AudioPlayerOpen = true
   app = new Application();
 
   (async () => {
