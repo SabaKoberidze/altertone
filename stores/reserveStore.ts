@@ -18,17 +18,23 @@ export const ReserveStore = defineStore('ReserveStore', {
               name: '',             
               email: '',
               feature: false,
+              month: '',
+              weekday: '',
             },
-            isModalOpen: false,             
+            isModalOpen: false,   
+            price: 0,  
+            singleHourPrice: 30,    
+            singleHourFeaturePrice: 20,    
+            duration: 0,  
         }
       },
       getters: {
         getPrice(): number {
-          let featurePrice = 0
           if(this.selectedData.feature){
-              featurePrice = this.selectedData.time.length * 20
+            return this.price + this.singleHourFeaturePrice * this.duration
+          }else{
+            return this.price
           }
-          return Number(featurePrice + this.selectedData.time.length * 100);
         },
         getNextStepDisabled(): (currentStep: number) => boolean {
             return (currentStep: number) => {

@@ -576,7 +576,6 @@ private updateTimeIndicators(){
         }).then(() => {
           this.audioLoaded(index, true, this.activeGenre)
         }
-          
       )
       )
     );

@@ -4,16 +4,16 @@
             <div class="row">
                 <img src="/images/icons/Calendar.svg" />
                 <div class="info">
-                    <p class="mainText">13 სექტემბერი</p>
-                    <p class="subText">კვირა</p>
+                    <p class="mainText">{{ reserveStore.selectedData.date }} {{ reserveStore.selectedData.month }}</p>
+                    <p class="subText">{{ reserveStore.selectedData.weekday }}</p>
                 </div>
                 <img src="/images/icons/Edit.svg" />
             </div>
             <div class="row">
                 <img src="/images/icons/Clock.svg" />
                 <div>
-                    <p class="mainText">12:00 - 14:00, 16:00 - 18:00</p>
-                    <p class="subText">4 საათ - 120 GEL</p>
+                    <p class="mainText">{{ mergedTimeRanges }}</p>
+                    <p class="subText">{{ totalDurationHours }} საათი - {{ computedPrice }} GEL</p>
                 </div>
                 <img src="/images/icons/Edit.svg" />
             </div>
@@ -23,7 +23,7 @@
                 <img src="/images/icons/Desktop.svg" />
                 <div>
                     <p class="mainText">IEM მონიტორები</p>
-                    <p class="subText">4 საათ - 40 GEL</p>
+                    <p class="subText">{{ totalDurationHours }} საათი - {{ computedFeaturePrice }} GEL</p>
                 </div>
                 <img class="featureToggle"
                     :src="`/images/icons/${reserveStore.selectedData.feature ? 'Delete.svg' : 'Add.svg'}`" />
@@ -37,6 +37,62 @@ const reserveStore = ReserveStore()
 const toggleExtraFeature = () => {
     reserveStore.selectedData.feature = !reserveStore.selectedData.feature
 }
+
+const weekdayNames: { [key: string]: string } = {
+    "Monday": "ორშაბათი",
+    "Tuesday": "სამშაბათი",
+    "Wednesday": "ოთხშაბათი",
+    "Thursday": "ხუთშაბათი",
+    "Friday": "პარასკევი",
+    "Saturday": "შაბათი",
+    "Sunday": "კვირა"
+};
+
+const mergedTimeRanges = computed(() => {
+    const times = reserveStore.selectedData.time || []
+
+    if (!times.length) return ''
+
+    times.sort((a, b) => a.start.localeCompare(b.start))
+
+    const mergedRanges: { start: string, end: string }[] = []
+
+    for (const range of times) {
+        const lastRange = mergedRanges[mergedRanges.length - 1]
+
+        if (lastRange && lastRange.end === range.start) {
+            lastRange.end = range.end
+        } else {
+            mergedRanges.push({ ...range })
+        }
+    }
+    return mergedRanges.map(({ start, end }) => `${start} - ${end}`).join(', ')
+})
+
+const totalDurationHours = computed(() => {
+    const times = reserveStore.selectedData.time || []
+
+    const timeToMinutes = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number)
+        return hours * 60 + minutes
+    }
+
+    const totalMinutes = times.reduce((acc, { start, end }) => {
+        return acc + (timeToMinutes(end) - timeToMinutes(start))
+    }, 0)
+
+    let hours = totalMinutes / 60
+    reserveStore.price = hours * reserveStore.singleHourPrice
+    reserveStore.duration = hours
+    return hours
+})
+
+const computedPrice = computed(() => {
+    return reserveStore.price
+})
+const computedFeaturePrice = computed(() => {
+    return reserveStore.singleHourFeaturePrice * totalDurationHours.value
+})
 </script>
 
 <style lang="scss" scoped>

@@ -4,10 +4,10 @@
             <div class="grid-row">
                 <template v-for="(date, index) in row" :key="index">
                     <div v-if="!unavailableDays.some(unavailable => unavailable.day === date.day && unavailable.month === date.monthNum)"
-                        class="grid-item" v-on:click="pickDay(date.day)" :class="{ picked: date.day === pickedDay }">
-                        <p class="month">{{ date.month }}</p>
+                        class="grid-item" v-on:click="pickDay(date)" :class="{ picked: date.day === pickedDay }">
+                        <p class="month">{{ date.month.slice(0, 3) }}</p>
                         <p class="day-number">{{ date.day }}</p>
-                        <p class="weekday">{{ date.weekday }}</p>
+                        <p class="weekday">{{ date.weekday.slice(0, 3) }}</p>
                     </div>
                 </template>
             </div>
@@ -61,19 +61,21 @@ const getNextDates = (count: number) => {
         const monthNum = futureDate.getMonth() + 1;
         dates.push({
             monthNum: monthNum,
-            month: monthNames[month].slice(0, 3) || month,
+            month: monthNames[month] || month,
             day: futureDate.getDate(),
-            weekday: weekdayNames[weekday].slice(0, 3) || weekday
+            weekday: weekdayNames[weekday] || weekday
         });
     }
 
     return dates;
 };
 
-const pickDay = (day: number) => {
-    reserveStore.selectedData.date = day.toString()
-    pickedDay.value = day
-    emit('dayPicked', day)
+const pickDay = (date: any) => {
+    reserveStore.selectedData.date = date.day.toString()
+    reserveStore.selectedData.month = date.month
+    reserveStore.selectedData.weekday = date.weekday
+    pickedDay.value = date.day
+    emit('dayPicked', date)
 }
 
 const dates = ref(getNextDates(14));
