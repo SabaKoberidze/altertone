@@ -47,6 +47,7 @@ export class AudioPlayer {
   private activeTypes: string[] = [];
   private fetchingGenre: string[] = []
   private onAudioState: (audioState: {playing: boolean, paused: boolean, loading: boolean})=> void
+  private volume: number;
 
 constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void, onAudioState: (audioState: {playing: boolean, paused: boolean, loading: boolean})=> void) {
   app.stage.interactive = true;
@@ -73,6 +74,7 @@ constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void, onAu
   this.onAudioState = onAudioState
   this.offsetY = 56
   this.padding = 56
+  this.volume = 0.5
   this.timeContainer = new Container()
 }
 public async loadAssets(){
@@ -397,6 +399,16 @@ private updateTimeIndicators(){
     this.stopTicker()
   }
 
+  public stopAudio(){
+    if(this.audioPlayerState.playing === true){
+      this.audio.forEach(audio=>{
+        audio.pause()
+        audio.currentTime = 0
+      })
+      this.stopTicker()
+    }
+  }
+
   private animateBar(bar: Graphics, baseY: number) {
     const waveIntensity = Math.random() * 10 + 3;
     const newY = baseY - waveIntensity / 2;
@@ -638,9 +650,7 @@ private updateTimeIndicators(){
   }
   public toggleSound(index: number) {
     if (!this.audio[index]) return; 
-  
     const referenceTime = this.getReferenceTime();
-  
     if (!this.audio[index].muted) {
       this.audio[index].muted = true;
       this.muteWaveform(index);
@@ -651,13 +661,20 @@ private updateTimeIndicators(){
     }
   }
 
+  public changeVolume(value: number){
+    this.audio.forEach(audio => {
+      this.volume = value
+      audio.volume = this.volume
+    })
+  }
+
   public toggleMute(){
     this.isMuted = !this.isMuted
     this.audio.forEach(audio =>{
       if(this.isMuted){
         audio.volume = 0
       }else{
-        audio.volume = 1
+        audio.volume = this.volume
       }
     })
   }

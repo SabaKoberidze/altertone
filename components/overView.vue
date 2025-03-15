@@ -43,7 +43,7 @@
           </div>
         </div>
         <Transition name="slide-up">
-          <AudioPlayer v-if="reserveStore.AudioPlayerOpen" ref="audioPlayerComponent"
+          <AudioPlayer v-if="reserveStore.AudioPlayerOpen" v-on:songChanged="changeSong" ref="audioPlayerComponent"
             @onPause="(paused: boolean) => { musicPaused = paused }" />
         </Transition>
       </div>
@@ -258,12 +258,17 @@ function scrollAnimation() {
     }
     exampleContainer.value.opacity = 1
     exampleContainer.value.currentPosition.y = exampleContainer.value.endPosition.y
+
+
+    examplesHeader.value.currentPosition.x = examplesHeader.value.endPosition.x
+    examplesHeader.value.currentPosition.y = examplesHeader.value.endPosition.y
+    examplesHeader.value.opacity = 1
+
     devices.value.forEach(device => {
       device.currentPosition.x = device.endPosition.x
       device.currentPosition.y = device.endPosition.y
       device.opacity = 0
     })
-    moveText(5, 6, 2)
     spreadCards(4, 5, true)
   }
 }
@@ -383,6 +388,7 @@ onMounted(() => {
   watch(() => reserveStore.AudioPlayerOpen, (isOpen) => {
     if (!isOpen) {
       pickedMusicIndex.value = -1
+      audioPlayerComponent.value.stopAudio()
       reserveStore.blockScrolling(false)
     } else {
       reserveStore.blockScrolling(true)
@@ -394,6 +400,10 @@ function handleResize() {
   if (!reserveStore.AudioPlayerOpen) {
     handleScroll()
   }
+}
+
+function changeSong(index: number) {
+  pickedMusicIndex.value = index
 }
 
 function scrollToTop() {

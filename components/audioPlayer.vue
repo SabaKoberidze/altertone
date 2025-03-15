@@ -11,10 +11,15 @@
             <button :class="{ loaded: loaded }" v-on:click="playAudio()" class="playSong"><img
                 :src="audioIcon" /></button>
             <div class="line"></div>
-            <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
-            <button v-on:click="changeTrack(false)"><img src="/images/icons/audioControls/previousSong.svg" /></button>
+            <button v-on:click="changeTrack(false)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
+            <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/previousSong.svg" /></button>
           </div>
-          <div class="sound" v-on:click="toggleMute()"><img src="/images/icons/audioControls/muteSong.svg" /></div>
+          <div class="sound">
+            <img v-on:click.stop="toggleMute()" src="/images/icons/audioControls/muteSong.svg" />
+            <div class="soundSettings">
+              <input type="range" :min="0" :max="1" :step="0.01" v-model="volume" @input="onVolumeChange" />
+            </div>
+          </div>
         </div>
       </div>
       <div class="secondaryControls">
@@ -25,7 +30,8 @@
       </div>
     </div>
     <div class="playerContainer">
-      <div class="audioPlayer" ref="canvasContainer"></div>
+      <div class="audioPlayer" ref="canvasContainer">
+      </div>
     </div>
   </div>
 </template>
@@ -34,9 +40,8 @@
 import { onMounted, ref } from 'vue';
 import { Application, Graphics } from 'pixi.js';
 import { AudioPlayer } from '../classes/AudioPlayer';
-
 const reserveStore = ReserveStore()
-const emit = defineEmits(['onPause']);
+const emit = defineEmits(['onPause', 'songChanged']);
 let soundTypes = ['Music', 'Vocal', 'Bass', 'Drums']
 let muted = ref([false, false, false, false])
 const canvasContainer = ref<HTMLDivElement | null>(null);
@@ -46,6 +51,7 @@ const onPlayerMounted = ref(false)
 const loaded = ref(false)
 const genreIndex = ref(0)
 const audioIcon = ref('')
+const volume = ref(0.5)
 
 const audioGenres = ["punk", "jazz", "rock", "blues", "metal"]
 const audioTypes = ['vocal', 'drums', 'music', 'bass']
@@ -58,9 +64,7 @@ const pickMusic = (index: number) => {
     await loadAudio(genre);
   }, 100);
 }
-defineExpose({
-  pickMusic
-})
+
 
 const setAudioIcon = () => {
   if (!audioPlayer) return '/images/icons/audioControls/Loading.svg'
@@ -89,7 +93,21 @@ function playAudio() {
   }
 }
 function changeTrack(next: boolean) {
-
+  setTimeout(async () => {
+    if (next) {
+      genreIndex.value += 1
+    } else {
+      genreIndex.value -= 1
+    }
+    if (genreIndex.value < 0) {
+      genreIndex.value = audioGenres.length - 1
+    } else if (genreIndex.value > audioGenres.length - 1) {
+      genreIndex.value = 0
+    }
+    let genre = audioGenres[genreIndex.value]
+    emit('songChanged', genreIndex.value)
+    await loadAudio(genre);
+  }, 100);
 }
 function toggleMute() {
   audioPlayer.toggleMute()
@@ -97,6 +115,10 @@ function toggleMute() {
 function toggleSound(index: number) {
   audioPlayer.toggleSound(index)
   muted.value[index] = !muted.value[index]
+}
+
+function onVolumeChange() {
+  audioPlayer.changeVolume(volume.value)
 }
 
 onMounted(() => {
@@ -132,6 +154,7 @@ onMounted(() => {
     }, (audioState: { playing: boolean, paused: boolean, loading: boolean }) => {
       if (!audioState.loading) {
         loaded.value = true
+        audioPlayer.changeVolume(0.5)
       } else {
         loaded.value = false
       }
@@ -165,6 +188,13 @@ let loadAudio = async (genre: string) => {
   return
 }
 
+let stopAudio = () => {
+  audioPlayer.stopAudio()
+}
+defineExpose({
+  pickMusic,
+  stopAudio
+})
 </script>
 
 <style lang="scss" scoped>
@@ -301,8 +331,51 @@ let loadAudio = async (genre: string) => {
           border: rgba(255, 255, 255, 0.04);
           background: rgba(255, 255, 255, 0.04);
           cursor: pointer;
-        }
+          position: relative;
+          transition: 200ms;
+          transition-delay: 100ms;
 
+          &>img {
+            padding: 25px;
+          }
+
+          .soundSettings {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            width: 200%;
+            height: 100%;
+            top: -50%;
+            left: 50%;
+            border: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.04);
+            rotate: -90deg;
+            border-radius: 0 20px 20px 0;
+            overflow: hidden;
+            transition: 200ms;
+            transition-delay: 0ms;
+            scale: 0 1;
+            transform-origin: left center;
+
+            input {
+              cursor: pointer;
+              width: 85%;
+              height: 100%;
+            }
+          }
+
+          &:hover {
+            border-radius: 0 0 20px 20px;
+            transition-delay: 0ms;
+
+            .soundSettings {
+              width: 200%;
+              transition-delay: 100ms;
+              scale: 1 1;
+            }
+          }
+        }
       }
     }
 
@@ -382,6 +455,7 @@ let loadAudio = async (genre: string) => {
       width: 100%;
       height: 100%;
       position: relative;
+
     }
   }
 

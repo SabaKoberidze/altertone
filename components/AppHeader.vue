@@ -34,7 +34,6 @@ const openReservation = async () => {
 
 const closeAudioPlayer = () => {
     reserveStore.AudioPlayerOpen = false
-    reserveStore.blockScrolling(false)
 }
 
 onMounted(() => {
