@@ -661,9 +661,11 @@ private updateTimeIndicators(){
     }
   }
 
-  public changeVolume(value: number){
+  public changeVolume(value?: number){
     this.audio.forEach(audio => {
-      this.volume = value
+      if(value){
+        this.volume = value
+      }
       audio.volume = this.volume
     })
   }

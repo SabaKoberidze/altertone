@@ -155,5 +155,9 @@ header {
             }
         }
     }
+
+    #closeAudioPlayer {
+        cursor: pointer;
+    }
 }
 </style>

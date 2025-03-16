@@ -17,7 +17,10 @@
           <div class="sound">
             <img v-on:click.stop="toggleMute()" src="/images/icons/audioControls/muteSong.svg" />
             <div class="soundSettings">
-              <input type="range" :min="0" :max="1" :step="0.01" v-model="volume" @input="onVolumeChange" />
+              <input type="range" :min="0" :max="1" :step="0.005" v-model="volume" @input="onVolumeChange" />
+              <div class="styledSlider">
+                <div :style="{ width: `${volume * 100}%`, opacity: volume }"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -154,7 +157,7 @@ onMounted(() => {
     }, (audioState: { playing: boolean, paused: boolean, loading: boolean }) => {
       if (!audioState.loading) {
         loaded.value = true
-        audioPlayer.changeVolume(0.5)
+        audioPlayer.changeVolume()
       } else {
         loaded.value = false
       }
@@ -328,7 +331,7 @@ defineExpose({
           width: 72px;
           height: 100%;
           border-radius: 20px;
-          border: rgba(255, 255, 255, 0.04);
+          //border: rgba(255, 255, 255, 0.04);
           background: rgba(255, 255, 255, 0.04);
           cursor: pointer;
           position: relative;
@@ -357,11 +360,30 @@ defineExpose({
             transition-delay: 0ms;
             scale: 0 1;
             transform-origin: left center;
+            padding: auto;
 
             input {
               cursor: pointer;
-              width: 85%;
+              width: 100%;
               height: 100%;
+              z-index: 1;
+              opacity: 0;
+            }
+
+            .styledSlider {
+              width: calc(100% - 10px);
+              height: calc(100% - 20px);
+              position: absolute;
+              overflow: hidden;
+              border-radius: 16px;
+              border: 3px solid rgba(255, 255, 255, 0.1);
+
+              &>div {
+                transform-origin: left;
+                height: 100%;
+                width: 100%;
+                background-color: white;
+              }
             }
           }
 
