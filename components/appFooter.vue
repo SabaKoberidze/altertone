@@ -70,6 +70,7 @@ const contactOptions = [
     link: '+995 555 22 21 43'
   }
 ]
+
 </script>
 
 <style lang="scss" scoped>

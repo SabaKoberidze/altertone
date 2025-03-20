@@ -362,12 +362,17 @@ function AnimationProgress(startIndex: number, endIndex: number) {
 
 
 function openMusic(index: number) {
-  reserveStore.AudioPlayerOpen = true
-  spreadCards(4, 5, true)
-  nextTick(() => {
+  if(!reserveStore.AudioPlayerOpen){
+    spreadCards(4, 5, true)
+    setTimeout(() => {
+      pickedMusicIndex.value = index
+      audioPlayerComponent.value.pickMusic(index)
+    }, 1000)
+  }else{
     pickedMusicIndex.value = index
     audioPlayerComponent.value.pickMusic(index)
-  })
+  }
+  reserveStore.AudioPlayerOpen = true
 }
 
 
