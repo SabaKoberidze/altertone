@@ -23,7 +23,7 @@
             <p class="additionalInfo">დამატებითი ინფორმაციისთვის</p>
             <button type="button" class="contactButton">
                 <img src="/images/icons/phone.svg" />
-                <p>
+                <p @click="goToContacts">
                     დაგვიკავშირდით
                 </p>
             </button>
@@ -68,7 +68,9 @@ const getBusPosition = () => {
         return '0px'
     }
 };
-
+const goToContacts = () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+};
 </script>
 
 <style scoped lang="scss">
