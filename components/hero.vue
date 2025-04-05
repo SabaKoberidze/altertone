@@ -62,7 +62,7 @@ article {
     grid-template-rows: 2fr 124px;
 
     @include respond-to('tablet') {
-        padding-bottom: 64px;
+        padding-bottom: 32px;
     }
 
     .graphics {

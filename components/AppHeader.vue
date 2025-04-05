@@ -72,6 +72,7 @@ header {
     z-index: 25;
     top: 0;
     font-family: 'Neue';
+    transition: 600ms;
 
     &::before {
         content: '';
@@ -88,6 +89,10 @@ header {
     &.scroll {
         &::before {
             top: 0%;
+        }
+
+        @include respond-to('tablet') {
+            height: 64px;
         }
     }
 

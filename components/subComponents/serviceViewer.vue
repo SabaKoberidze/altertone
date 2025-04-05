@@ -88,6 +88,7 @@ const goToContacts = () => {
     @include respond-to('tablet') {
         padding: 0px 20px;
         height: unset;
+        width: 100%
     }
 
     h1 {

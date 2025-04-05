@@ -90,9 +90,10 @@ article {
 
     @include respond-to('tablet') {
         height: 100dvh;
-        padding: 64px 0px;
+        padding: 64px 0px 32px 0px;
         flex-direction: column-reverse;
-        gap: 28px;
+        justify-content: space-evenly;
+
     }
 
     h1 {
@@ -100,13 +101,12 @@ article {
         width: 100%;
         font-size: 24px;
         font-weight: 700;
-        display: flex;
-        justify-content: center;
+        justify-content: start;
         align-items: center;
         padding: 0 20px;
 
         @include respond-to('tablet') {
-            display: unset;
+            display: flex;
         }
     }
 

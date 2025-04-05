@@ -82,6 +82,10 @@ section {
   align-items: center;
   padding: 0 56px;
 
+  @include respond-to('tablet') {
+    display: none;
+  }
+
   .contactsInfo {
     flex-grow: 1;
     display: flex;

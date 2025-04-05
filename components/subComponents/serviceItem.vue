@@ -66,8 +66,9 @@ defineProps({
     padding: 30px;
 
     @include respond-to('tablet') {
-        width: 300px;
-        height: 500px;
+        width: 65vw;
+        height: auto;
+        aspect-ratio: 3/5;
     }
 
     .serviceBg {
