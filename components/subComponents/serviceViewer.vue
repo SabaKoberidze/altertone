@@ -1,7 +1,6 @@
 <template>
     <div class="service-viewer">
         <h1>სერვისები</h1>
-
         <div class="serviceMap">
             <div class="servicePoints">
                 <template v-for="(service, index, key) in services" :key="key">
@@ -84,10 +83,19 @@ const getBusPosition = () => {
     height: 756px;
     width: 443px;
 
+    @include respond-to('tablet') {
+        padding: 0px 20px;
+        height: unset;
+    }
+
     h1 {
         font-size: 44px;
         font-weight: 700;
         font-feature-settings: 'case';
+
+        @include respond-to('tablet') {
+            display: none;
+        }
     }
 
     .serviceMap {
@@ -150,6 +158,9 @@ const getBusPosition = () => {
             }
         }
 
+        @include respond-to('tablet') {
+            display: none;
+        }
     }
 
     .serviceViewContainer {

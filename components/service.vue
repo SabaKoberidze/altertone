@@ -9,12 +9,14 @@
                 </div>
             </template>
         </div>
+        <h1>სერვისები</h1>
     </article>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { useElementVisibility } from '@vueuse/core';
+
 
 let services = [
     {
@@ -86,11 +88,46 @@ article {
     display: flex;
     justify-content: space-between;
 
+    @include respond-to('tablet') {
+        height: 100dvh;
+        padding: 64px 0px;
+        flex-direction: column-reverse;
+        gap: 28px;
+    }
+
+    h1 {
+        display: none;
+        width: 100%;
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+
+        @include respond-to('tablet') {
+            display: unset;
+        }
+    }
+
     .serviceContainer {
         padding: 220px 80px;
         display: flex;
         flex-direction: column;
         gap: 40px;
+
+        @include respond-to('tablet') {
+            padding: 0px 20px 0px 20px;
+            gap: 20px;
+            flex-direction: row;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
     }
 }
 </style>

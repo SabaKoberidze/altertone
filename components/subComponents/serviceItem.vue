@@ -65,6 +65,11 @@ defineProps({
     color: white;
     padding: 30px;
 
+    @include respond-to('tablet') {
+        width: 300px;
+        height: 500px;
+    }
+
     .serviceBg {
         width: 100%;
         height: 100%;

@@ -376,7 +376,7 @@ defineExpose({
               position: absolute;
               overflow: hidden;
               border-radius: 16px;
-              border: 3px solid rgba(255, 255, 255, 0.1);
+              border: 2px solid rgba(255, 255, 255, 0.1);
 
               &>div {
                 transform-origin: left;

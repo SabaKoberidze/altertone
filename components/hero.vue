@@ -61,6 +61,10 @@ article {
     display: grid;
     grid-template-rows: 2fr 124px;
 
+    @include respond-to('tablet') {
+        padding-bottom: 64px;
+    }
+
     .graphics {
         padding: 124px 56px;
         position: absolute;
@@ -98,6 +102,14 @@ article {
                 //width: calc(100vw - 665px);
                 width: 50%;
             }
+
+            @include respond-to('tablet') {
+
+                &:nth-child(2),
+                &:nth-child(3) {
+                    display: none;
+                }
+            }
         }
     }
 
@@ -121,6 +133,12 @@ article {
         gap: 16px;
         padding: 0 56px;
 
+        @include respond-to('tablet') {
+            width: 100%;
+            padding: 40px 20px;
+            gap: 30px;
+        }
+
         h1 {
             height: 345px;
             color: #FFF;
@@ -133,6 +151,11 @@ article {
             text-transform: uppercase;
             font-feature-settings: 'case';
 
+            @include respond-to('tablet') {
+                width: 90%;
+                font-size: 44px;
+                height: min-content;
+            }
         }
 
         p {
@@ -145,6 +168,11 @@ article {
             font-weight: 300;
             line-height: 150%;
             letter-spacing: -0.36px;
+
+            @include respond-to('tablet') {
+                width: 90%;
+                font-size: 16px;
+            }
         }
     }
 
@@ -156,6 +184,10 @@ article {
         height: 124px;
         padding: 0 56px;
         z-index: 1;
+
+        @include respond-to('tablet') {
+            padding: 0 20px;
+        }
 
         &>div {
             cursor: pointer;

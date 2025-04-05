@@ -6,6 +6,7 @@
   </div>
   <Reserve class="reserve" v-if="reserveStore.isModalOpen"></Reserve>
   <OverView ref="overView"></OverView>
+  <Equipments></Equipments>
   <AppFooter />
 </template>
 <script setup lang="ts">
