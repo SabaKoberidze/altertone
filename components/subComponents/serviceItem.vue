@@ -65,12 +65,6 @@ defineProps({
     color: white;
     padding: 30px;
 
-    @include respond-to('tablet') {
-        width: 65vw;
-        height: auto;
-        aspect-ratio: 3/5;
-    }
-
     .serviceBg {
         width: 100%;
         height: 100%;
@@ -135,6 +129,10 @@ defineProps({
         .serviceTitle {
             font-size: 24px;
             font-feature-settings: "case";
+
+            @include respond-to('tablet') {
+                font-size: 20px;
+            }
         }
 
         .serviceInfo {
@@ -229,6 +227,79 @@ defineProps({
             &:hover {
                 cursor: pointer;
                 background-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+
+    @include respond-to('tablet') {
+        width: 300px;
+        height: 100%;
+        padding: 24px;
+        background-color: black;
+
+
+        .serviceBg {
+            height: 50%;
+            -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 80%);
+            mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 90%);
+        }
+
+        &:hover {
+            .serviceBg {
+                filter: none;
+            }
+        }
+
+        .serviceContent {
+            gap: 10px;
+
+            .serviceTitle {
+                font-size: 20px;
+            }
+
+            .extraInfo {
+                max-height: 168px;
+                opacity: 1;
+                margin-top: 5px;
+                margin-bottom: 60px;
+                gap: 5px;
+            }
+
+            .buyOnline {
+                opacity: 1;
+                bottom: 0;
+                top: unset;
+                left: 0;
+                width: max-content;
+                justify-content: space-evenly;
+                height: 40px;
+                padding: 0;
+                padding: 10px;
+                font-size: 10px;
+
+            }
+
+            .serviceInfo {
+
+                .servicePrice {
+                    font-size: 14px;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .serviceDetails {
+                    opacity: 0;
+                }
+            }
+
+            .extraInfo {
+                div {
+                    gap: 8px;
+                }
+
+                p {
+                    font-size: 14px;
+                }
             }
         }
     }

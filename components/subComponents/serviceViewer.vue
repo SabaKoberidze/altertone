@@ -118,7 +118,7 @@ const goToContacts = () => {
             .navLine {
                 height: calc(100% - 38px);
                 width: 2px;
-                background-color: red;
+
                 position: absolute;
                 background-color: #1d1b1b;
                 left: 50%;

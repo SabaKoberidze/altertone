@@ -42,10 +42,6 @@
             </p>
           </div>
         </div>
-        <Transition name="slide-up">
-          <AudioPlayer v-if="reserveStore.AudioPlayerOpen" v-on:songChanged="changeSong" ref="audioPlayerComponent"
-            @onPause="(paused: boolean) => { musicPaused = paused }" />
-        </Transition>
       </div>
     </div>
   </article>
@@ -54,13 +50,18 @@
 <script setup lang="ts">
 import { useElementVisibility } from '@vueuse/core';
 import { toRef } from 'vue'
+const props = defineProps({
+  audioPlayerComponent: {
+    type: Object,
+    required: true
+  }
+})
 const scrollContainer = ref<HTMLElement | null>(null);
 let scrollTop = 0;
 let maxScroll = 0;
 const scrollProgress = ref(0)
 const lastProgress = ref(0)
 const mainTitle = ref<HTMLElement | null>(null);
-const audioPlayerComponent = ref()
 const reserveStore = ReserveStore()
 const pickedMusicIndex = ref(-1)
 const cardHolder = ref([])
@@ -362,15 +363,15 @@ function AnimationProgress(startIndex: number, endIndex: number) {
 
 
 function openMusic(index: number) {
-  if(!reserveStore.AudioPlayerOpen){
+  if (!reserveStore.AudioPlayerOpen) {
     spreadCards(4, 5, true)
     setTimeout(() => {
       pickedMusicIndex.value = index
-      audioPlayerComponent.value.pickMusic(index)
+      props.audioPlayerComponent.pickMusic(index)
     }, 1000)
-  }else{
+  } else {
     pickedMusicIndex.value = index
-    audioPlayerComponent.value.pickMusic(index)
+    props.audioPlayerComponent.pickMusic(index)
   }
   reserveStore.AudioPlayerOpen = true
 }
@@ -393,7 +394,7 @@ onMounted(() => {
   watch(() => reserveStore.AudioPlayerOpen, (isOpen) => {
     if (!isOpen) {
       pickedMusicIndex.value = -1
-      audioPlayerComponent.value.stopAudio()
+      props.audioPlayerComponent.stopAudio()
       reserveStore.blockScrolling(false)
     } else {
       reserveStore.blockScrolling(true)
@@ -411,6 +412,14 @@ function changeSong(index: number) {
   pickedMusicIndex.value = index
 }
 
+function pauseMusic(paused: boolean) {
+  if (paused) {
+    musicPaused.value = true
+  } else {
+    musicPaused.value = false
+  }
+}
+
 function scrollToTop() {
   if (scrollContainer.value) {
     scrollContainer.value.scrollIntoView({
@@ -419,7 +428,10 @@ function scrollToTop() {
     });
   }
 }
-
+defineExpose({
+  changeSong,
+  pauseMusic
+})
 </script>
 
 <style lang="scss" scoped>
@@ -447,6 +459,10 @@ article {
     .overViewContainer {
       position: fixed;
 
+      &::before {
+        opacity: 1;
+      }
+
       &::after {
         opacity: 1;
       }
@@ -473,6 +489,19 @@ article {
     align-items: center;
     overflow: hidden;
 
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      opacity: 0;
+      transition: 1000ms;
+      pointer-events: none;
+    }
+
     &::after {
       content: '';
       position: absolute;
@@ -480,7 +509,7 @@ article {
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: black;
+      background: linear-gradient(233deg, rgba(31, 11, 18, 0.50) 0%, rgba(32, 11, 19, 0.00) 71.38%);
       opacity: 0;
       transition: 1000ms;
       pointer-events: none;
@@ -551,6 +580,7 @@ article {
       align-items: center;
       transition: 200ms;
       position: absolute;
+      z-index: 21;
 
 
 

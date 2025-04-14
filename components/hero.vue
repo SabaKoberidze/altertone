@@ -61,10 +61,6 @@ article {
     display: grid;
     grid-template-rows: 2fr 124px;
 
-    @include respond-to('tablet') {
-        padding-bottom: 32px;
-    }
-
     .graphics {
         padding: 124px 56px;
         position: absolute;
@@ -110,6 +106,7 @@ article {
                     display: none;
                 }
             }
+
         }
     }
 
@@ -187,6 +184,7 @@ article {
 
         @include respond-to('tablet') {
             padding: 0 20px;
+            height: 150px;
         }
 
         &>div {

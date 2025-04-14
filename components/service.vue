@@ -41,7 +41,7 @@ let services = [
         }
     },
     {
-        title: 'ხმის გამოხმოვანება კონცერტებზე', icon: '/images/icons/sound.svg', bgImage: '/images/hero.png', price: 0, duration: 0, details: {
+        title: 'ხმის გახმოვანება კონცერტებზე', icon: '/images/icons/sound.svg', bgImage: '/images/hero.png', price: 0, duration: 0, details: {
             includedServices: ['დარბაზი', 'აპარატურა'],
             addedFeatures: [{ name: 'IEM მონიტორები', price: 10 }],
             deals: ['4 საათზე 12.5% ფასდაკლება']
@@ -90,10 +90,16 @@ article {
 
     @include respond-to('tablet') {
         height: 100dvh;
-        padding: 64px 0px 32px 0px;
+        max-height: 1000px;
+        padding: 64px 0px 64px 0px;
+        gap: 10vh;
         flex-direction: column-reverse;
-        justify-content: space-evenly;
+        justify-content: flex-start;
 
+        @media (max-height: 800px) {
+            gap: 20px;
+            padding: 32px 0px 32px 0px;
+        }
     }
 
     h1 {
@@ -114,11 +120,14 @@ article {
         padding: 220px 80px;
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 40px;
 
         @include respond-to('tablet') {
             padding: 0px 20px 0px 20px;
             gap: 20px;
+            min-height: 450px;
+            height: 450px;
             flex-direction: row;
             overflow-x: auto;
             scrollbar-width: none;
@@ -126,6 +135,10 @@ article {
 
             &::-webkit-scrollbar {
                 display: none;
+            }
+
+            .serviceScrollPoint {
+                height: 100%;
             }
         }
     }

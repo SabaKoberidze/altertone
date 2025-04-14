@@ -12,6 +12,7 @@ interface TimeInterval {
 export const ReserveStore = defineStore('ReserveStore', {
     state: () => {
         return {
+            audioPlayerComponent: null,
             reservations: {},
             selectedData: {
               date: '',

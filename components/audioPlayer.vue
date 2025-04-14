@@ -214,18 +214,20 @@ defineExpose({
 .audioPlayerContainer {
   display: flex;
   width: 100vw;
-  height: 100dvh;
+  height: 50dvh;
   align-items: end;
-  top: 0;
-  background: linear-gradient(233deg, rgba(31, 11, 18, 0.50) 0%, rgba(32, 11, 19, 0.00) 71.38%);
-  position: fixed;
   bottom: 0;
-  z-index: 1;
+  position: fixed;
+  z-index: 21;
 
   .playerControls {
-    height: 50%;
+    height: 100%;
     width: 50vw;
     display: flex;
+
+    @include respond-to('tablet') {
+      width: 30vw;
+    }
 
 
     .mainControls {
@@ -239,6 +241,10 @@ defineExpose({
       justify-content: space-between;
       border-radius: 0px 20px 0px 0px;
       background: radial-gradient(92.22% 89.66% at 0% 100%, rgba(46, 12, 24, 0.70) 0%, rgba(46, 12, 24, 0.00) 100%), rgba(255, 255, 255, 0.04);
+
+      @include respond-to('tablet') {
+        display: none;
+      }
 
       .abousMusic {
         display: flex;
@@ -407,7 +413,11 @@ defineExpose({
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 56px 56px;
+      padding: 56px;
+
+      @include respond-to('tablet') {
+        padding: 56px 20px;
+      }
 
       &>div {
         width: 100%;
@@ -472,6 +482,10 @@ defineExpose({
     justify-content: center;
     align-items: center;
     padding: 0px 0px 56px 0px;
+
+    @include respond-to('tablet') {
+      width: 70vw;
+    }
 
     .audioPlayer {
       width: 100%;

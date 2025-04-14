@@ -24,7 +24,8 @@ export class AudioPlayer {
   private progressLine: Graphics | any;
   private waveGraphics: Graphics[];
   private progressColors: Graphics[];
-  private samples: number;
+  private samples: number = 100;
+  private drawnSamples: number = 100;
   private audioUrls: string[];
   private progressColorContainers: Container[];
   private beforeProgressColors: Graphics[]; 
@@ -51,6 +52,9 @@ export class AudioPlayer {
 
 constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void, onAudioState: (audioState: {playing: boolean, paused: boolean, loading: boolean})=> void) {
   app.stage.interactive = true;
+  this.offsetY = 0
+  this.padding = 0
+  this.restyleWaves()
   this.audio = [];
   this.audioContext = [];
   this.sources = [];
@@ -58,7 +62,6 @@ constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void, onAu
   this.dragging = false;
   this.waveGraphics = [];
   this.progressColors = [];
-  this.samples = 100;
   this.audioUrls = [];
   this.progressColorContainers = [];
   this.beforeProgressColors = [];
@@ -72,10 +75,9 @@ constructor(private app: Application, onLoaded: (isLoaded: boolean)=> void, onAu
   this.firstLoad = false
   this.setupDragEvents()
   this.onAudioState = onAudioState
-  this.offsetY = 56
-  this.padding = 56
   this.volume = 0.5
   this.timeContainer = new Container()
+
 }
 public async loadAssets(){
   await Assets.load('images/audioPlayer/timePointer.svg');
@@ -412,7 +414,6 @@ private updateTimeIndicators(){
   private animateBar(bar: Graphics, baseY: number) {
     const waveIntensity = Math.random() * 10 + 3;
     const newY = baseY - waveIntensity / 2;
-  
     gsap.to(bar, {
       height: waveIntensity,
       y: newY,
@@ -459,7 +460,11 @@ private updateTimeIndicators(){
         const bar = this.barObjects[index][i];
 
         if(firstDraw) {
-           this.animateBar(bar, y);
+          if(this.samples > this.drawnSamples && i % 2 === 0){
+            bar.height = 0
+          }else{
+            this.animateBar(bar, y);
+          }
         }else if (!this.firstLoad) {
           gsap.killTweensOf(bar)
           bar.height = 1
@@ -504,7 +509,9 @@ private updateTimeIndicators(){
         const y = ((this.app.screen.height - this.offsetY) / 4 * index + (this.app.screen.height - this.offsetY) / 8) - barHeight / 2 + this.offsetY;
         const bar = this.barObjects[index][i];
         gsap.getTweensOf(bar).forEach(tween => tween.kill());
-
+        if(i % 2 === 0 && this.samples > this.drawnSamples){
+          barHeight = 0
+        }
         gsap.to(bar, {
             y: y,
             height: barHeight,
@@ -521,9 +528,13 @@ private updateTimeIndicators(){
     for (let i = 0; i < this.samples; i++) {
         const bar = this.barObjects[index][i];
         if (!bar) continue;
+        let barHeight = 1
+        if(i % 2 === 0 && this.samples > this.drawnSamples){
+          barHeight = 0
+        }
         gsap.getTweensOf(bar).forEach(tween => tween.kill());
         gsap.to(bar, {
-            height: 1,
+            height: barHeight,
             y: y - 0.5,
             duration: duration,
             ease: "power2.out",
@@ -689,7 +700,20 @@ private updateTimeIndicators(){
     return this.audio[0]?.currentTime || 0;
   }
 
+  restyleWaves(){
+    if(innerWidth < breakpoints.tablet){
+      this.offsetY = 56
+      this.padding = 20
+      this.drawnSamples = 50
+    }else{
+      this.offsetY = 56
+      this.padding = 56
+      this.drawnSamples = 100
+    }
+  }
+
   public resize(isLoaded: boolean) {
+    this.restyleWaves()
     if (this.progressLine) {
         const progress = this.audio[0]?.currentTime / this.audio[0]?.duration || 0;
         const x = this.padding + progress * this.app.screen.width;
@@ -715,7 +739,9 @@ private updateTimeIndicators(){
       this.beforeProgressColors[index].rect(0, yPosition, this.app.screen.width, waveHeight).fill('grey');
     });
     this.positionTimeIndicators()
-    this.updateProgressLine()
+    if(this.audio[0]){
+      this.updateProgressLine()
+    }
 }
 }
 
