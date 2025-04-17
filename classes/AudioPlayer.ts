@@ -468,7 +468,11 @@ private updateTimeIndicators(){
         }else if (!this.firstLoad) {
           gsap.killTweensOf(bar)
           bar.height = 1
-          this.animateBar(bar, y);
+          if(this.samples > this.drawnSamples && i % 2 === 0){
+            bar.height = 0
+          }else{
+            this.animateBar(bar, y);
+          }
         } 
     }
   }

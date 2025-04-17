@@ -32,10 +32,35 @@
         </div>
       </div>
     </div>
+    <div class="abousMusicMobile">
+          <p class="title">{{ audioGenres[genreIndex] }}</p>
+          <p class="description">მუსიკის სახეწლი ვისია რა არი საიდან არი რამე აღწერა</p>
+    </div>
     <div class="playerContainer">
       <div class="audioPlayer" ref="canvasContainer">
       </div>
     </div>
+
+    <div class="mainControlsMobile">
+        <div class="controls">
+          <div class="trackControls">
+            <button :class="{ loaded: loaded }" v-on:click="playAudio()" class="playSong"><img
+                :src="audioIcon" /></button>
+            <div class="line"></div>
+            <button v-on:click="changeTrack(false)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
+            <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/previousSong.svg" /></button>
+          </div>
+          <div class="sound">
+            <img v-on:click.stop="toggleMute()" src="/images/icons/audioControls/muteSong.svg" />
+            <div class="soundSettings">
+              <input type="range" :min="0" :max="1" :step="0.005" v-model="volume" @input="onVolumeChange" />
+              <div class="styledSlider">
+                <div :style="{ width: `${volume * 100}%`, opacity: volume }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -219,7 +244,26 @@ defineExpose({
   bottom: 0;
   position: fixed;
   z-index: 21;
-
+  .mainControlsMobile {
+    display: none;
+  }
+  .abousMusicMobile {
+    display: none;
+  }
+  @include respond-to('tablet') {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    .mainControlsMobile {
+      display: flex;
+      grid-column: 1 / 3;
+      grid-row: 3 / 4;
+    }
+    .abousMusicMobile {
+      display: flex;
+      grid-column: 1 / 3;
+      grid-row: 1 / 2;
+    }
+  }
   .playerControls {
     height: 100%;
     width: 50vw;
@@ -485,6 +529,7 @@ defineExpose({
 
     @include respond-to('tablet') {
       width: 70vw;
+      height: 40dvh;
     }
 
     .audioPlayer {

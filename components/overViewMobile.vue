@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="examplesMobileContainer" :class="{ AudioPlayerOpen: reserveStore.AudioPlayerOpen }">
-            <h1>პროფესიონალური აპარატურა</h1>
+            <h1>ჩვენი ჩაწერილი მუსიკა</h1>
             <div class="cardContainer">
                 <div class="card" v-for="(example, index) in examples">
                     <div class="cardHolder" :class="{ spinning: pickedMusicIndex === index, paused: musicPaused }"
