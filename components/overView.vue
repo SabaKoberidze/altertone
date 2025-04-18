@@ -400,6 +400,13 @@ onMounted(() => {
       reserveStore.blockScrolling(true)
     }
   })
+  if(reserveStore.AudioPlayerOpen){
+    reserveStore.blockScrolling(false)
+    nextTick(()=>{
+      window.scrollTo({ top: document.body.scrollHeight * 2, behavior: 'smooth' });
+    })
+    console.log('here')
+  }
 });
 
 function handleResize() {

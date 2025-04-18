@@ -5,8 +5,8 @@
     <service />
   </div>
   <Reserve class="reserve" v-if="reserveStore.isModalOpen"></Reserve>
-  <OverView v-if="isWeb" :audioPlayerComponent="audioPlayerComponent" ref="overView" />
-  <OverViewMobile v-else :audioPlayerComponent="audioPlayerComponent" ref="overViewMobile" />
+  <OverView v-if="isWeb" :audioPlayerComponent="audioPlayerComponent || {}" ref="overView" />
+  <OverViewMobile v-else :audioPlayerComponent="audioPlayerComponent || {}" ref="overViewMobile" />
   <Transition name="slide-up">
     <AudioPlayer v-if="reserveStore.AudioPlayerOpen" v-on:songChanged="changeSong" ref="audioPlayerComponent"
       @onPause="(paused: boolean) => { pauseMusic(paused) }" />
