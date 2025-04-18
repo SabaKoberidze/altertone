@@ -12,9 +12,9 @@
         <div class="examplesMobileContainer" :class="{ AudioPlayerOpen: reserveStore.AudioPlayerOpen }">
             <h1>პროფესიონალური აპარატურა</h1>
             <div class="cardContainer">
-                <div class="card" v-for="(example, index) in examples">
-                    <div class="cardHolder" :class="{ spinning: pickedMusicIndex === index, paused: musicPaused }"
-                        @click="openMusic(index)">
+                <div class="card" :class="{ spinning: pickedMusicIndex === index, paused: musicPaused }"
+                    v-for="(example, index) in examples">
+                    <div class="cardHolder" @click="openMusic(index)">
                         <img class="vinyl" src="/images/examples/vinyl.png" />
                         <div class="cardInnerContainer">
                             <img class="cardImage" :src="`images/examples/${example.img}.png`" />
@@ -233,6 +233,7 @@ onMounted(() => {
                 align-items: center;
                 transition: 200ms;
                 z-index: 21;
+                cursor: pointer;
 
                 .cardHolder {
                     width: 100%;
@@ -271,8 +272,7 @@ onMounted(() => {
 
                 }
 
-                &:hover {
-                    cursor: pointer;
+                &.spinning {
                     width: 230px;
                     min-width: 230px;
                 }
