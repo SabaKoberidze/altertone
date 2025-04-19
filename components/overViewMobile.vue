@@ -303,6 +303,8 @@ onMounted(() => {
             .audioPlayerContainer {
                 height: 50dvh;
                 width: 100%;
+
+
             }
 
         }

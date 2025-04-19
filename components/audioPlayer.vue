@@ -33,8 +33,8 @@
       </div>
     </div>
     <div class="abousMusicMobile">
-          <p class="title">{{ audioGenres[genreIndex] }}</p>
-          <p class="description">მუსიკის სახეწლი ვისია რა არი საიდან არი რამე აღწერა</p>
+      <p class="title">{{ audioGenres[genreIndex] }}</p>
+      <p class="description">მუსიკის სახეწლი ვისია რა არი საიდან არი რამე აღწერა</p>
     </div>
     <div class="playerContainer">
       <div class="audioPlayer" ref="canvasContainer">
@@ -42,25 +42,25 @@
     </div>
 
     <div class="mainControlsMobile">
-        <div class="controls">
-          <div class="trackControls">
-            <button :class="{ loaded: loaded }" v-on:click="playAudio()" class="playSong"><img
-                :src="audioIcon" /></button>
-            <div class="line"></div>
-            <button v-on:click="changeTrack(false)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
-            <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/previousSong.svg" /></button>
-          </div>
-          <div class="sound">
-            <img v-on:click.stop="toggleMute()" src="/images/icons/audioControls/muteSong.svg" />
-            <div class="soundSettings">
-              <input type="range" :min="0" :max="1" :step="0.005" v-model="volume" @input="onVolumeChange" />
-              <div class="styledSlider">
-                <div :style="{ width: `${volume * 100}%`, opacity: volume }"></div>
-              </div>
+      <div class="controls">
+        <div class="trackControls">
+          <button :class="{ loaded: loaded }" v-on:click="playAudio()" class="playSong"><img
+              :src="audioIcon" /></button>
+          <div class="line"></div>
+          <button v-on:click="changeTrack(false)"><img src="/images/icons/audioControls/nextSong.svg" /></button>
+          <button v-on:click="changeTrack(true)"><img src="/images/icons/audioControls/previousSong.svg" /></button>
+        </div>
+        <div class="sound">
+          <img v-on:click.stop="toggleMute()" src="/images/icons/audioControls/muteSong.svg" />
+          <div class="soundSettings">
+            <input type="range" :min="0" :max="1" :step="0.005" v-model="volume" @input="onVolumeChange" />
+            <div class="styledSlider">
+              <div :style="{ width: `${volume * 100}%`, opacity: volume }"></div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -244,26 +244,185 @@ defineExpose({
   bottom: 0;
   position: fixed;
   z-index: 21;
+
+  @include respond-to('tablet') {
+    height: 60dvh;
+  }
+
   .mainControlsMobile {
     display: none;
   }
+
   .abousMusicMobile {
     display: none;
   }
+
+
   @include respond-to('tablet') {
     display: grid;
     grid-template-rows: 1fr 1fr 1fr;
+
     .mainControlsMobile {
       display: flex;
       grid-column: 1 / 3;
       grid-row: 3 / 4;
+
+      .controls {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0px 20px;
+        padding-bottom: 64px;
+
+        .trackControls {
+          width: 190px;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 16px;
+          border-radius: 20px;
+          border: rgba(255, 255, 255, 0.04);
+          background: rgba(255, 255, 255, 0.04);
+          padding: 8px 18px 8px 8px;
+
+          button {
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            border: 0;
+            background-color: transparent;
+            height: 100%;
+          }
+
+          .line {
+            height: 24px;
+            width: 2px;
+            border-radius: 1px;
+            background-color: rgba(255, 255, 255, 0.16);
+          }
+
+          .playSong {
+            background-color: white;
+            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            max-width: 56px;
+
+            // img {
+            //   display: none;
+            // }
+            img {
+              animation: rotate 1s linear infinite;
+            }
+
+            &.loaded {
+              img {
+                animation: none;
+              }
+            }
+          }
+        }
+
+        .sound {
+          z-index: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 72px;
+          height: 72px;
+          border-radius: 20px;
+          //border: rgba(255, 255, 255, 0.04);
+          background: rgba(255, 255, 255, 0.04);
+          cursor: pointer;
+          position: relative;
+          transition: 200ms;
+          transition-delay: 100ms;
+
+          &>img {
+            padding: 25px;
+          }
+
+          .soundSettings {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            width: 200%;
+            height: 100%;
+            top: -50%;
+            left: 50%;
+            border: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.04);
+            rotate: -90deg;
+            border-radius: 0 20px 20px 0;
+            overflow: hidden;
+            transition: 200ms;
+            transition-delay: 0ms;
+            scale: 0 1;
+            transform-origin: left center;
+            padding: auto;
+
+            input {
+              cursor: pointer;
+              width: 100%;
+              height: 100%;
+              z-index: 1;
+              opacity: 0;
+            }
+
+            .styledSlider {
+              width: calc(100% - 10px);
+              height: calc(100% - 20px);
+              position: absolute;
+              overflow: hidden;
+              border-radius: 16px;
+              border: 2px solid rgba(255, 255, 255, 0.1);
+
+              &>div {
+                transform-origin: left;
+                height: 100%;
+                width: 100%;
+                background-color: white;
+              }
+            }
+          }
+
+          &:hover {
+            border-radius: 0 0 20px 20px;
+            transition-delay: 0ms;
+
+            .soundSettings {
+              width: 200%;
+              transition-delay: 100ms;
+              scale: 1 1;
+            }
+          }
+        }
+      }
     }
+
     .abousMusicMobile {
       display: flex;
       grid-column: 1 / 3;
       grid-row: 1 / 2;
+      flex-direction: column;
+      padding-left: 20px;
+      gap: 8px;
+
+      .title {
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 700;
+      }
     }
   }
+
   .playerControls {
     height: 100%;
     width: 50vw;
@@ -460,7 +619,11 @@ defineExpose({
       padding: 56px;
 
       @include respond-to('tablet') {
-        padding: 56px 20px;
+        padding: 56px 5px 0 20px;
+
+        p {
+          font-size: 14px;
+        }
       }
 
       &>div {
@@ -480,6 +643,10 @@ defineExpose({
           transform: translate(-50%, -50%);
           right: -30%;
           position: absolute;
+
+          @include respond-to('tablet') {
+            right: -13%;
+          }
         }
 
         button {
@@ -530,6 +697,7 @@ defineExpose({
     @include respond-to('tablet') {
       width: 70vw;
       height: 40dvh;
+      padding-bottom: 0;
     }
 
     .audioPlayer {
@@ -545,7 +713,9 @@ defineExpose({
     transition: transform 1s;
     transform: translateY(100%);
     opacity: 0;
+
   }
+
 
   &.deployed {
 
@@ -555,5 +725,7 @@ defineExpose({
       opacity: 1;
     }
   }
+
+
 }
 </style>
