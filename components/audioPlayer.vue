@@ -205,6 +205,7 @@ onMounted(() => {
   setTimeout(() => {
     onPlayerMounted.value = true
   }, 200)
+  
 });
 
 let loadAudio = async (genre: string) => {
@@ -239,14 +240,14 @@ defineExpose({
 .audioPlayerContainer {
   display: flex;
   width: 100vw;
-  height: 50dvh;
+  height: 50vh;
   align-items: end;
   bottom: 0;
   position: fixed;
   z-index: 21;
 
   @include respond-to('tablet') {
-    height: 60dvh;
+    height: 60vh;
   }
 
   .mainControlsMobile {
@@ -687,7 +688,7 @@ defineExpose({
   }
 
   .playerContainer {
-    height: 50dvh;
+    height: 50vh;
     width: 50vw;
     display: flex;
     justify-content: center;
@@ -696,7 +697,7 @@ defineExpose({
 
     @include respond-to('tablet') {
       width: 70vw;
-      height: 40dvh;
+      height: 40vh;
       padding-bottom: 0;
     }
 

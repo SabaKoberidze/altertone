@@ -454,7 +454,7 @@ defineExpose({
 
 article {
   width: 100vw;
-  height: 400dvh;
+  height: 400vh;
   margin: 0;
   padding: 0;
 
@@ -479,7 +479,7 @@ article {
 
   .mainOverViewContainer {
     width: 100vw;
-    height: 400dvh;
+    height: 400vh;
     margin: 0;
     padding: 0;
   }
@@ -488,7 +488,7 @@ article {
 
   .overViewContainer {
     width: 100vw;
-    height: 100dvh;
+    height: 100vh;
     position: sticky;
     top: 0;
     display: flex;
@@ -525,7 +525,7 @@ article {
 
   .bgImage {
     width: 100vw;
-    height: 100dvh;
+    height: 100vh;
     background-image: url('/images/hero.png');
     background-size: cover;
     background-position: center;

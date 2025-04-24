@@ -9,7 +9,7 @@
                 </div>
             </div>
         </div>
-        <div class="examplesMobileContainer" :class="{ AudioPlayerOpen: reserveStore.AudioPlayerOpen }">
+        <div class="examplesMobileContainer" ref="examplesMobileContainer" :class="{ AudioPlayerOpen: pickedMusicIndex !== -1 }">
             <h1>ჩვენი ჩაწერილი მუსიკა</h1>
             <div class="cardContainer">
                 <div class="card" :class="{ spinning: pickedMusicIndex === index, paused: musicPaused }"
@@ -25,7 +25,6 @@
                     </p>
                 </div>
             </div>
-            <div class="audioPlayerContainer"></div>
         </div>
     </div>
 </template>
@@ -39,6 +38,8 @@ const props = defineProps({
         required: true
     }
 })
+const overViewMobile = ref(null)
+const examplesMobileContainer = ref(null)
 const reserveStore = ReserveStore()
 const pickedMusicIndex = ref(-1)
 const musicPaused = ref(false)
@@ -94,16 +95,34 @@ const examples = ref([
 
 function openMusic(index: number) {
     if (!reserveStore.AudioPlayerOpen) {
+        pickedMusicIndex.value = index
         setTimeout(() => {
-            console.log(props.audioPlayerComponent)
-            pickedMusicIndex.value = index
             props.audioPlayerComponent.pickMusic(index)
+            const element = examplesMobileContainer.value as unknown as HTMLElement
+            if (element) {
+                window.scrollTo({
+                    top: element.scrollHeight + element.offsetHeight + 2000,
+                    behavior: 'smooth'
+                });
+            }
         }, 1000)
+        //scroll to bottom of this component
     } else {
         pickedMusicIndex.value = index
         props.audioPlayerComponent.pickMusic(index)
     }
     reserveStore.AudioPlayerOpen = true
+}
+
+function changeSong(index: number) {
+  pickedMusicIndex.value = index
+}
+function pauseMusic(paused: boolean) {
+  if (paused) {
+    musicPaused.value = true
+  } else {
+    musicPaused.value = false
+  }
 }
 
 onMounted(() => {
@@ -116,6 +135,10 @@ onMounted(() => {
         //     reserveStore.blockScrolling(true)
         // }
     })
+})
+defineExpose({
+    changeSong,
+    pauseMusic
 })
 </script>
 
@@ -298,15 +321,9 @@ onMounted(() => {
         }
 
         &.AudioPlayerOpen {
-            height: 100dvh;
-
-            .audioPlayerContainer {
-                height: 50dvh;
-                width: 100%;
-
-
-            }
-
+            height: 100vh;
+            min-height: 100vh;
+            padding-bottom: 60vh;
         }
 
     }

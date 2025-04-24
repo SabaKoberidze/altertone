@@ -89,7 +89,7 @@ article {
     justify-content: space-between;
 
     @include respond-to('tablet') {
-        height: 100dvh;
+        height: 100vh;
         max-height: 1000px;
         padding: 64px 0px 64px 0px;
         gap: 10vh;
