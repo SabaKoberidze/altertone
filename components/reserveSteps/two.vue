@@ -50,6 +50,11 @@ const filteredIntervals = computed(() => {
     padding: 20px;
     max-width: 550px;
     margin: auto;
+    @include respond-to('tablet') {
+        height: calc(100vh - 290px);
+        overflow-y: auto;
+        width: 80%;
+    }
 }
 
 .grid-item {

@@ -268,10 +268,17 @@ function previousStep() {
         width: 100%;
         position: absolute;
         top: 0;
+        @include respond-to('tablet') {
+            padding: 20px 20px;
+            height: 80px;
+        }
 
         .steps {
             display: flex;
             gap: 16px;
+            @include respond-to('tablet') {
+                gap: 8px;
+            }
 
             .step {
                 display: flex;
@@ -284,6 +291,11 @@ function previousStep() {
                 border: 1px solid $modalBorder-color;
                 background: $modalBorder-color;
                 transition: 200ms;
+                @include respond-to('tablet') {
+                    width: 26px;
+                    height: 26px;
+                    padding: 0;
+                }
 
                 p {
                     color: rgba(255, 255, 255, 0.26);
@@ -294,12 +306,18 @@ function previousStep() {
                     font-weight: 500;
                     line-height: 150%;
                     transition: 200ms;
+                    @include respond-to('tablet') {
+                        font-size: 12px;
+                    }
                 }
 
                 &.active {
                     width: 64px;
                     border: white 1px solid;
                     background-color: black;
+                    @include respond-to('tablet') {
+                        width: 50px;
+                    }
 
                     p {
                         color: white;
@@ -317,6 +335,10 @@ function previousStep() {
             color: $modalText-color;
             font-size: 16px;
             transition: 200ms;
+            @include respond-to('tablet') {
+                gap: 8px;
+                font-size: 12px;
+            }
 
             button {
                 width: 44px;
@@ -330,6 +352,15 @@ function previousStep() {
                 outline: 0;
                 transition: 200ms;
                 cursor: pointer;
+                @include respond-to('tablet') {
+                    width: 32px;
+                    height: 32px;
+                    img {
+                        width: 32px;
+                        height: 32px;
+                    }
+                }
+
             }
 
             &:hover {
@@ -351,6 +382,11 @@ function previousStep() {
         flex-direction: column;
         gap: 43px;
         transition: 200ms;
+        @include respond-to('tablet') {
+            justify-content: end;
+            padding-bottom: 20px;
+            gap: 20px;
+        }
 
         .currentStep {
             display: flex;
@@ -358,6 +394,9 @@ function previousStep() {
             flex-direction: column;
             gap: 43px;
             transition: 200ms;
+            @include respond-to('tablet') {
+                gap: 20px;
+            }
 
             &>div {
                 display: flex;
@@ -369,10 +408,17 @@ function previousStep() {
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
+                @include respond-to('tablet') {
+                    width: 100vw;
+                }
 
                 p {
                     font-weight: 400;
                     text-align: center;
+                    @include respond-to('tablet') {
+                        padding: 0 20px;
+                        width: 100vw;
+                    }
                 }
 
                 .mainText {
@@ -385,6 +431,7 @@ function previousStep() {
                     text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
                     font-size: 14px;
                     font-weight: 400;
+                   
 
                 }
             }
@@ -395,6 +442,10 @@ function previousStep() {
             justify-content: center;
             align-items: center;
             gap: 8px;
+            @include respond-to('tablet') {
+                width: 100vw;
+                padding: 0 20px;
+            }
 
             .nextStep,
             .previousStep {
@@ -416,6 +467,9 @@ function previousStep() {
             .nextStep {
                 width: 240px;
                 background-color: white;
+                @include respond-to('tablet') {
+                    max-width: 60%;
+                }
 
                 p {
                     color: black;
@@ -430,7 +484,10 @@ function previousStep() {
             .previousStep {
                 width: 110px;
                 color: $modalText-color;
-                background-color: $modalBorder-color
+                background-color: $modalBorder-color;
+                @include respond-to('tablet') {
+                    max-width: 40%;
+                }
             }
         }
 

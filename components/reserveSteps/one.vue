@@ -117,6 +117,11 @@ onMounted(() => {
     padding: 20px;
     max-width: 800px;
     margin: auto;
+    @include respond-to('tablet') {
+        height: calc(100vh - 280px);
+        overflow-y: auto;
+        width: 80%;
+    }
 }
 
 .grid-row {
@@ -128,6 +133,10 @@ onMounted(() => {
 
     &:last-child {
         margin-bottom: 0;
+    }
+    @include respond-to('tablet') {
+        width: 100%;
+        flex-direction: column;
     }
 }
 
@@ -150,6 +159,11 @@ onMounted(() => {
     &.picked {
         background-color: transparent;
         border: 1px solid white;
+    }
+    @include respond-to('tablet') {
+        width: 100%;
+        height: 65px;
+        flex-direction: row;
     }
 }
 

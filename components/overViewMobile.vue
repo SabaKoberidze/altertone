@@ -190,29 +190,26 @@
       }
   
       .cardContainer {
-        min-width: 100%;
-        max-width: 100%;
+        width: 100%;
         overflow-x: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
         display: flex;
-        flex-direction: row;
-        height: 150px;
         gap: 12px;
         &::-webkit-scrollbar {
           display: none;
         }
-  
+        height: 180px;
         .card {
           width: 150px;
-          height: 100%;
-          min-width: 150px;
-          max-width: 150px;
+          height: 150px;
           display: flex;
           justify-content: center;
           align-items: center;
           transition: 200ms;
           cursor: pointer;
+          position: relative;
+          overflow: visible;
   
           .cardHolder {
             width: 100%;
@@ -220,7 +217,6 @@
             display: flex;
             align-items: center;
             justify-content: start;
-            position: relative;
             transition: 200ms;
             border-radius: 50%;
   
@@ -251,10 +247,11 @@
   
           .exampleTitle {
             position: absolute;
-            opacity: 0;
+            //opacity: 0;
             transition: 200ms;
             font-size: 14px;
             text-shadow: 0px 0px 20px rgb(0, 0, 0);
+            top: 105%;
           }
   
           &:first-child {

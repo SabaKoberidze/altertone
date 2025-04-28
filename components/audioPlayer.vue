@@ -244,10 +244,14 @@ defineExpose({
   align-items: end;
   bottom: 0;
   position: fixed;
+
+
   z-index: 21;
 
   @include respond-to('tablet') {
     height: 60vh;
+    position: absolute;
+    bottom: 100vh;
   }
 
   .mainControlsMobile {

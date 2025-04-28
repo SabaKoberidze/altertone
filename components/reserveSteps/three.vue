@@ -32,6 +32,11 @@ const reserveStore = ReserveStore()
     gap: 16px;
     border: 2px solid rgba(255, 255, 255, 0.10);
     border-radius: 12px;
+    @include respond-to('tablet') {
+        margin-bottom: calc(50vh - 254px);
+        width: calc(100% - 40px);
+        padding: 20px 20px;
+    }
 
     .inputField {
         display: flex;

@@ -81,9 +81,9 @@ section {
   flex-direction: column;
   align-items: center;
   padding: 0 56px;
-
+  overflow: hidden;
   @include respond-to('tablet') {
-    display: none;
+    padding: 0 20px;
   }
 
   .contactsInfo {

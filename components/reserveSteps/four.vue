@@ -107,6 +107,11 @@ const computedFeaturePrice = computed(() => {
     border-radius: 12px;
     outline: 0px solid rgba(255, 255, 255, 0);
     transition: 200ms;
+    @include respond-to('tablet') {
+        margin-bottom: calc(50vh - 244px);
+        width: calc(100% - 40px);
+    }
+
 
     .basicFeatures,
     .extraFeature {
@@ -192,6 +197,9 @@ const computedFeaturePrice = computed(() => {
             .featureToggle {
                 padding: 6px;
             }
+        }
+        @include respond-to('tablet') {
+            margin-bottom: calc(50vh - 210px);
         }
     }
 
