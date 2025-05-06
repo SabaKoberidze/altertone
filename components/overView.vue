@@ -30,14 +30,14 @@
             transform: `translate(-50%, -50%) rotate(${example.currentPosition.rotation}deg) scale(${example.currentPosition.scale})`
           }">
             <div class="cardHolder" ref="cardHolder"
-              :class="{ spinning: pickedMusicIndex === index, paused: musicPaused }" @click="openMusic(index)">
+              :class="{ spinning: reserveStore.pickedMusicIndex === index, paused: musicPaused }" @click="openMusic(index)">
               <img class="vinyl" src="/images/examples/vinyl.png" />
               <div class="cardInnerContainer">
                 <img class="cardImage" :src="`images/examples/${example.img}.png`" />
                 <div class="cardHole"></div>
               </div>
             </div>
-            <p class="exampleTitle" :style="{ opacity: pickedMusicIndex === index || scrollProgress < 90 ? 0 : 1 }">
+            <p class="exampleTitle" :style="{ opacity: reserveStore.pickedMusicIndex === index || scrollProgress < 90 ? 0 : 1 }">
               {{ example.title }}
             </p>
           </div>
@@ -63,7 +63,6 @@ const scrollProgress = ref(0)
 const lastProgress = ref(0)
 const mainTitle = ref<HTMLElement | null>(null);
 const reserveStore = ReserveStore()
-const pickedMusicIndex = ref(-1)
 const cardHolder = ref([])
 const musicPaused = ref(false)
 let progressIndexes: number[] = [0, 25, 45, 46, 60, 90]
@@ -166,6 +165,7 @@ const examples = ref([
   },
 ])
 
+const emit = defineEmits(['stopAudio'])
 
 function handleScroll() {
   if (scrollContainer.value) {
@@ -366,11 +366,11 @@ function openMusic(index: number) {
   if (!reserveStore.AudioPlayerOpen) {
     spreadCards(4, 5, true)
     setTimeout(() => {
-      pickedMusicIndex.value = index
+      reserveStore.pickedMusicIndex = index
       props.audioPlayerComponent.pickMusic(index)
     }, 1000)
   } else {
-    pickedMusicIndex.value = index
+    reserveStore.pickedMusicIndex = index
     props.audioPlayerComponent.pickMusic(index)
   }
   reserveStore.AudioPlayerOpen = true
@@ -393,8 +393,8 @@ onMounted(() => {
   scrollAnimation()
   watch(() => reserveStore.AudioPlayerOpen, (isOpen) => {
     if (!isOpen) {
-      pickedMusicIndex.value = -1
-      props.audioPlayerComponent.stopAudio()
+      reserveStore.pickedMusicIndex = -1
+      emit('stopAudio')
       reserveStore.blockScrolling(false)
     } else {
       reserveStore.blockScrolling(true)
@@ -403,9 +403,18 @@ onMounted(() => {
   if(reserveStore.AudioPlayerOpen){
     reserveStore.blockScrolling(false)
     nextTick(()=>{
-      window.scrollTo({ top: document.body.scrollHeight * 2, behavior: 'smooth' });
+      const scrollTarget = document.body.scrollHeight * 2;
+      window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+      const scrollListener = () => {
+      if (window.scrollY >= scrollTarget - 1 || window.scrollY <= scrollTarget + 1) {
+        reserveStore.blockScrolling(true);  
+        window.removeEventListener('scroll', scrollListener);  
+      }
+    };
+
+    // Listen for scroll events
+    window.addEventListener('scroll', scrollListener);
     })
-    console.log('here')
   }
 });
 
@@ -416,7 +425,7 @@ function handleResize() {
 }
 
 function changeSong(index: number) {
-  pickedMusicIndex.value = index
+  reserveStore.pickedMusicIndex = index
 }
 
 function pauseMusic(paused: boolean) {

@@ -17,13 +17,13 @@
       <div
         class="examplesMobileContainer"
         ref="examplesMobileContainer"
-        :class="{ AudioPlayerOpen: pickedMusicIndex !== -1 }"
+        :class="{ AudioPlayerOpen: reserveStore.pickedMusicIndex !== -1 }"
       >
         <h1>ჩვენი ჩაწერილი მუსიკა</h1>
         <div class="cardContainer">
           <div
             class="card"
-            :class="{ spinning: pickedMusicIndex === index, paused: musicPaused }"
+            :class="{ spinning: reserveStore.pickedMusicIndex === index, paused: musicPaused }"
             v-for="(example, index) in examples"
           >
             <div class="cardHolder" @click="openMusic(index)">
@@ -50,8 +50,8 @@
   })
   
   const reserveStore = ReserveStore()
-  const pickedMusicIndex = ref(-1)
   const musicPaused = ref(false)
+  const examplesMobileContainer = ref<HTMLElement | null>(null)
   
   const devices = ref([
     { name: 'კომბები', img: 'amp' },
@@ -69,35 +69,48 @@
     { img: 'Metal', title: 'მეტალი' },
   ])
   
+  const emit = defineEmits(['stopAudio'])
+  
   function openMusic(index: number) {
     if (!reserveStore.AudioPlayerOpen) {
-      pickedMusicIndex.value = index
+      reserveStore.pickedMusicIndex = index
       setTimeout(() => {
         props.audioPlayerComponent.pickMusic(index)
       }, 1000)
     } else {
-      pickedMusicIndex.value = index
+      reserveStore.pickedMusicIndex = index
       props.audioPlayerComponent.pickMusic(index)
     }
     reserveStore.AudioPlayerOpen = true
   }
   
   function changeSong(index: number) {
-    pickedMusicIndex.value = index
+    reserveStore.pickedMusicIndex = index
   }
   function pauseMusic(paused: boolean) {
     musicPaused.value = paused
   }
   
   onMounted(() => {
+    console.log(reserveStore.pickedMusicIndex)
     watch(() => reserveStore.AudioPlayerOpen, (isOpen) => {
-      // Add scroll-blocking logic here if needed
+      if (!isOpen) {
+        reserveStore.pickedMusicIndex = -1
+        emit('stopAudio')
+      } 
     })
+    if(reserveStore.AudioPlayerOpen){
+      reserveStore.blockScrolling(false)
+      nextTick(()=>{
+        const scrollTarget = document.documentElement.scrollHeight - window.innerHeight * 2;
+        window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+      })
+    }
   })
   
   defineExpose({
     changeSong,
-    pauseMusic
+    pauseMusic,
   })
   </script>
   

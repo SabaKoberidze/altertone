@@ -9,7 +9,7 @@
   <OverViewMobile v-else :audioPlayerComponent="audioPlayerComponent || {}" ref="overViewMobile" />
   <Transition name="slide-up">
     <AudioPlayer v-if="reserveStore.AudioPlayerOpen" v-on:songChanged="changeSong" ref="audioPlayerComponent"
-      @onPause="(paused: boolean) => { pauseMusic(paused) }" />
+      @onPause="(paused: boolean) => { pauseMusic(paused) }" @stopAudio="stopAudio" />
   </Transition>
   <Equipments></Equipments>
   <AppFooter />
@@ -42,6 +42,14 @@ function pauseMusic(paused: boolean) {
     (overView.value as any).pauseMusic(paused)
   } else if (!isWeb.value && overViewMobile.value) {
     (overViewMobile.value as any).pauseMusic(paused)
+  }
+}
+
+function stopAudio() {
+  if (isWeb.value && overView.value) {
+    audioPlayerComponent.value.stopAudio()
+  } else if (!isWeb.value && overViewMobile.value) {
+    audioPlayerComponent.value.stopAudio()
   }
 }
 
