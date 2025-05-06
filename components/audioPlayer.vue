@@ -449,7 +449,13 @@ defineExpose({
       justify-content: space-between;
       border-radius: 0px 20px 0px 0px;
       background: radial-gradient(92.22% 89.66% at 0% 100%, rgba(46, 12, 24, 0.70) 0%, rgba(46, 12, 24, 0.00) 100%), rgba(255, 255, 255, 0.04);
-
+      transition: 600ms;
+      @media (max-width: 1400px) {
+        padding: 56px 30px;
+      }
+      @media (max-width: 1100px) {
+        padding: 56px 20px;
+      }
       @include respond-to('tablet') {
         display: none;
       }
@@ -622,6 +628,16 @@ defineExpose({
       justify-content: center;
       align-items: center;
       padding: 56px;
+      transition: 600ms;
+      @media (max-width: 1400px) {
+        padding: 56px 30px;
+      }
+      @media (max-width: 1100px) {
+        padding: 56px 20px;
+      }
+      @media (max-width: 950px) {
+        padding: 56px 10px;
+      }
 
       @include respond-to('tablet') {
         padding: 56px 5px 0 20px;

@@ -115,6 +115,15 @@
   </script>
   
   <style lang="scss" scoped>
+  @keyframes vinylPlaying {
+  0% {
+    rotate: 0;
+  }
+
+  100% {
+    rotate: 360deg;
+  }
+}
   .overViewMobile {
     width: 100%;
     box-sizing: border-box;
@@ -256,6 +265,21 @@
           &.spinning {
             width: 230px;
             min-width: 230px;
+            .cardHolder{
+              .vinyl{
+                animation-name: vinylPlaying;
+                animation-duration: 5s;
+                animation-iteration-count: infinite;
+                animation-timing-function: linear;
+              }
+            }
+            &.paused {
+              .cardHolder{
+                .vinyl{
+                  animation-play-state: paused;
+                }
+              }
+            }
           }
   
           .exampleTitle {
