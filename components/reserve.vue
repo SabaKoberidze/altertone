@@ -29,7 +29,7 @@
                         <ReserveStepsThree />
                     </div>
                     <div v-else-if="currentStep === 3" class="submit">
-                        <ReserveStepsFour />
+                        <ReserveStepsFour @editDate="editDate" @editTime="editTime" />
                     </div>
                 </div>
             </transition>
@@ -190,7 +190,23 @@ function nextStep() {
 }
 function previousStep() {
     currentStep.value--
+    if(currentStep.value === 0){
+        reserveStore.selectedData.date = ''
+        reserveStore.selectedData.time = []
+    }
 }
+
+function editDate() {
+    currentStep.value = 0
+    reserveStore.selectedData.date = ''
+    reserveStore.selectedData.time = []
+}
+
+function editTime() {
+    currentStep.value = 1
+    reserveStore.selectedData.time = []
+}
+
 </script>
 <style lang="scss" scoped>
 .fade-slide-forward-enter-active,

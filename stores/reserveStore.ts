@@ -29,6 +29,7 @@ export const ReserveStore = defineStore('ReserveStore', {
             singleHourPrice: 30,    
             singleHourFeaturePrice: 20,    
             duration: 0,  
+            pickedMusicIndex: -1,
         }
       },
       getters: {
@@ -50,6 +51,7 @@ export const ReserveStore = defineStore('ReserveStore', {
       actions: {
         blockScrolling(block: boolean) {
           if(block){
+            console.log('block')
             document.body.style.overflowY = 'hidden';
           }else{
             document.body.style.overflowY = 'auto';

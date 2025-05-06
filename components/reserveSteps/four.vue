@@ -7,7 +7,7 @@
                     <p class="mainText">{{ reserveStore.selectedData.date }} {{ reserveStore.selectedData.month }}</p>
                     <p class="subText">{{ reserveStore.selectedData.weekday }}</p>
                 </div>
-                <img src="/images/icons/Edit.svg" />
+                <img src="/images/icons/Edit.svg" @click="editDate()" />
             </div>
             <div class="row">
                 <img src="/images/icons/Clock.svg" />
@@ -15,7 +15,7 @@
                     <p class="mainText">{{ mergedTimeRanges }}</p>
                     <p class="subText">{{ totalDurationHours }} საათი - {{ computedPrice }} GEL</p>
                 </div>
-                <img src="/images/icons/Edit.svg" />
+                <img src="/images/icons/Edit.svg" @click="editTime()" />
             </div>
         </div>
         <div class="extraFeature" @click="toggleExtraFeature()">
@@ -34,6 +34,7 @@
 
 <script lang="ts" setup>
 const reserveStore = ReserveStore()
+const emit = defineEmits(['editDate', 'editTime'])
 const toggleExtraFeature = () => {
     reserveStore.selectedData.feature = !reserveStore.selectedData.feature
 }
@@ -93,6 +94,15 @@ const computedPrice = computed(() => {
 const computedFeaturePrice = computed(() => {
     return reserveStore.singleHourFeaturePrice * totalDurationHours.value
 })
+
+const editDate = () => {
+    emit('editDate')
+}
+
+const editTime = () => {
+    emit('editTime')
+}
+
 </script>
 
 <style lang="scss" scoped>

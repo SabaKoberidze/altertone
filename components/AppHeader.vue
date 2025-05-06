@@ -6,7 +6,7 @@
         </div>
         <transition name="audioPlayer" mode="out-in">
             <div key="headerButtons" id="headerButtons">
-                <button v-if="!reserveStore.AudioPlayerOpen" type="button" @click="goToContacts">კონტაქტი</button>
+                <button class="contacts" v-if="!reserveStore.AudioPlayerOpen" type="button" @click="goToContacts">კონტაქტი</button>
                 <button v-if="!reserveStore.AudioPlayerOpen" type="button" @click="openReservation()">დაჯავშნე</button>
                 <div @click="closeAudioPlayer()" v-if="reserveStore.AudioPlayerOpen" key="closeAudioPlayer"
                     id="closeAudioPlayer">
@@ -135,7 +135,7 @@ header {
         gap: 10px;
 
         @include respond-to('tablet') {
-            :nth-child(1) {
+            .contacts {
                 display: none;
             }
         }
