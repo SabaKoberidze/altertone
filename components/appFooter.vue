@@ -94,6 +94,9 @@ section {
     width: 100%;
     gap: 40px;
     align-items: center;
+    @include respond-to('tablet') {
+      gap: 0;
+    }
 
     .contactsHeader {
       display: flex;
@@ -101,10 +104,18 @@ section {
       gap: 16px;
       align-items: center;
       justify-content: center;
+      @include respond-to('tablet') {
+        align-items: start;
+        width: 100%;
+        margin-top: 20%;
+      }
 
       h1 {
         font-size: 44px;
-        font-weight: 700
+        font-weight: 700;
+        @include respond-to('tablet') {
+          font-size: 8vw;
+        }
       }
 
       p {
@@ -112,6 +123,9 @@ section {
         font-weight: 400;
         color: rgba(255, 255, 255, 0.56);
         text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
+        @include respond-to('tablet') {
+          font-size: 4vw;
+        }
       }
     }
 
@@ -121,6 +135,13 @@ section {
       justify-content: center;
       gap: 40px;
       width: 100%;
+      @include respond-to('tablet') {
+        flex-direction: column;
+        align-items: start;
+        gap: 0;
+        justify-content: space-evenly;
+        height: 100%;
+      }
 
       .contactOption {
         display: flex;
@@ -134,11 +155,19 @@ section {
         background-color: #0A0A0A;
         border-radius: 16px;
         width: 416px;
+        @include respond-to('tablet') {
+          width: 100%;
+          height: 15vh;
+          padding: 0 5%;
+          flex-direction: row;
+          justify-content: start;
+          align-items: center;
+          gap: 5%;
+        }
 
         img {
           background-color: #141414;
           border: 1px solid rgba(255, 255, 255, 0.04);
-          ;
           border-radius: 16px;
           padding: 22px;
           width: 60px;
@@ -150,6 +179,10 @@ section {
           flex-direction: column;
           justify-content: space-between;
           height: 55%;
+          @include respond-to('tablet') {
+            height: 100%;
+            padding: 5%;
+          }
 
           .contactOptionTextHeader {
             display: flex;
@@ -161,12 +194,18 @@ section {
               font-size: 20px;
               font-weight: 700;
               color: rgba(255, 255, 255, 1);
+              @include respond-to('tablet') {
+                font-size: 4vw;
+              }
             }
 
             p:nth-child(2) {
               font-size: 16px;
               font-weight: 400;
               color: rgba(255, 255, 255, 0.68);
+              @include respond-to('tablet') {
+                font-size: 3vw;
+              }
             }
 
           }
@@ -184,7 +223,7 @@ section {
   }
 
   footer {
-    height: 166px;
+    height: 100px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -223,12 +262,19 @@ section {
         img {
           width: 44px;
           height: 44px;
+          @include respond-to('tablet') {
+            width: 30px;
+            height: 30px;
+          }
         }
 
         p {
           font-family: 'Orbitron';
           font-weight: 700;
           font-size: 18px;
+          @include respond-to('tablet') {
+            font-size: 12px;
+          }
         }
       }
 
@@ -242,11 +288,17 @@ section {
         &>p {
           display: flex;
           align-items: center;
+          @include respond-to('tablet') {
+            display: none;
+          }
         }
 
         &>div {
           display: flex;
           gap: 8px;
+          @include respond-to('tablet') {
+            gap: 16px;
+          }
 
           img {
             cursor: pointer;
@@ -256,6 +308,11 @@ section {
             background-color: rgba(255, 255, 255, 0.04);
             border-radius: 12px;
             transition: 200ms;
+            @include respond-to('tablet') {
+              width: 35px;
+              height: 35px;
+              padding: 5px;
+            }
 
             &:hover {
               background-color: rgba(255, 255, 255, 0.12);
@@ -267,6 +324,9 @@ section {
 
     .additionalInfo {
       height: 80px;
+      @include respond-to('tablet') {
+        width: 100%;
+      }
 
       p {
         font-size: 12px;
@@ -275,6 +335,11 @@ section {
         display: flex;
         align-items: center;
         gap: 10px;
+        @include respond-to('tablet') {
+          width: 50%;
+          font-size: 10px;
+          display: flex;
+        }
 
         span {
           padding: 9px 14px;
@@ -286,6 +351,11 @@ section {
           gap: 5px;
           font-size: 14px;
           font-weight: 700;
+          @include respond-to('tablet') {
+            font-size: 12px;
+            padding: 9px 10px;
+            width: 200px;
+          }
 
           strong {
             font-family: 'Rubik';
