@@ -65,7 +65,7 @@ header {
     justify-content: space-between;
     align-items: center;
     height: 124px;
-    width: 100vw;
+    width: 100%;
     color: #FFF;
     padding: 40px 56px;
     position: fixed;
