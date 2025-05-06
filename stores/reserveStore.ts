@@ -59,6 +59,11 @@ export const ReserveStore = defineStore('ReserveStore', {
         },
         toggleModal() {
             this.isModalOpen = !this.isModalOpen
+            if(this.isModalOpen){
+                this.blockScrolling(true)
+            }else{
+                this.blockScrolling(false)
+            }
         },       
         async getReservedData() {
             try {

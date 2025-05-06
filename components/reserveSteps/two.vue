@@ -50,8 +50,9 @@ const filteredIntervals = computed(() => {
     padding: 20px;
     max-width: 550px;
     margin: auto;
+
     @include respond-to('tablet') {
-        height: calc(100vh - 290px);
+        height: calc(100vh - 320px);
         overflow-y: auto;
         width: 80%;
     }
@@ -75,6 +76,10 @@ const filteredIntervals = computed(() => {
     &.picked {
         background-color: rgba(255, 255, 255, 0.1);
         border: 1px solid white;
+    }
+
+    @include respond-to('tablet') {
+        width: 100%;
     }
 }
 

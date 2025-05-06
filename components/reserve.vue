@@ -262,7 +262,7 @@ function editTime() {
 
 #reservation {
     position: fixed;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     top: 0;
     left: 0;
@@ -284,6 +284,7 @@ function editTime() {
         width: 100%;
         position: absolute;
         top: 0;
+
         @include respond-to('tablet') {
             padding: 20px 20px;
             height: 80px;
@@ -292,6 +293,7 @@ function editTime() {
         .steps {
             display: flex;
             gap: 16px;
+
             @include respond-to('tablet') {
                 gap: 8px;
             }
@@ -307,6 +309,7 @@ function editTime() {
                 border: 1px solid $modalBorder-color;
                 background: $modalBorder-color;
                 transition: 200ms;
+
                 @include respond-to('tablet') {
                     width: 26px;
                     height: 26px;
@@ -322,6 +325,7 @@ function editTime() {
                     font-weight: 500;
                     line-height: 150%;
                     transition: 200ms;
+
                     @include respond-to('tablet') {
                         font-size: 12px;
                     }
@@ -331,6 +335,7 @@ function editTime() {
                     width: 64px;
                     border: white 1px solid;
                     background-color: black;
+
                     @include respond-to('tablet') {
                         width: 50px;
                     }
@@ -351,6 +356,7 @@ function editTime() {
             color: $modalText-color;
             font-size: 16px;
             transition: 200ms;
+
             @include respond-to('tablet') {
                 gap: 8px;
                 font-size: 12px;
@@ -368,9 +374,11 @@ function editTime() {
                 outline: 0;
                 transition: 200ms;
                 cursor: pointer;
+
                 @include respond-to('tablet') {
                     width: 32px;
                     height: 32px;
+
                     img {
                         width: 32px;
                         height: 32px;
@@ -398,6 +406,7 @@ function editTime() {
         flex-direction: column;
         gap: 43px;
         transition: 200ms;
+
         @include respond-to('tablet') {
             justify-content: end;
             padding-bottom: 20px;
@@ -410,6 +419,7 @@ function editTime() {
             flex-direction: column;
             gap: 43px;
             transition: 200ms;
+
             @include respond-to('tablet') {
                 gap: 20px;
             }
@@ -424,6 +434,7 @@ function editTime() {
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
+
                 @include respond-to('tablet') {
                     width: 100vw;
                 }
@@ -431,6 +442,7 @@ function editTime() {
                 p {
                     font-weight: 400;
                     text-align: center;
+
                     @include respond-to('tablet') {
                         padding: 0 20px;
                         width: 100vw;
@@ -447,7 +459,7 @@ function editTime() {
                     text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
                     font-size: 14px;
                     font-weight: 400;
-                   
+
 
                 }
             }
@@ -458,8 +470,10 @@ function editTime() {
             justify-content: center;
             align-items: center;
             gap: 8px;
+
             @include respond-to('tablet') {
                 width: 100vw;
+                margin-bottom: 20px;
                 padding: 0 20px;
             }
 
@@ -483,6 +497,7 @@ function editTime() {
             .nextStep {
                 width: 240px;
                 background-color: white;
+
                 @include respond-to('tablet') {
                     max-width: 60%;
                 }
@@ -501,6 +516,7 @@ function editTime() {
                 width: 110px;
                 color: $modalText-color;
                 background-color: $modalBorder-color;
+
                 @include respond-to('tablet') {
                     max-width: 40%;
                 }

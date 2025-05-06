@@ -205,7 +205,7 @@ onMounted(() => {
   setTimeout(() => {
     onPlayerMounted.value = true
   }, 200)
-  
+
 });
 
 let loadAudio = async (genre: string) => {

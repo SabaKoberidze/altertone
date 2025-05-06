@@ -65,7 +65,7 @@ article {
         padding: 124px 56px;
         position: absolute;
         top: 0;
-        width: 100vw;
+        width: 100%;
         height: 100vh;
         display: flex;
         flex-direction: column;

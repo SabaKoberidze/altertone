@@ -14,9 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { useElementVisibility } from '@vueuse/core';
-
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 
 let services = [
     {
@@ -48,14 +46,16 @@ let services = [
         }
     }
 ];
-
 const serviceSection = ref<HTMLElement[]>([]);
-const visibleBlocks = ref<boolean[]>([]);
 const highestVisibleIndex = ref(-1);
 const serviceScrollPoint = ref<HTMLElement[]>([]);
+
 const setServiceRef = (el: any, index: number) => {
-    if (el) serviceSection.value[index] = el;
+    if (el && el.rootElement) {
+        serviceSection.value[index] = el.rootElement;
+    }
 };
+
 const scrollToContent = (index: number) => {
     serviceScrollPoint.value[index].scrollIntoView({
         behavior: 'smooth',
@@ -63,20 +63,50 @@ const scrollToContent = (index: number) => {
         inline: 'nearest'
     });
 };
-onMounted(() => {
+
+const getVisibleIndex = () => {
+    let visibleIndex = -1;
+    const middleZoneTop = window.innerHeight / 2 - 50;  // 50px wiggle room (above middle)
+    const middleZoneBottom = window.innerHeight / 2 + 50; // 50px wiggle room (below middle)
+
     serviceSection.value.forEach((el, index) => {
-        const isVisible = useElementVisibility(ref(el), { rootMargin: `0px 0px ${-window.innerHeight / 2}px 0px` });
+        if (!el) return;  // Skip if no element is available
 
-        watch(isVisible, (visible) => {
-            visibleBlocks.value[index] = visible;
+        if (el instanceof HTMLElement) {
+            const rect = el.getBoundingClientRect(); // Get element's position relative to the viewport
 
-            const visibleIndices = visibleBlocks.value
-                .map((isVis, i) => (isVis ? i : -1))
-                .filter(i => i !== -1);
+            // Middle of the screen, which is constant
+            const middle = window.innerHeight / 2;
 
-            highestVisibleIndex.value = visibleIndices.length ? Math.max(...visibleIndices) : -1;
-        });
+            // Log positions for debugging
+            console.log('Middle of screen:', middle);
+            console.log('Element top:', rect.top);
+            console.log('Element bottom:', rect.bottom);
+
+            // Check if the middle of the screen is between the top and bottom of the element
+            if (rect.top <= middle && rect.bottom >= middle) {
+                visibleIndex = index;
+            }
+        }
     });
+
+    // Set the highest visible index
+    highestVisibleIndex.value = visibleIndex;
+
+};
+
+onMounted(() => {
+    nextTick(() => {
+        // Initialize visibility check on mount
+        getVisibleIndex();
+
+        // Add scroll event listener
+        window.addEventListener('scroll', getVisibleIndex);
+    });
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', getVisibleIndex);
 });
 </script>
 
@@ -140,6 +170,14 @@ article {
             .serviceScrollPoint {
                 height: 100%;
             }
+        }
+
+        @media (max-width: 1300px) and (min-width: 900px) {
+            padding: 220px 0px 220px 20px;
+        }
+
+        @media (min-width: 1921px) {
+            padding: 220px 8% 220px 60px;
         }
     }
 }

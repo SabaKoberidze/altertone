@@ -85,6 +85,15 @@ const goToContacts = () => {
     height: 756px;
     width: 443px;
 
+    @media (max-width: 1300px) {
+        width: 330px;
+    }
+
+    @media (min-width: 1921px) {
+        transform-origin: top left;
+        scale: 1.2;
+    }
+
     @include respond-to('tablet') {
         padding: 0px 20px;
         height: unset;
@@ -193,6 +202,11 @@ const goToContacts = () => {
                 letter-spacing: 0.32px;
                 transition: 400ms;
                 transition-delay: 200ms;
+
+                @media (max-width: 1300px) {
+                    width: 300px;
+                    padding: 16px 8px;
+                }
             }
 
             &.active {
@@ -224,6 +238,10 @@ const goToContacts = () => {
 
         .additionalInfo {
             font-size: 18px;
+
+            @media (max-width: 1300px) {
+                font-size: 16px;
+            }
         }
 
         .contactButton {

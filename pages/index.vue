@@ -13,6 +13,7 @@
   </Transition>
   <Equipments></Equipments>
   <AppFooter />
+  <LandScape v-if="!isWeb" />
 </template>
 <script setup lang="ts">
 const reserveStore = ReserveStore()

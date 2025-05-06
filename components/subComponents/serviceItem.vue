@@ -1,5 +1,5 @@
 <template>
-    <div class="serviceItem">
+    <div class="serviceItem" ref="rootElement">
         <img :src="bgImage" class="serviceBg" />
         <div class="serviceContent">
             <img :src="icon" class="serviceIcon" />
@@ -54,6 +54,8 @@ defineProps({
     duration: Number,
     details: Object,
 })
+const rootElement = ref<HTMLElement | null>(null);
+defineExpose({ rootElement });
 </script>
 <style lang="scss" scoped>
 .serviceItem {
@@ -231,12 +233,13 @@ defineProps({
         }
     }
 
+
+
     @include respond-to('tablet') {
         width: 300px;
         height: 100%;
         padding: 24px;
         background-color: black;
-
 
         .serviceBg {
             height: 50%;
@@ -302,6 +305,20 @@ defineProps({
                 }
             }
         }
+    }
+
+    @media (max-width: 1300px) and (min-width: 1100px) {
+        width: 600px;
+    }
+
+    @media (max-width: 1100px) and (min-width: 900px) {
+        width: 450px;
+        height: 450px;
+    }
+
+    @media (min-width: 1921px) {
+        width: 900px;
+        height: 680px;
     }
 }
 </style>
