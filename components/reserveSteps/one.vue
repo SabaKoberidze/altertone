@@ -119,7 +119,7 @@ onMounted(() => {
     margin: auto;
 
     @include respond-to('tablet') {
-        height: calc(100vh - 320px);
+        height: calc(100svh - 320px);
         overflow-y: auto;
         width: 80%;
     }

@@ -1,5 +1,5 @@
 <template>
-    <header :class="{ scroll: isScrolled }">
+    <header :class="{hide: hideHeader }">
         <div id="headerLogo">
             <img alt="logo" src="/images/Logo.svg" />
             <p>Altertone</p>
@@ -20,34 +20,53 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { breakpoints } from '@/utils/breakpoints';
 const reserveStore = ReserveStore();
 
-const isScrolled = ref(false);
+const hideHeader = ref(false);
 
-const handleScroll = () => {
-    isScrolled.value = window.scrollY > 0;
-};
+const lastScrollY = ref(0);
 
 const openReservation = async () => {
-    reserveStore.toggleModal();
+  reserveStore.toggleModal();
 };
 
 const closeAudioPlayer = () => {
-    reserveStore.AudioPlayerOpen = false
-}
+  reserveStore.AudioPlayerOpen = false;
+};
 
 const goToContacts = () => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+};
+
+const handleScroll = () => {
+  const currentScrollY = window.scrollY;
+
+  const isMobile = window.innerWidth <= breakpoints.tablet;
+
+  if (isMobile) {
+    if (currentScrollY > lastScrollY.value && currentScrollY > 50) {
+      hideHeader.value = true;
+    } else if (currentScrollY < lastScrollY.value) {
+      hideHeader.value = false;
+    }
+  } else {
+    hideHeader.value = false;
+  }
+
+  lastScrollY.value = currentScrollY;
 };
 
 onMounted(() => {
-    window.addEventListener('scroll', handleScroll);
+  lastScrollY.value = window.scrollY;
+  window.addEventListener('scroll', handleScroll);
 });
 
 onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
+
 
 <style lang="scss" scoped>
 .audioPlayer-enter-active,
@@ -74,6 +93,7 @@ header {
     font-family: 'Neue';
     transition: 600ms;
 
+
     &::before {
         content: '';
         position: absolute;
@@ -84,16 +104,12 @@ header {
         transition: 400ms;
         background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
         z-index: -1;
+        backdrop-filter: blur(5px);
     }
 
-    &.scroll {
-        &::before {
-            top: 0%;
-        }
-
-        @include respond-to('tablet') {
-            height: 64px;
-        }
+    &.hide {
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-in-out;
     }
 
     @include respond-to('tablet') {

@@ -263,7 +263,7 @@ function editTime() {
 #reservation {
     position: fixed;
     width: 100%;
-    height: 100vh;
+    height: 100svh;
     top: 0;
     left: 0;
     display: flex;

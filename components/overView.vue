@@ -497,7 +497,7 @@ article {
 
   .overViewContainer {
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     position: sticky;
     top: 0;
     display: flex;
@@ -534,7 +534,7 @@ article {
 
   .bgImage {
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     background-image: url('/images/hero.png');
     background-size: cover;
     background-position: center;
