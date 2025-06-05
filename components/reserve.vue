@@ -190,7 +190,7 @@ function nextStep() {
 }
 function previousStep() {
     currentStep.value--
-    if(currentStep.value === 0){
+    if (currentStep.value === 0) {
         reserveStore.selectedData.date = ''
         reserveStore.selectedData.time = []
     }
@@ -436,7 +436,7 @@ function editTime() {
                 gap: 12px;
 
                 @include respond-to('tablet') {
-                    width: 100vw;
+                    width: 100%;
                 }
 
                 p {
@@ -445,7 +445,7 @@ function editTime() {
 
                     @include respond-to('tablet') {
                         padding: 0 20px;
-                        width: 100vw;
+                        width: 100%;
                     }
                 }
 
@@ -472,7 +472,7 @@ function editTime() {
             gap: 8px;
 
             @include respond-to('tablet') {
-                width: 100vw;
+                width: 100%;
                 margin-bottom: 20px;
                 padding: 0 20px;
             }

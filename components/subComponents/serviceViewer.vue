@@ -55,18 +55,14 @@ const handleContentClick = (index: number) => {
 };
 
 const getBusPosition = () => {
-    if (props.visibleIndex) {
-        let visibleIndex = props.visibleIndex
-        if (visibleIndex < 0) {
-            visibleIndex = 0
-        }
+    const index = props.visibleIndex;
+    if (index !== undefined && index >= 0) {
         const pointHeight = 18;
         const gap = 54;
-        const offset = visibleIndex * (pointHeight + gap);
+        const offset = index * (pointHeight + gap);
         return `${offset}px`;
-    } else {
-        return '0px'
     }
+    return busPosition.value;
 };
 const goToContacts = () => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });

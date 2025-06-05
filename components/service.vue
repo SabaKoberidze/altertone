@@ -117,9 +117,11 @@ article {
     background: #0D0E0F;
     display: flex;
     justify-content: space-between;
+    padding-bottom: 56px;
 
     @include respond-to('tablet') {
         height: 100vh;
+        padding-bottom: 0px;
         max-height: 1000px;
         padding: 64px 0px 64px 0px;
         gap: 10vh;

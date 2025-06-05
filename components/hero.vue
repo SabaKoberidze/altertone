@@ -177,7 +177,7 @@ article {
         display: flex;
         justify-content: start;
         align-items: center;
-        width: 100vw;
+        width: 100%;
         height: 124px;
         padding: 0 56px;
         z-index: 1;

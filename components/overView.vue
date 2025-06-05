@@ -30,14 +30,16 @@
             transform: `translate(-50%, -50%) rotate(${example.currentPosition.rotation}deg) scale(${example.currentPosition.scale})`
           }">
             <div class="cardHolder" ref="cardHolder"
-              :class="{ spinning: reserveStore.pickedMusicIndex === index, paused: musicPaused }" @click="openMusic(index)">
+              :class="{ spinning: reserveStore.pickedMusicIndex === index, paused: musicPaused }"
+              @click="openMusic(index)">
               <img class="vinyl" src="/images/examples/vinyl.png" />
               <div class="cardInnerContainer">
                 <img class="cardImage" :src="`images/examples/${example.img}.png`" />
                 <div class="cardHole"></div>
               </div>
             </div>
-            <p class="exampleTitle" :style="{ opacity: reserveStore.pickedMusicIndex === index || scrollProgress < 90 ? 0 : 1 }">
+            <p class="exampleTitle"
+              :style="{ opacity: reserveStore.pickedMusicIndex === index || scrollProgress < 90 ? 0 : 1 }">
               {{ example.title }}
             </p>
           </div>
@@ -400,20 +402,20 @@ onMounted(() => {
       reserveStore.blockScrolling(true)
     }
   })
-  if(reserveStore.AudioPlayerOpen){
+  if (reserveStore.AudioPlayerOpen) {
     reserveStore.blockScrolling(false)
-    nextTick(()=>{
+    nextTick(() => {
       const scrollTarget = document.body.scrollHeight * 2;
       window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
       const scrollListener = () => {
-      if (window.scrollY >= scrollTarget - 1 || window.scrollY <= scrollTarget + 1) {
-        reserveStore.blockScrolling(true);  
-        window.removeEventListener('scroll', scrollListener);  
-      }
-    };
+        if (window.scrollY >= scrollTarget - 1 || window.scrollY <= scrollTarget + 1) {
+          reserveStore.blockScrolling(true);
+          window.removeEventListener('scroll', scrollListener);
+        }
+      };
 
-    // Listen for scroll events
-    window.addEventListener('scroll', scrollListener);
+      // Listen for scroll events
+      window.addEventListener('scroll', scrollListener);
     })
   }
 });
@@ -462,7 +464,7 @@ defineExpose({
 }
 
 article {
-  width: 100vw;
+  width: 100%;
   height: 400vh;
   margin: 0;
   padding: 0;
@@ -487,7 +489,7 @@ article {
   }
 
   .mainOverViewContainer {
-    width: 100vw;
+    width: 100%;
     height: 400vh;
     margin: 0;
     padding: 0;
@@ -496,7 +498,7 @@ article {
 
 
   .overViewContainer {
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     position: sticky;
     top: 0;
