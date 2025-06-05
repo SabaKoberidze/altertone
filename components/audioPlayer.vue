@@ -251,7 +251,7 @@ defineExpose({
   @include respond-to('tablet') {
     height: 60vh;
     position: absolute;
-    bottom: 100vh;
+    bottom: 100svh;
   }
 
   .mainControlsMobile {

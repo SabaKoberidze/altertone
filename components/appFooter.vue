@@ -76,7 +76,7 @@ const contactOptions = [
 <style lang="scss" scoped>
 section {
   width: 100%;
-  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;

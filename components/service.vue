@@ -120,7 +120,7 @@ article {
     padding-bottom: 56px;
 
     @include respond-to('tablet') {
-        height: 100vh;
+        height: 100svh;
         padding-bottom: 0px;
         max-height: 1000px;
         padding: 64px 0px 64px 0px;
