@@ -118,7 +118,7 @@ section {
         font-weight: 700;
 
         @include respond-to('tablet') {
-          font-size: 8vw;
+          font-size: 32px;
         }
       }
 
@@ -129,7 +129,7 @@ section {
         text-shadow: 0px 0px 80px rgba(0, 0, 0, 0.50);
 
         @include respond-to('tablet') {
-          font-size: 4vw;
+          font-size: 16px;
         }
       }
     }
@@ -189,7 +189,7 @@ section {
 
           @include respond-to('tablet') {
             height: 100%;
-            padding: 5%;
+            padding: 20px;
           }
 
           .contactOptionTextHeader {
@@ -204,7 +204,7 @@ section {
               color: rgba(255, 255, 255, 1);
 
               @include respond-to('tablet') {
-                font-size: 4vw;
+                font-size: 20px;
               }
             }
 
@@ -214,7 +214,7 @@ section {
               color: rgba(255, 255, 255, 0.68);
 
               @include respond-to('tablet') {
-                font-size: 3vw;
+                font-size: 12px;
               }
             }
 
