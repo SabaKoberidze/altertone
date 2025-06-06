@@ -249,9 +249,9 @@ defineExpose({
   z-index: 21;
 
   @include respond-to('tablet') {
-    height: 60vh;
+    height: 480px;
     position: absolute;
-    bottom: 100svh;
+    bottom: calc(100svh + 20px);
   }
 
   .mainControlsMobile {
@@ -271,7 +271,6 @@ defineExpose({
       display: flex;
       grid-column: 1 / 3;
       grid-row: 3 / 4;
-
       .controls {
         width: 100%;
         height: 100%;
@@ -280,7 +279,6 @@ defineExpose({
         justify-content: space-between;
         gap: 8px;
         padding: 0px 20px;
-        padding-bottom: 64px;
 
         .trackControls {
           width: 190px;
@@ -417,13 +415,22 @@ defineExpose({
       grid-column: 1 / 3;
       grid-row: 1 / 2;
       flex-direction: column;
-      padding-left: 20px;
+      padding: 0 20px;
       gap: 8px;
+      max-width: 100%;
+      min-height: 80px;
+
 
       .title {
         font-size: 20px;
         font-style: normal;
         font-weight: 700;
+        max-width: 100%;
+      }
+      .description {
+        max-width: 100%;
+        max-height: 50px;
+        overflow-y: scroll;
       }
     }
   }
@@ -723,7 +730,7 @@ defineExpose({
 
     @include respond-to('tablet') {
       width: 70vw;
-      height: 40vh;
+      height: 300px;
       padding-bottom: 0;
     }
 

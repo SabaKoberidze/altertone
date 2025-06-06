@@ -302,10 +302,10 @@
       }
   
       &.AudioPlayerOpen {
-        height: 100svh;
-        min-height: 100svh;
-        padding-bottom: 60vh;
+        height: 800px;    
+        padding-bottom: 480px;
         width: 100%;
+        padding-top: 20px;
       }
     }
   }

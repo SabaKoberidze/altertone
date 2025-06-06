@@ -122,15 +122,15 @@ article {
     @include respond-to('tablet') {
         height: 100svh;
         padding-bottom: 0px;
-        max-height: 1000px;
-        padding: 64px 0px 64px 0px;
-        gap: 10vh;
+        max-height: 800px;
+        min-height: 700px;
+        gap: 20px;
+        padding: 32px 0px 32px 0px;
         flex-direction: column-reverse;
-        justify-content: flex-start;
+        justify-content: center;
 
-        @media (max-height: 800px) {
-            gap: 20px;
-            padding: 32px 0px 32px 0px;
+        @media (min-height: 750px) {
+            gap: 64px;
         }
     }
 
